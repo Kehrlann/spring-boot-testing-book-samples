@@ -20,12 +20,16 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ManualWiringTests {
+// tag::class-definition[]
+class ManualSpringBootTests {
 
 	private static ConfigurableApplicationContext app;
 
 	private static RestClient restClient;
 
+	// end::class-definition[]
+
+	// tag::before-after[]
 	@BeforeAll
 	static void beforeAll() {
 		app = new SpringApplication(TestConfiguration.class).run();
@@ -37,7 +41,9 @@ class ManualWiringTests {
 	static void afterAll() {
 		app.stop();
 	}
+	// end::before-after[]
 
+	// tag::test[]
 	@Test
 	void addWidget() {
 		StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class);
@@ -57,6 +63,7 @@ class ManualWiringTests {
 		assertThat(widget).isPresent();
 		assertThat(widget.get().name()).isEqualTo("test-widget");
 	}
+	// end::test[]
 
 	private static int getWidgetId(URI location) {
 		//@formatter:off
@@ -68,9 +75,10 @@ class ManualWiringTests {
 		return Integer.parseInt(id);
 	}
 
+	// tag::configuration[]
 	@Configuration
 	@EnableAutoConfiguration
-	@ComponentScan(basePackageClasses = ManualWiringTests.class,
+	@ComponentScan(basePackageClasses = ManualSpringBootTests.class,
 			excludeFilters = {
 					@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { WidgetValidator.class }),
 					@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { WidgetApplication.class }) })
@@ -83,6 +91,7 @@ class ManualWiringTests {
 		}
 
 	}
+	// end::configuration[]
 
 	private static class StubWidgetValidator extends WidgetValidator {
 
