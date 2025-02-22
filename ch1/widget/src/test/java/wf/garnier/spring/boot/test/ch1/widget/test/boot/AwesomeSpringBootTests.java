@@ -1,6 +1,9 @@
-package wf.garnier.spring.boot.test.ch1.widget;
+package wf.garnier.spring.boot.test.ch1.widget.test.boot;
 
 import org.junit.jupiter.api.Test;
+import wf.garnier.spring.boot.test.ch1.widget.InvalidWidgetException;
+import wf.garnier.spring.boot.test.ch1.widget.WidgetRepository;
+import wf.garnier.spring.boot.test.ch1.widget.WidgetValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,10 +14,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = "widget.id.step=5")
 @AutoConfigureMockMvc
 class AwesomeSpringBootTests {
 
@@ -41,6 +45,33 @@ class AwesomeSpringBootTests {
 		var widget = repository.findById(id);
 		assertThat(widget).isPresent();
 		assertThat(widget.get().name()).isEqualTo("test-widget");
+	}
+
+	@Test
+	void addWidgetRejected() throws Exception {
+		doThrow(new InvalidWidgetException("rejected")).when(mockValidator).validateWidget(anyString());
+		var widgetCount = repository.count();
+
+		mvc.perform(post("/widget").param("name", "test-widget")).andExpect(status().isBadRequest());
+		assertThat(repository.count()).isEqualTo(widgetCount);
+	}
+
+	@Test
+	void widgetIdIncrementsWithStep() throws Exception {
+		doNothing().when(mockValidator).validateWidget(anyString());
+		var firstLocation = mvc.perform(post("/widget").param("name", "test-widget"))
+			.andReturn()
+			.getResponse()
+			.getHeader("location");
+
+		var firstId = getWidgetId(firstLocation);
+		var secondLocation = mvc.perform(post("/widget").param("name", "test-widget"))
+			.andReturn()
+			.getResponse()
+			.getHeader("location");
+
+		var secondId = getWidgetId(secondLocation);
+		assertThat(secondId - firstId).isEqualTo(5);
 	}
 
 	private static int getWidgetId(String location) {

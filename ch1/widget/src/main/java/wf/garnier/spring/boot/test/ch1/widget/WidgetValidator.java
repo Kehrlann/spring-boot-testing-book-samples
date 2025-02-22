@@ -5,7 +5,7 @@ import java.util.Random;
 import org.springframework.stereotype.Service;
 
 @Service
-class WidgetValidator {
+public class WidgetValidator {
     private final Random random = new Random();
 
     public void validateWidget(String name) throws InvalidWidgetException {

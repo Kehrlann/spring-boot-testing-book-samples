@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 @Repository
-class WidgetRepository {
+public class WidgetRepository {
 
 	private final Map<Integer, Widget> widgetById = new HashMap<>();
 
@@ -35,6 +35,10 @@ class WidgetRepository {
 		var newWidget = new Widget(nextId.getAndAdd(step), name);
 		widgetById.put(newWidget.id(), newWidget);
 		return newWidget;
+	}
+
+	public int count() {
+		return widgetById.size();
 	}
 
 }
