@@ -177,6 +177,5 @@ class ManualSpringBootTests {
 	}
 
 	// end::ignored[]
-
 }
 // end::content[]
