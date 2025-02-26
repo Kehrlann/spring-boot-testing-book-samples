@@ -127,13 +127,13 @@ class ManualSpringBootTests {
 	@EnableAutoConfiguration // <1>
 	@ComponentScan(basePackageClasses = WidgetApplication.class, // <2>
 			excludeFilters = {
-					@ComponentScan.Filter(type = FilterType.ANNOTATION, classes = { SpringBootApplication.class }), // <3>
-					@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { WidgetValidator.class }), // <4>
+					@ComponentScan.Filter(type = FilterType.ANNOTATION, classes = { SpringBootApplication.class }),
+					@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { WidgetValidator.class }),
 			})
 	static class TestConfiguration {
 
 		@Bean
-		public WidgetValidator testWidgetValidator() { // <5>
+		public WidgetValidator testWidgetValidator() { // <3>
 			return new StubWidgetValidator();
 		}
 
