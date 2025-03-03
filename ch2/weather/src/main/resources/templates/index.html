@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Weather App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Weather App</h1>
+        
+        <!-- Add City Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Add a new city</h5>
+                <form action="/cities" method="post" class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="name" placeholder="City name" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" step="0.0001" class="form-control" name="latitude" placeholder="Latitude" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" step="0.0001" class="form-control" name="longitude" placeholder="Longitude" required>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary">Add City</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Cities List -->
+        <div class="row">
+            <div th:each="cityWeather : ${cities}" class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${cityWeather.city().getName()}">City Name</h5>
+                        <p class="card-text">
+                            Temperature: <span th:text="${cityWeather.weather().temperature()}">20</span>°C<br>
+                            Wind Speed: <span th:text="${cityWeather.weather().windspeed()}">5</span> km/h<br>
+                            Weather: <span th:text="${cityWeather.weather().getWeatherDescription()}">Sunny</span>
+                        </p>
+                        <form th:action="@{/cities/{id}/delete(id=${cityWeather.city().getId()})}" method="post">
+                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
