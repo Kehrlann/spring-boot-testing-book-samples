@@ -39,7 +39,7 @@ public class WeatherController {
     public String addCity(@RequestParam String name,
                          @RequestParam double latitude,
                          @RequestParam double longitude) {
-        cityRepository.save(new City(name, latitude, longitude));
+        cityRepository.save(new City(name, "", latitude, longitude));
         return "redirect:/";
     }
 

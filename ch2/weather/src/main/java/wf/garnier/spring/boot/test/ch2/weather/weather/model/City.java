@@ -11,14 +11,16 @@ public class City {
     private Long id;
     
     private String name;
+    private String country;
     private double latitude;
     private double longitude;
 
     // JPA requires default constructor
     protected City() {}
 
-    public City(String name, double latitude, double longitude) {
+    public City(String name, String country, double latitude, double longitude) {
         this.name = name;
+        this.country = country;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -29,6 +31,14 @@ public class City {
 
     public String getName() {
         return name;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public double getLatitude() {

@@ -67,7 +67,7 @@ class WeatherControllerTest {
     @Test
     void shouldDeleteCity() throws Exception {
         // given
-        var paris = cityRepository.save(new City("Paris", 48.8566, 2.3522));
+        var paris = cityRepository.save(new City("Paris", "France", 48.8566, 2.3522));
         when(weatherService.getWeather(anyDouble(), anyDouble()))
             .thenReturn(new WeatherResponse(20.0, 5.0, 0));
 
@@ -83,7 +83,7 @@ class WeatherControllerTest {
     @Test
     void shouldShowWeatherForCity() throws Exception {
         // given
-        var paris = cityRepository.save(new City("Paris", 48.8566, 2.3522));
+        var paris = cityRepository.save(new City("Paris", "France", 48.8566, 2.3522));
         when(weatherService.getWeather(48.8566, 2.3522))
             .thenReturn(new WeatherResponse(20.0, 5.0, 0));
 

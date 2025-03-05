@@ -19,7 +19,7 @@ class CityRepositoryTest {
     @Test
     void shouldSaveAndRetrieveCity() {
         // given
-        City paris = new City("Paris", 48.8566, 2.3522);
+        City paris = new City("Paris", "France", 48.8566, 2.3522);
 
         // when
         City savedCity = cityRepository.save(paris);
@@ -34,7 +34,7 @@ class CityRepositoryTest {
     @Test
     void shouldFindCityByName() {
         // given
-        City paris = new City("Paris", 48.8566, 2.3522);
+        City paris = new City("Paris", "France", 48.8566, 2.3522);
         cityRepository.save(paris);
 
         // when
@@ -48,8 +48,8 @@ class CityRepositoryTest {
     @Test
     void shouldListAllCities() {
         // given
-        City paris = new City("Paris", 48.8566, 2.3522);
-        City london = new City("London", 51.5074, -0.1278);
+        City paris = new City("Paris", "France", 48.8566, 2.3522);
+        City london = new City("London", "United Kingdom", 51.5074, -0.1278);
         cityRepository.saveAll(List.of(paris, london));
 
         // when
@@ -63,7 +63,7 @@ class CityRepositoryTest {
     @Test
     void shouldDeleteCity() {
         // given
-        City paris = new City("Paris", 48.8566, 2.3522);
+        City paris = new City("Paris", "France", 48.8566, 2.3522);
         City savedCity = cityRepository.save(paris);
 
         // when
