@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch2.weather.weather.model;
+package wf.garnier.spring.boot.test.ch2.weather.model;
 
 public record WeatherResponse(double temperature, double windspeed, int weathercode) {
 	// Weather codes as per https://open-meteo.com/en/docs

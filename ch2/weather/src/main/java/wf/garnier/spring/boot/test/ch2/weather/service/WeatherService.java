@@ -1,6 +1,7 @@
-package wf.garnier.spring.boot.test.ch2.weather.weather.service;
+package wf.garnier.spring.boot.test.ch2.weather.service;
 
-import wf.garnier.spring.boot.test.ch2.weather.weather.model.WeatherResponse;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import wf.garnier.spring.boot.test.ch2.weather.model.WeatherResponse;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -24,22 +25,16 @@ public class WeatherService {
 				.build())
 			.retrieve()
 			.body(ApiResponse.class);
-
-		return new WeatherResponse(response.current.temperature_2m, response.current.windspeed_10m,
+		// TODO: null?
+		return new WeatherResponse(response.current.temperature, response.current.windspeed,
 				response.current.weathercode);
 	}
 
 	private record ApiResponse(Current current) {
 	}
 
-	private record Current(double temperature_2m, double windspeed_10m, int weathercode) {
-		double getTemperature() {
-			return temperature_2m;
-		}
-
-		double getWindspeed() {
-			return windspeed_10m;
-		}
+	private record Current(@JsonProperty("temperature_2m") double temperature,
+			@JsonProperty("windspeed_10m") double windspeed, int weathercode) {
 	}
 
 }

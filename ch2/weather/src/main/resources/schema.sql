@@ -13,12 +13,12 @@ INSERT INTO city(name, country, latitude, longitude)
                    CAST("lat" as DOUBLE),
                    CAST("lng" as DOUBLE)
             FROM CSVREAD(
-                    'classpath:cities.csv',
+                    'classpath:/cities.csv',
                     null, 'charset=UTF-8 lineComment=# caseSensitiveColumnNames=true'));
 
 CREATE TABLE IF NOT EXISTS preferred_city
 (
     id      int PRIMARY KEY AUTO_INCREMENT,
-    city_id int NOT NULL,
+    city_id int UNIQUE NOT NULL,
     FOREIGN KEY (city_id) REFERENCES city(id) ON DELETE CASCADE
 );
