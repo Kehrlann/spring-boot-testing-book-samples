@@ -14,63 +14,64 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 class CityRepositoryTest {
 
-    @Autowired
-    private CityRepository cityRepository;
+	@Autowired
+	private CityRepository cityRepository;
 
-    @Test
-    void shouldSaveAndRetrieveCity() {
-        // given
-        City paris = new City("Paris", "France", 48.8566, 2.3522);
+	@Test
+	void shouldSaveAndRetrieveCity() {
+		// given
+		City paris = new City("Paris", "France", 48.8566, 2.3522);
 
-        // when
-        City savedCity = cityRepository.save(paris);
+		// when
+		City savedCity = cityRepository.save(paris);
 
-        // then
-        assertThat(savedCity.getId()).isNotNull();
-        assertThat(savedCity.getName()).isEqualTo("Paris");
-        assertThat(savedCity.getLatitude()).isEqualTo(48.8566);
-        assertThat(savedCity.getLongitude()).isEqualTo(2.3522);
-    }
+		// then
+		assertThat(savedCity.getId()).isNotNull();
+		assertThat(savedCity.getName()).isEqualTo("Paris");
+		assertThat(savedCity.getLatitude()).isEqualTo(48.8566);
+		assertThat(savedCity.getLongitude()).isEqualTo(2.3522);
+	}
 
-    @Test
-    void shouldFindCityByName() {
-        // given
-        City paris = new City("Paris", "France", 48.8566, 2.3522);
-        cityRepository.save(paris);
+	@Test
+	void shouldFindCityByName() {
+		// given
+		City paris = new City("Paris", "France", 48.8566, 2.3522);
+		cityRepository.save(paris);
 
-        // when
-        Optional<City> found = cityRepository.findByName("Paris");
+		// when
+		Optional<City> found = cityRepository.findByName("Paris");
 
-        // then
-        assertThat(found).isPresent();
-        assertThat(found.get().getName()).isEqualTo("Paris");
-    }
+		// then
+		assertThat(found).isPresent();
+		assertThat(found.get().getName()).isEqualTo("Paris");
+	}
 
-    @Test
-    void shouldListAllCities() {
-        // given
-        City paris = new City("Paris", "France", 48.8566, 2.3522);
-        City london = new City("London", "United Kingdom", 51.5074, -0.1278);
-        cityRepository.saveAll(List.of(paris, london));
+	@Test
+	void shouldListAllCities() {
+		// given
+		City paris = new City("Paris", "France", 48.8566, 2.3522);
+		City london = new City("London", "United Kingdom", 51.5074, -0.1278);
+		cityRepository.saveAll(List.of(paris, london));
 
-        // when
-        List<City> cities = cityRepository.findAll();
+		// when
+		List<City> cities = cityRepository.findAll();
 
-        // then
-        assertThat(cities).hasSize(2);
-        assertThat(cities).extracting(City::getName).containsExactlyInAnyOrder("Paris", "London");
-    }
+		// then
+		assertThat(cities).hasSize(2);
+		assertThat(cities).extracting(City::getName).containsExactlyInAnyOrder("Paris", "London");
+	}
 
-    @Test
-    void shouldDeleteCity() {
-        // given
-        City paris = new City("Paris", "France", 48.8566, 2.3522);
-        City savedCity = cityRepository.save(paris);
+	@Test
+	void shouldDeleteCity() {
+		// given
+		City paris = new City("Paris", "France", 48.8566, 2.3522);
+		City savedCity = cityRepository.save(paris);
 
-        // when
-        cityRepository.deleteById(savedCity.getId());
+		// when
+		cityRepository.deleteById(savedCity.getId());
 
-        // then
-        assertThat(cityRepository.findById(savedCity.getId())).isEmpty();
-    }
+		// then
+		assertThat(cityRepository.findById(savedCity.getId())).isEmpty();
+	}
+
 }

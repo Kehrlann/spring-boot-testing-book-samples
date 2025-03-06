@@ -18,36 +18,38 @@ import org.springframework.web.server.ResponseStatusException;
 @Controller
 @RequestMapping("/cities")
 public class CityController {
-    private final CityRepository cityRepository;
-    private final PreferredCityRepository preferredCityRepository;
 
-    public CityController(CityRepository cityRepository, PreferredCityRepository preferredCityRepository) {
-        this.cityRepository = cityRepository;
-        this.preferredCityRepository = preferredCityRepository;
-    }
+	private final CityRepository cityRepository;
 
-    @GetMapping
-    @ResponseBody
-    public List<City> listAllCities() {
-        return cityRepository.findAll();
-    }
+	private final PreferredCityRepository preferredCityRepository;
 
-    @PostMapping("/{cityId}/prefer")
-    public String addToPreferred(@PathVariable Long cityId) {
-        City city = cityRepository.findById(cityId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
-        
-        if (preferredCityRepository.findByCityId(cityId).isEmpty()) {
-            preferredCityRepository.save(new PreferredCity(city));
-        }
-        
-        return "redirect:/";
-    }
+	public CityController(CityRepository cityRepository, PreferredCityRepository preferredCityRepository) {
+		this.cityRepository = cityRepository;
+		this.preferredCityRepository = preferredCityRepository;
+	}
 
-    @PostMapping("/{cityId}/unprefer")
-    public String removeFromPreferred(@PathVariable Long cityId) {
-        preferredCityRepository.findByCityId(cityId)
-                .ifPresent(preferredCityRepository::delete);
-        return "redirect:/";
-    }
+	@GetMapping
+	@ResponseBody
+	public List<City> listAllCities() {
+		return cityRepository.findAll();
+	}
+
+	@PostMapping("/{cityId}/prefer")
+	public String addToPreferred(@PathVariable Long cityId) {
+		City city = cityRepository.findById(cityId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "City not found"));
+
+		if (preferredCityRepository.findByCityId(cityId).isEmpty()) {
+			preferredCityRepository.save(new PreferredCity(city));
+		}
+
+		return "redirect:/";
+	}
+
+	@PostMapping("/{cityId}/unprefer")
+	public String removeFromPreferred(@PathVariable Long cityId) {
+		preferredCityRepository.findByCityId(cityId).ifPresent(preferredCityRepository::delete);
+		return "redirect:/";
+	}
+
 }

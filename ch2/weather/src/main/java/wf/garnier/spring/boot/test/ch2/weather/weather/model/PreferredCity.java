@@ -11,26 +11,29 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "preferred_city")
 public class PreferredCity {
-    @Id
-    @GeneratedValue
-    private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "city_id", nullable = false)
-    private City city;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    // JPA requires default constructor
-    protected PreferredCity() {}
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "city_id", nullable = false)
+	private City city;
 
-    public PreferredCity(City city) {
-        this.city = city;
-    }
+	// JPA requires default constructor
+	protected PreferredCity() {
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public PreferredCity(City city) {
+		this.city = city;
+	}
 
-    public City getCity() {
-        return city;
-    }
+	public Long getId() {
+		return id;
+	}
+
+	public City getCity() {
+		return city;
+	}
+
 }

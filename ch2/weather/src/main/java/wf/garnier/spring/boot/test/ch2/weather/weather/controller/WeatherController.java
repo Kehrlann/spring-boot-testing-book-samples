@@ -13,29 +13,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/")
 public class WeatherController {
-    private final PreferredCityRepository preferredCityRepository;
-    private final WeatherService weatherService;
 
-    public WeatherController(PreferredCityRepository preferredCityRepository, WeatherService weatherService) {
-        this.preferredCityRepository = preferredCityRepository;
-        this.weatherService = weatherService;
-    }
+	private final PreferredCityRepository preferredCityRepository;
 
-    @GetMapping
-    public String index(Model model) {
-        var citiesWithWeather = preferredCityRepository.findAll().stream()
-            .map(preferredCity -> new CityWeather(
-                preferredCity.getCity(),
-                weatherService.getWeather(
-                    preferredCity.getCity().getLatitude(),
-                    preferredCity.getCity().getLongitude()
-                )
-            ))
-            .toList();
+	private final WeatherService weatherService;
 
-        model.addAttribute("cities", citiesWithWeather);
-        return "index";
-    }
+	public WeatherController(PreferredCityRepository preferredCityRepository, WeatherService weatherService) {
+		this.preferredCityRepository = preferredCityRepository;
+		this.weatherService = weatherService;
+	}
 
-    record CityWeather(City city, WeatherResponse weather) {}
+	@GetMapping
+	public String index(Model model) {
+		var citiesWithWeather = preferredCityRepository.findAll()
+			.stream()
+			.map(preferredCity -> new CityWeather(preferredCity.getCity(),
+					weatherService.getWeather(preferredCity.getCity().getLatitude(),
+							preferredCity.getCity().getLongitude())))
+			.toList();
+
+		model.addAttribute("cities", citiesWithWeather);
+		return "index";
+	}
+
+	record CityWeather(City city, WeatherResponse weather) {
+	}
+
 }

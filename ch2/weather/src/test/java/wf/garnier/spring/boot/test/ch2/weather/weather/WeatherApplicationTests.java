@@ -20,44 +20,43 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class WeatherApplicationTests {
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @Autowired
-    private CityRepository cityRepository;
+	@Autowired
+	private CityRepository cityRepository;
 
-    @BeforeEach
-    void setUp() {
-        cityRepository.deleteAll();
-    }
+	@BeforeEach
+	void setUp() {
+		cityRepository.deleteAll();
+	}
 
-    @Test
-    void shouldShowRealWeatherForParis() throws Exception {
-        // when adding Paris
-        mockMvc.perform(post("/cities")
-                .param("name", "Paris")
-                .param("latitude", "48.8566")
-                .param("longitude", "2.3522"))
-               .andExpect(status().is3xxRedirection())
-               .andExpect(redirectedUrl("/"));
+	@Test
+	void shouldShowRealWeatherForParis() throws Exception {
+		// when adding Paris
+		mockMvc
+			.perform(post("/cities").param("name", "Paris").param("latitude", "48.8566").param("longitude", "2.3522"))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("/"));
 
-        // then weather is displayed
-        mockMvc.perform(get("/"))
-               .andExpect(status().isOk())
-               .andExpect(content().string(containsString("Paris")))
-               // Check for weather data structure without asserting exact values
-               .andExpect(content().string(containsString("Temperature: <span>")))
-               .andExpect(content().string(containsString("</span>°C")))
-               .andExpect(content().string(containsString("Wind Speed: <span>")))
-               .andExpect(content().string(containsString("</span> km/h")))
-               .andExpect(content().string(containsString("Weather: <span>")))
-               // Log actual values for manual verification
-               .andDo(result -> {
-                   System.out.println("[DEBUG_LOG] Response content:");
-                   System.out.println(result.getResponse().getContentAsString());
-               });
+		// then weather is displayed
+		mockMvc.perform(get("/"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("Paris")))
+			// Check for weather data structure without asserting exact values
+			.andExpect(content().string(containsString("Temperature: <span>")))
+			.andExpect(content().string(containsString("</span>°C")))
+			.andExpect(content().string(containsString("Wind Speed: <span>")))
+			.andExpect(content().string(containsString("</span> km/h")))
+			.andExpect(content().string(containsString("Weather: <span>")))
+			// Log actual values for manual verification
+			.andDo(result -> {
+				System.out.println("[DEBUG_LOG] Response content:");
+				System.out.println(result.getResponse().getContentAsString());
+			});
 
-        // and city is in database
-        assertThat(cityRepository.findByName("Paris")).isPresent();
-    }
+		// and city is in database
+		assertThat(cityRepository.findByName("Paris")).isPresent();
+	}
+
 }

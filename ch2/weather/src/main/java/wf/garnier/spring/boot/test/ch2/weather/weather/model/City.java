@@ -6,46 +6,52 @@ import jakarta.persistence.Id;
 
 @Entity
 public class City {
-    @Id
-    @GeneratedValue
-    private Long id;
-    
-    private String name;
-    private String country;
-    private double latitude;
-    private double longitude;
 
-    // JPA requires default constructor
-    protected City() {}
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    public City(String name, String country, double latitude, double longitude) {
-        this.name = name;
-        this.country = country;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
+	private String name;
 
-    public Long getId() {
-        return id;
-    }
+	private String country;
 
-    public String getName() {
-        return name;
-    }
+	private double latitude;
 
-    public String getCountry() {
-        return country;
-    }
+	private double longitude;
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
+	// JPA requires default constructor
+	protected City() {
+	}
 
-    public double getLatitude() {
-        return latitude;
-    }
+	public City(String name, String country, double latitude, double longitude) {
+		this.name = name;
+		this.country = country;
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
 
-    public double getLongitude() {
-        return longitude;
-    }
+	public Long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
+	}
+
 }
