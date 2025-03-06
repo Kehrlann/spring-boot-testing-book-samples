@@ -1,12 +1,11 @@
 package wf.garnier.spring.boot.test.ch2.weather.weather.repository;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import wf.garnier.spring.boot.test.ch2.weather.weather.model.City;
 import wf.garnier.spring.boot.test.ch2.weather.weather.model.PreferredCity;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest

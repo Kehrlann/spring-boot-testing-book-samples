@@ -1,10 +1,10 @@
 package wf.garnier.spring.boot.test.ch2.weather.weather.service;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import wf.garnier.spring.boot.test.ch2.weather.weather.model.WeatherResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest

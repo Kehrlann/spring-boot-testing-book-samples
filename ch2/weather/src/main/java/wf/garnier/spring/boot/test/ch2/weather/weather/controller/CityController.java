@@ -1,15 +1,19 @@
 package wf.garnier.spring.boot.test.ch2.weather.weather.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import wf.garnier.spring.boot.test.ch2.weather.weather.model.City;
 import wf.garnier.spring.boot.test.ch2.weather.weather.model.PreferredCity;
 import wf.garnier.spring.boot.test.ch2.weather.weather.repository.CityRepository;
 import wf.garnier.spring.boot.test.ch2.weather.weather.repository.PreferredCityRepository;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 @RequestMapping("/cities")

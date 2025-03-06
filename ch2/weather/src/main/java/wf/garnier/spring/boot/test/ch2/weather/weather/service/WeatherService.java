@@ -1,8 +1,9 @@
 package wf.garnier.spring.boot.test.ch2.weather.weather.service;
 
+import wf.garnier.spring.boot.test.ch2.weather.weather.model.WeatherResponse;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import wf.garnier.spring.boot.test.ch2.weather.weather.model.WeatherResponse;
 
 @Service
 public class WeatherService {

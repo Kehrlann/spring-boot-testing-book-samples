@@ -1,14 +1,14 @@
 package wf.garnier.spring.boot.test.ch2.weather.weather.controller;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 import wf.garnier.spring.boot.test.ch2.weather.weather.model.City;
 import wf.garnier.spring.boot.test.ch2.weather.weather.model.WeatherResponse;
 import wf.garnier.spring.boot.test.ch2.weather.weather.repository.PreferredCityRepository;
 import wf.garnier.spring.boot.test.ch2.weather.weather.service.WeatherService;
 
-import java.util.List;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/")
