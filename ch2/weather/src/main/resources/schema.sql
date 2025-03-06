@@ -13,7 +13,7 @@ INSERT INTO city(name, country, latitude, longitude)
                    CAST("lat" as DOUBLE),
                    CAST("lng" as DOUBLE)
             FROM CSVREAD(
-                    '/home/daniel/github/kehrlann/spring-boot-testing-book-samples/ch2/weather/src/main/resources/cities.csv',
+                    'classpath:cities.csv',
                     null, 'charset=UTF-8 lineComment=# caseSensitiveColumnNames=true'));
 
 CREATE TABLE IF NOT EXISTS preferred_city
