@@ -3,6 +3,7 @@ package wf.garnier.spring.boot.test.ch2.weather.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import java.util.Objects;
 
 @Entity
 public class City {
@@ -52,6 +53,20 @@ public class City {
 
 	public double getLongitude() {
 		return longitude;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		City city = (City) o;
+		return Objects.equals(id, city.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(id);
 	}
 
 }

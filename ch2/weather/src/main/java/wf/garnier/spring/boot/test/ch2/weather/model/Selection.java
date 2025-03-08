@@ -6,13 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "preferred_city")
-public class PreferredCity {
+public class Selection {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +22,10 @@ public class PreferredCity {
 	private City city;
 
 	// JPA requires default constructor
-	protected PreferredCity() {
+	protected Selection() {
 	}
 
-	public PreferredCity(City city) {
+	public Selection(City city) {
 		this.city = city;
 	}
 

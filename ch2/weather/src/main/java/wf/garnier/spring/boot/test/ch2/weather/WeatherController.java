@@ -1,10 +1,11 @@
 package wf.garnier.spring.boot.test.ch2.weather;
 
+import java.util.List;
 import wf.garnier.spring.boot.test.ch2.weather.model.City;
-import wf.garnier.spring.boot.test.ch2.weather.model.PreferredCity;
+import wf.garnier.spring.boot.test.ch2.weather.model.Selection;
 import wf.garnier.spring.boot.test.ch2.weather.model.WeatherResponse;
 import wf.garnier.spring.boot.test.ch2.weather.repository.CityRepository;
-import wf.garnier.spring.boot.test.ch2.weather.repository.PreferredCityRepository;
+import wf.garnier.spring.boot.test.ch2.weather.repository.SelectionRepository;
 import wf.garnier.spring.boot.test.ch2.weather.service.WeatherService;
 
 import org.springframework.stereotype.Controller;
@@ -16,15 +17,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class WeatherController {
 
-	private final PreferredCityRepository preferredCityRepository;
+	private final SelectionRepository selectionRepository;
 
 	private final WeatherService weatherService;
 
 	private final CityRepository cityRepository;
 
-	public WeatherController(PreferredCityRepository preferredCityRepository, WeatherService weatherService,
-			CityRepository cityRepository) {
-		this.preferredCityRepository = preferredCityRepository;
+	public WeatherController(SelectionRepository selectionRepository, WeatherService weatherService,
+							 CityRepository cityRepository) {
+		this.selectionRepository = selectionRepository;
 		this.weatherService = weatherService;
 		this.cityRepository = cityRepository;
 	}
@@ -32,14 +33,17 @@ public class WeatherController {
 	@GetMapping("/")
 	public String index(Model model) {
 		var cities = cityRepository.findAll();
-		model.addAttribute("cities", cities); // TODO other model
-		var citiesWithWeather = preferredCityRepository.findAll()
+		var selectedCities = selectionRepository.findAll()
+				.stream().map(Selection::getCity)
+				.toList();
+		var citiesWithWeather = selectedCities
 			.stream()
-			.map(preferredCity -> new CityWeather(preferredCity.getCity(),
-					weatherService.getWeather(preferredCity.getCity().getLatitude(),
-							preferredCity.getCity().getLongitude())))
+			.map(selectedCity -> new CityWeather(selectedCity,
+					weatherService.getWeather(selectedCity.getLatitude(),
+							selectedCity.getLongitude())))
 			.toList();
-
+		cities.removeAll(selectedCities);
+		model.addAttribute("cities", cities);
 		model.addAttribute("preferredCities", citiesWithWeather);
 		return "index";
 	}
@@ -47,8 +51,8 @@ public class WeatherController {
 	@PostMapping("/city/add")
 	public String addCity(String city) {
 		cityRepository.findByNameIgnoreCase(city).ifPresent(c -> {
-			if (preferredCityRepository.findByCity(c).isEmpty()) {
-				preferredCityRepository.save(new PreferredCity(c));
+			if (selectionRepository.findByCity(c).isEmpty()) {
+				selectionRepository.save(new Selection(c));
 			}
 		});
 		return "redirect:/";
@@ -57,7 +61,7 @@ public class WeatherController {
 	@PostMapping("/city/delete")
 	@Transactional
 	public String addCity(long id) {
-		preferredCityRepository.deleteByCityId(id);
+		selectionRepository.deleteByCityId(id);
 		return "redirect:/";
 	}
 
