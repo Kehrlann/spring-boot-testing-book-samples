@@ -69,4 +69,14 @@ public class City {
 		return Objects.hashCode(id);
 	}
 
+	@Override
+	public String toString() {
+		return "City{" +
+			   "id=" + id +
+			   ", name='" + name + '\'' +
+			   ", country='" + country + '\'' +
+			   ", latitude=" + latitude +
+			   ", longitude=" + longitude +
+			   '}';
+	}
 }

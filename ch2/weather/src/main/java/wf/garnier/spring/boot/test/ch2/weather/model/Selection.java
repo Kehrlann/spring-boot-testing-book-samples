@@ -37,4 +37,10 @@ public class Selection {
 		return city;
 	}
 
+	@Override
+	public String toString() {
+		return "Selection{" +
+			   "city=" + city.getName() +
+			   '}';
+	}
 }

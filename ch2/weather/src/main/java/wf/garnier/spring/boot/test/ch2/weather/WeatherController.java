@@ -9,14 +9,13 @@ import wf.garnier.spring.boot.test.ch2.weather.service.WeatherService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 public class WeatherController {
@@ -59,14 +58,15 @@ public class WeatherController {
 	}
 
 	@PostMapping(value = "/city/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseStatus(HttpStatus.CREATED)
-	@ResponseBody
-	public void addCityApi(@RequestBody SelectCityRequest req) {
-		cityRepository.findByNameIgnoreCase(req.cityName).ifPresent(c -> {
-			if (selectionRepository.findByCity(c).isEmpty()) {
-				selectionRepository.save(new Selection(c));
+	public ResponseEntity<Void> addCityApi(@RequestBody SelectCityRequest req) {
+		var city = cityRepository.findByNameIgnoreCase(req.cityName);
+		if (city.isPresent()) {
+			if (selectionRepository.findByCity(city.get()).isEmpty()) {
+				selectionRepository.save(new Selection(city.get()));
+				return ResponseEntity.status(HttpStatus.CREATED).build();
 			}
-		});
+		}
+		return ResponseEntity.badRequest().build();
 	}
 
 	public record SelectCityRequest(String cityName) {

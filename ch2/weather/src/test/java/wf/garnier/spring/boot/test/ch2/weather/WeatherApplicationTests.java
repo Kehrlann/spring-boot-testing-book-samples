@@ -1,5 +1,6 @@
 package wf.garnier.spring.boot.test.ch2.weather;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch2.weather.model.City;
 import wf.garnier.spring.boot.test.ch2.weather.model.Selection;
@@ -22,6 +23,11 @@ class WeatherApplicationTests {
 
 	@Autowired
 	private SelectionRepository selectionRepository;
+
+	@BeforeEach
+	void setUp() {
+		selectionRepository.deleteAll();
+	}
 
 	@Test
 	void contextLoads() {
@@ -50,12 +56,47 @@ class WeatherApplicationTests {
 				.content("{\"cityName\": \"Paris\"}")
 				.exchange();
 		//@formatter:on
+
 		assertThat(resp).hasStatus(HttpStatus.CREATED);
+
 		assertThat(selectionRepository.findAll()).hasSize(1)
 			.first()
 			.extracting(Selection::getCity)
 			.extracting(City::getName)
 			.isEqualTo("Paris");
+	}
+
+	@Test
+	void selectUnknown() {
+		//@formatter:off
+		var resp = mvc.post()
+				.uri("/city/add")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"cityName\": \"Foobar\"}")
+				.exchange();
+		//@formatter:on
+
+		assertThat(resp).hasStatus(HttpStatus.BAD_REQUEST);
+
+		assertThat(selectionRepository.findAll()).hasSize(0);
+	}
+
+	@Test
+	void selectTwice() {
+		//@formatter:off
+		mvc.post()
+				.uri("/city/add")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"cityName\": \"Bogotá\"}")
+				.exchange();
+		mvc.post()
+				.uri("/city/add")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"cityName\": \"Bogotá\"}")
+				.exchange();
+		//@formatter:on
+
+		assertThat(selectionRepository.findAll()).hasSize(1);
 	}
 
 }
