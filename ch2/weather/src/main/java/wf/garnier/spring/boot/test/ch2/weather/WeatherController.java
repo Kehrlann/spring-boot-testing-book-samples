@@ -1,5 +1,7 @@
 package wf.garnier.spring.boot.test.ch2.weather;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import wf.garnier.spring.boot.test.ch2.weather.model.City;
 import wf.garnier.spring.boot.test.ch2.weather.model.Selection;
 import wf.garnier.spring.boot.test.ch2.weather.model.WeatherResponse;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class WeatherController {
@@ -33,7 +36,7 @@ public class WeatherController {
 		this.cityRepository = cityRepository;
 	}
 
-	@GetMapping("/")
+	@GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
 	public String index(Model model) {
 		var cities = cityRepository.findAll();
 		var selectedCities = selectionRepository.findAll().stream().map(Selection::getCity).toList();
@@ -45,6 +48,16 @@ public class WeatherController {
 		model.addAttribute("cities", cities);
 		model.addAttribute("preferredCities", citiesWithWeather);
 		return "index";
+	}
+
+	@GetMapping(value = "/weather", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<CityWeather> weather() {
+		return selectionRepository.findAll()
+			.stream()
+			.map(Selection::getCity)
+			.map(city -> new CityWeather(city, weatherService.getWeather(city.getLatitude(), city.getLongitude())))
+			.collect(Collectors.toList());
 	}
 
 	@PostMapping(value = "/city/add", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
