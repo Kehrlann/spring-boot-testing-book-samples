@@ -36,7 +36,7 @@ class WeatherApplicationTests {
 	@BeforeEach
 	void setUp() {
 		selectionRepository.deleteAll();
-		when(weatherService.getWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
+		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
 	@Test
@@ -129,7 +129,7 @@ class WeatherApplicationTests {
 
 	@Test
 	void getWeather() {
-        when(weatherService.getWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
+        when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
 
 		//@formatter:off
 		mvc.post()

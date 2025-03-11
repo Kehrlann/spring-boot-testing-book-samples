@@ -42,7 +42,7 @@ public class WeatherController {
 		var selectedCities = selectionRepository.findAll().stream().map(Selection::getCity).toList();
 		var citiesWithWeather = selectedCities.stream()
 			.map(selectedCity -> new CityWeather(selectedCity,
-					weatherService.getWeather(selectedCity.getLatitude(), selectedCity.getLongitude())))
+					weatherService.getCurrentWeather(selectedCity.getLatitude(), selectedCity.getLongitude())))
 			.toList();
 		cities.removeAll(selectedCities);
 		model.addAttribute("cities", cities);
@@ -56,7 +56,7 @@ public class WeatherController {
 		return selectionRepository.findAll()
 			.stream()
 			.map(Selection::getCity)
-			.map(city -> new CityWeather(city, weatherService.getWeather(city.getLatitude(), city.getLongitude())))
+			.map(city -> new CityWeather(city, weatherService.getCurrentWeather(city.getLatitude(), city.getLongitude())))
 			.collect(Collectors.toList());
 	}
 
