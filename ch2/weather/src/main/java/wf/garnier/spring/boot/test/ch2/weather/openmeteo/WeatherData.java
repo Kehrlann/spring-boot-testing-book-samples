@@ -1,8 +1,16 @@
 package wf.garnier.spring.boot.test.ch2.weather.openmeteo;
 
-public record WeatherResponse(double temperature, double windspeed, int weathercode) {
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+public record WeatherData(double temperature, double windspeed, String weather) {
+
+	@JsonCreator
+	public WeatherData(double temperature, double windspeed, int weathercode) {
+		this(temperature, windspeed, weatherFromCode(weathercode));
+	}
+
 	// Weather codes as per https://open-meteo.com/en/docs
-	public String getWeatherDescription() {
+	public static String weatherFromCode(int weathercode) {
 		return switch (weathercode) {
 			case 0 -> "Clear sky";
 			case 1, 2, 3 -> "Partly cloudy";

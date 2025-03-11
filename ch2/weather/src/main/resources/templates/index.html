@@ -32,7 +32,7 @@
             <p>
                 Temperature: <span th:text="${cityWeather.weather().temperature()}">20</span>°C<br>
                 Wind Speed: <span th:text="${cityWeather.weather().windspeed()}">5</span> km/h<br>
-                Weather: <span th:text="${cityWeather.weather().getWeatherDescription()}">Sunny</span>
+                Weather: <span th:text="${cityWeather.weather().weather()}">Sunny</span>
             </p>
             <form action="/city/delete" method="post">
                 <input type="hidden" name="id" th:value="${cityWeather.city().getId()}"/>

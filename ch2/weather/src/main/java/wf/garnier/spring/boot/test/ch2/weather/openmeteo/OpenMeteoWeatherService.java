@@ -17,7 +17,7 @@ public class OpenMeteoWeatherService implements WeatherService {
 	}
 
 	@Override
-	public WeatherResponse getWeather(double latitude, double longitude) {
+	public WeatherData getWeather(double latitude, double longitude) {
 		ApiResponse response = restClient.get()
 			.uri(uriBuilder -> uriBuilder.queryParam("latitude", latitude)
 				.queryParam("longitude", longitude)
@@ -26,7 +26,7 @@ public class OpenMeteoWeatherService implements WeatherService {
 			.retrieve()
 			.body(ApiResponse.class);
 		// TODO: null?
-		return new WeatherResponse(response.current.temperature, response.current.windspeed,
+		return new WeatherData(response.current.temperature, response.current.windspeed,
 				response.current.weathercode);
 	}
 

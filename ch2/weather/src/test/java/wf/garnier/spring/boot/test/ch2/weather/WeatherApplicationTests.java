@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch2.weather.city.City;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherService;
 import wf.garnier.spring.boot.test.ch2.weather.service.Selection;
-import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherResponse;
+import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherData;
 import wf.garnier.spring.boot.test.ch2.weather.service.SelectionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ class WeatherApplicationTests {
 	@BeforeEach
 	void setUp() {
 		selectionRepository.deleteAll();
-		when(weatherService.getWeather(anyDouble(), anyDouble())).thenReturn(new WeatherResponse(20, 0, 0));
+		when(weatherService.getWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
 	@Test
@@ -129,7 +129,7 @@ class WeatherApplicationTests {
 
 	@Test
 	void getWeather() {
-        when(weatherService.getWeather(anyDouble(), anyDouble())).thenReturn(new WeatherResponse(22.6, 0, 1));
+        when(weatherService.getWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
 
 		//@formatter:off
 		mvc.post()
