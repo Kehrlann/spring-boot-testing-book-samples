@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch2.weather.model;
+package wf.garnier.spring.boot.test.ch2.weather.city;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

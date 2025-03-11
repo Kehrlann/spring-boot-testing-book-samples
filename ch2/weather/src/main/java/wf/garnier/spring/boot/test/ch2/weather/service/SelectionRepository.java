@@ -1,8 +1,7 @@
-package wf.garnier.spring.boot.test.ch2.weather.repository;
+package wf.garnier.spring.boot.test.ch2.weather.service;
 
 import java.util.Optional;
-import wf.garnier.spring.boot.test.ch2.weather.model.City;
-import wf.garnier.spring.boot.test.ch2.weather.model.Selection;
+import wf.garnier.spring.boot.test.ch2.weather.city.City;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

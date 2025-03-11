@@ -1,7 +1,6 @@
-package wf.garnier.spring.boot.test.ch2.weather.service;
+package wf.garnier.spring.boot.test.ch2.weather.openmeteo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import wf.garnier.spring.boot.test.ch2.weather.model.WeatherResponse;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
