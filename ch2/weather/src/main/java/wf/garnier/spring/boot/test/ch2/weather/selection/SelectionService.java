@@ -6,6 +6,7 @@ import wf.garnier.spring.boot.test.ch2.weather.city.CityRepository;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherService;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SelectionService {
@@ -48,6 +49,11 @@ public class SelectionService {
 			}
 		}
 		return false;
+	}
+
+	@Transactional
+	public void deleteByCityId(long id) {
+		selectionRepository.deleteByCityId(id);
 	}
 
 }

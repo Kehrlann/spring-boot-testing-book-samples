@@ -34,8 +34,7 @@
                 Wind Speed: <span th:text="${cityWeather.windSpeed()}">5</span> km/h<br>
                 Weather: <span th:text="${cityWeather.weather()}">Sunny</span>
             </p>
-            <form action="/city/delete" method="post">
-                <input type="hidden" name="id" th:value="${cityWeather.cityId()}"/>
+            <form th:action="'/city/delete/' + ${cityWeather.cityId()}" method="post">
                 <button type="submit" class="button button-danger button-sm">Remove</button>
             </form>
         </div>

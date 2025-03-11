@@ -162,4 +162,6 @@ class WeatherApplicationTests {
 				.hasFieldOrPropertyWithValue("temperature", 22.6);
 	}
 
+	// TODO: delete
+
 }
