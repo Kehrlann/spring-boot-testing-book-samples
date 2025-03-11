@@ -1,12 +1,9 @@
 package wf.garnier.spring.boot.test.ch2.weather;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherService;
 import wf.garnier.spring.boot.test.ch2.weather.selection.CityWeather;
-import wf.garnier.spring.boot.test.ch2.weather.selection.Selection;
-import wf.garnier.spring.boot.test.ch2.weather.city.CityRepository;
 import wf.garnier.spring.boot.test.ch2.weather.selection.SelectionRepository;
+import wf.garnier.spring.boot.test.ch2.weather.selection.SelectionService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,26 +21,17 @@ public class WeatherController {
 
 	private final SelectionRepository selectionRepository;
 
-	private final WeatherService weatherService;
+	private final SelectionService selectionService;
 
-	private final CityRepository cityRepository;
-
-	public WeatherController(SelectionRepository selectionRepository, WeatherService weatherService,
-			CityRepository cityRepository) {
+	public WeatherController(SelectionRepository selectionRepository, SelectionService selectionService) {
 		this.selectionRepository = selectionRepository;
-		this.weatherService = weatherService;
-		this.cityRepository = cityRepository;
+		this.selectionService = selectionService;
 	}
 
 	@GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
 	public String index(Model model) {
-		var cities = cityRepository.findAll();
-		var selectedCities = selectionRepository.findAll().stream().map(Selection::getCity).toList();
-		var citiesWithWeather = selectedCities.stream()
-			.map(selectedCity -> new CityWeather(selectedCity,
-					weatherService.getCurrentWeather(selectedCity.getLatitude(), selectedCity.getLongitude())))
-			.toList();
-		cities.removeAll(selectedCities);
+		var cities = selectionService.findUnselectedCities();
+		var citiesWithWeather = selectionService.getWeatherInSelectedCities();
 		model.addAttribute("cities", cities);
 		model.addAttribute("preferredCities", citiesWithWeather);
 		return "index";
@@ -52,33 +40,19 @@ public class WeatherController {
 	@GetMapping(value = "/weather", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public List<CityWeather> weather() {
-		return selectionRepository.findAll()
-			.stream()
-			.map(Selection::getCity)
-			.map(city -> new CityWeather(city, weatherService.getCurrentWeather(city.getLatitude(), city.getLongitude())))
-			.collect(Collectors.toList());
+		return selectionService.getWeatherInSelectedCities();
 	}
 
 	@PostMapping(value = "/city/add", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public String addCity(String city) {
-		cityRepository.findByNameIgnoreCase(city).ifPresent(c -> {
-			if (selectionRepository.findByCity(c).isEmpty()) {
-				selectionRepository.save(new Selection(c));
-			}
-		});
+		selectionService.addCity(city);
 		return "redirect:/";
 	}
 
 	@PostMapping(value = "/city/add", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> addCityApi(@RequestBody SelectCityRequest req) {
-		var city = cityRepository.findByNameIgnoreCase(req.cityName);
-		if (city.isPresent()) {
-			if (selectionRepository.findByCity(city.get()).isEmpty()) {
-				selectionRepository.save(new Selection(city.get()));
-				return ResponseEntity.status(HttpStatus.CREATED).build();
-			}
-		}
-		return ResponseEntity.badRequest().build();
+		return selectionService.addCity(req.cityName) ? ResponseEntity.status(HttpStatus.CREATED).build()
+				: ResponseEntity.badRequest().build();
 	}
 
 	public record SelectCityRequest(String cityName) {

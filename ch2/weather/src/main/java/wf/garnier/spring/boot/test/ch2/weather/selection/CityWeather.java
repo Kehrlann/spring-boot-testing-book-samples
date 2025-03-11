@@ -7,6 +7,6 @@ public record CityWeather(String cityName, Long cityId, String weather, Double t
 
 	public CityWeather(City city, WeatherData weatherData) {
 		this(city.getName(), city.getId(), weatherData.weather(), weatherData.temperature(), weatherData.windspeed());
-
 	}
+
 }
