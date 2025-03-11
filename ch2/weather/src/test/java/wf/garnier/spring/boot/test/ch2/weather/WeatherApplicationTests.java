@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch2.weather.city.City;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherService;
+import wf.garnier.spring.boot.test.ch2.weather.selection.CityWeather;
 import wf.garnier.spring.boot.test.ch2.weather.selection.Selection;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherData;
 import wf.garnier.spring.boot.test.ch2.weather.selection.SelectionRepository;
@@ -148,17 +149,17 @@ class WeatherApplicationTests {
 		assertThat(response).hasStatus(HttpStatus.OK);
 
 		assertThat(response).bodyJson()
-			.extractingPath("$.[*].city.name")
+			.extractingPath("$.[*].cityName")
 			.asArray()
 			.hasSize(2)
 			.containsExactly("Beijing", "Paris");
 
 		assertThat(response).bodyJson()
-				.convertTo(list(WeatherController.CityWeather.class))
+				.convertTo(list(CityWeather.class))
 				.hasSize(2)
 				.last()
-				.hasFieldOrPropertyWithValue("city.name", "Paris")
-				.hasFieldOrPropertyWithValue("weather.temperature", 22.6);
+				.hasFieldOrPropertyWithValue("cityName", "Paris")
+				.hasFieldOrPropertyWithValue("temperature", 22.6);
 	}
 
 }

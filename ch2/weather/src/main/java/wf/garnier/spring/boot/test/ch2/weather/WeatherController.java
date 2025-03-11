@@ -2,10 +2,9 @@ package wf.garnier.spring.boot.test.ch2.weather;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import wf.garnier.spring.boot.test.ch2.weather.city.City;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherService;
+import wf.garnier.spring.boot.test.ch2.weather.selection.CityWeather;
 import wf.garnier.spring.boot.test.ch2.weather.selection.Selection;
-import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherData;
 import wf.garnier.spring.boot.test.ch2.weather.city.CityRepository;
 import wf.garnier.spring.boot.test.ch2.weather.selection.SelectionRepository;
 
@@ -90,9 +89,6 @@ public class WeatherController {
 	public String addCity(long id) {
 		selectionRepository.deleteByCityId(id);
 		return "redirect:/";
-	}
-
-	public record CityWeather(City city, WeatherData weather) {
 	}
 
 }
