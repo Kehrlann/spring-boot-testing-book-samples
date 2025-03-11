@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch2.weather.service;
+package wf.garnier.spring.boot.test.ch2.weather.selection;
 
 import java.util.Optional;
 import wf.garnier.spring.boot.test.ch2.weather.city.City;

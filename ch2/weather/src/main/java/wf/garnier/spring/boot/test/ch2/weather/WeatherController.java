@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import wf.garnier.spring.boot.test.ch2.weather.city.City;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherService;
-import wf.garnier.spring.boot.test.ch2.weather.service.Selection;
+import wf.garnier.spring.boot.test.ch2.weather.selection.Selection;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherData;
 import wf.garnier.spring.boot.test.ch2.weather.city.CityRepository;
-import wf.garnier.spring.boot.test.ch2.weather.service.SelectionRepository;
+import wf.garnier.spring.boot.test.ch2.weather.selection.SelectionRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

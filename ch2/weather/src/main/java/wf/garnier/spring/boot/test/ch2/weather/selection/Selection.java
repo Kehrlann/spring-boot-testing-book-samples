@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch2.weather.service;
+package wf.garnier.spring.boot.test.ch2.weather.selection;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

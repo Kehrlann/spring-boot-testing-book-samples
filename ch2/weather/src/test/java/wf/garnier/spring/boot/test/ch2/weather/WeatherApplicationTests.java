@@ -4,9 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch2.weather.city.City;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherService;
-import wf.garnier.spring.boot.test.ch2.weather.service.Selection;
+import wf.garnier.spring.boot.test.ch2.weather.selection.Selection;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherData;
-import wf.garnier.spring.boot.test.ch2.weather.service.SelectionRepository;
+import wf.garnier.spring.boot.test.ch2.weather.selection.SelectionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
