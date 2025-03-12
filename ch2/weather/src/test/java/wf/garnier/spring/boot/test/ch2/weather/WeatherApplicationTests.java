@@ -112,6 +112,22 @@ class WeatherApplicationTests {
 
 	@Test
 	void getWeather() {
+		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
+		selectCity("Paris");
+
+		var response = mvc.get().uri("/weather").accept(MediaType.APPLICATION_JSON).exchange();
+		assertThat(response).hasStatus(HttpStatus.OK);
+
+		assertThat(response).bodyJson()
+				.convertTo(list(CityWeather.class))
+				.hasSize(1)
+				.first()
+				.hasFieldOrPropertyWithValue("cityName", "Paris")
+				.hasFieldOrPropertyWithValue("temperature", 22.6);
+	}
+
+	@Test
+	void getWeatherMultipleCities() {
         when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
 		selectCity("Paris");
 		selectCity("Beijing");
@@ -124,13 +140,6 @@ class WeatherApplicationTests {
 			.asArray()
 			.hasSize(2)
 			.containsExactly("Beijing", "Paris");
-
-		assertThat(response).bodyJson()
-				.convertTo(list(CityWeather.class))
-				.hasSize(2)
-				.last()
-				.hasFieldOrPropertyWithValue("cityName", "Paris")
-				.hasFieldOrPropertyWithValue("temperature", 22.6);
 	}
 
 	@Test
@@ -138,10 +147,10 @@ class WeatherApplicationTests {
 		selectCity("Paris");
 
 		var response = mvc.post()
-				.uri("/city/delete")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"cityName\": \"Paris\"}")
-				.exchange();
+			.uri("/city/delete")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("{\"cityName\": \"Paris\"}")
+			.exchange();
 
 		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
 		assertThat(selectionRepository.findAll()).hasSize(0);
