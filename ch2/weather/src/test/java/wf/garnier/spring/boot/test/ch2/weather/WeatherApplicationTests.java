@@ -3,10 +3,10 @@ package wf.garnier.spring.boot.test.ch2.weather;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch2.weather.city.City;
+import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherData;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherService;
 import wf.garnier.spring.boot.test.ch2.weather.selection.CityWeather;
 import wf.garnier.spring.boot.test.ch2.weather.selection.Selection;
-import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherData;
 import wf.garnier.spring.boot.test.ch2.weather.selection.SelectionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -59,25 +60,7 @@ class WeatherApplicationTests {
 	}
 
 	@Test
-	void indexPageWithCity() {
-		//@formatter:off
-		mvc.post()
-				.uri("/city/add")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"cityName\": \"Paris\"}")
-				.exchange();
-		var response = mvc.get()
-				.uri("/")
-				.exchange();
-		assertThat(response)
-				.hasStatus(HttpStatus.OK)
-				.bodyText()
-				.contains("Paris");
-		//@formatter:on
-	}
-
-	@Test
-	void selectCity() {
+	void addSelectedCity() {
 		//@formatter:off
 		var response = mvc.post()
 				.uri("/city/add")
@@ -96,14 +79,23 @@ class WeatherApplicationTests {
 	}
 
 	@Test
-	void selectUnknown() {
+	void indexPageWithCity() {
+		selectCity("Paris");
+
 		//@formatter:off
-		var response = mvc.post()
-				.uri("/city/add")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"cityName\": \"Foobar\"}")
+		var response = mvc.get()
+				.uri("/")
 				.exchange();
+		assertThat(response)
+				.hasStatus(HttpStatus.OK)
+				.bodyText()
+				.contains("Paris");
 		//@formatter:on
+	}
+
+	@Test
+	void selectUnknown() {
+		var response = selectCity("Foobar");
 
 		assertThat(response).hasStatus(HttpStatus.BAD_REQUEST);
 
@@ -112,18 +104,8 @@ class WeatherApplicationTests {
 
 	@Test
 	void selectTwice() {
-		//@formatter:off
-		mvc.post()
-				.uri("/city/add")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"cityName\": \"Bogotá\"}")
-				.exchange();
-		mvc.post()
-				.uri("/city/add")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"cityName\": \"Bogotá\"}")
-				.exchange();
-		//@formatter:on
+		selectCity("Bogotá");
+		selectCity("Bogotá");
 
 		assertThat(selectionRepository.findAll()).hasSize(1);
 	}
@@ -131,19 +113,8 @@ class WeatherApplicationTests {
 	@Test
 	void getWeather() {
         when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
-
-		//@formatter:off
-		mvc.post()
-			.uri("/city/add")
-			.contentType(MediaType.APPLICATION_JSON)
-			.content("{\"cityName\": \"Paris\"}")
-			.exchange();
-		mvc.post()
-			.uri("/city/add")
-			.contentType(MediaType.APPLICATION_JSON)
-			.content("{\"cityName\": \"Beijing\"}")
-			.exchange();
-		//@formatter:on
+		selectCity("Paris");
+		selectCity("Beijing");
 
 		var response = mvc.get().uri("/weather").accept(MediaType.APPLICATION_JSON).exchange();
 		assertThat(response).hasStatus(HttpStatus.OK);
@@ -163,5 +134,13 @@ class WeatherApplicationTests {
 	}
 
 	// TODO: delete
+
+	private MvcTestResult selectCity(String cityName) {
+		return mvc.post()
+			.uri("/city/add")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("{\"cityName\": \"" + cityName + "\"}")
+			.exchange();
+	}
 
 }
