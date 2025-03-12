@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 public class WeatherController {
@@ -46,18 +47,24 @@ public class WeatherController {
 	}
 
 	@PostMapping(value = "/city/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> addCityApi(@RequestBody SelectCityRequest req) {
-		return selectionService.addCity(req.cityName) ? ResponseEntity.status(HttpStatus.CREATED).build()
+	public ResponseEntity<Void> addCityApi(@RequestBody CityRequest req) {
+		return selectionService.addCity(req.cityName()) ? ResponseEntity.status(HttpStatus.CREATED).build()
 				: ResponseEntity.badRequest().build();
 	}
 
-	public record SelectCityRequest(String cityName) {
+	public record CityRequest(String cityName) {
 	}
 
 	@PostMapping(value = "/city/delete/{id}", produces = MediaType.TEXT_HTML_VALUE)
 	public String addCity(@PathVariable long id) {
-		selectionService.deleteByCityId(id);
+		selectionService.uselectCityById(id);
 		return "redirect:/";
+	}
+
+	@PostMapping(value = "/city/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteCity(@RequestBody CityRequest req) {
+		selectionService.unselectCityByName(req.cityName());
 	}
 
 }

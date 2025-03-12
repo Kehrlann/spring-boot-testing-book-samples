@@ -133,7 +133,19 @@ class WeatherApplicationTests {
 				.hasFieldOrPropertyWithValue("temperature", 22.6);
 	}
 
-	// TODO: delete
+	@Test
+	void deleteCity() {
+		selectCity("Paris");
+
+		var response = mvc.post()
+				.uri("/city/delete")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"cityName\": \"Paris\"}")
+				.exchange();
+
+		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
+		assertThat(selectionRepository.findAll()).hasSize(0);
+	}
 
 	private MvcTestResult selectCity(String cityName) {
 		return mvc.post()

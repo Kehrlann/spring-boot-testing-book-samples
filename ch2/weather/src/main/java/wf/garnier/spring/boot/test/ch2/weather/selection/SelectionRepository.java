@@ -9,15 +9,18 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface SelectionRepository extends JpaRepository<Selection, Long> {
 
-    void deleteByCityId(long id);
+	void deleteByCityId(long id);
 
-    Optional<Selection> findByCity(City city);
+	void deleteByCityName(String cityName);
 
-    @Query("""
-            SELECT c FROM City c
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM Selection s WHERE s.city.id = c.id
-                )
-            """)
+	Optional<Selection> findByCity(City city);
+
+	@Query("""
+			SELECT c FROM City c
+			    WHERE NOT EXISTS (
+			        SELECT 1 FROM Selection s WHERE s.city.id = c.id
+			    )
+			""")
 	List<City> findUnselectedCities();
- }
+
+}
