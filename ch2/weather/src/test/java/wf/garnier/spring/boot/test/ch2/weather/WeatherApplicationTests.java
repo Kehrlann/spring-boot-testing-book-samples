@@ -128,9 +128,8 @@ class WeatherApplicationTests {
 
 	@Test
 	void getWeatherMultipleCities() {
-        when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
-		selectCity("Paris");
 		selectCity("Beijing");
+		selectCity("Paris");
 
 		var response = mvc.get().uri("/weather").accept(MediaType.APPLICATION_JSON).exchange();
 		assertThat(response).hasStatus(HttpStatus.OK);
@@ -139,7 +138,22 @@ class WeatherApplicationTests {
 			.extractingPath("$.[*].cityName")
 			.asArray()
 			.hasSize(2)
-			.containsExactly("Beijing", "Paris");
+			.containsExactlyInAnyOrder("Beijing", "Paris");
+	}
+
+	@Test
+	void getWeatherMultipleCitiesOrderAlphabetically() {
+		selectCity("Beijing");
+		selectCity("Tokyo");
+		selectCity("Quito");
+
+		var response = mvc.get().uri("/weather").accept(MediaType.APPLICATION_JSON).exchange();
+		assertThat(response).hasStatus(HttpStatus.OK);
+
+		assertThat(response).bodyJson()
+			.hasPathSatisfying("$.[0].cityName", value -> assertThat(value).isEqualTo("Beijing"))
+			.hasPathSatisfying("$.[1].cityName", value -> assertThat(value).isEqualTo("Quito"))
+			.hasPathSatisfying("$.[2].cityName", value -> assertThat(value).isEqualTo("Tokyo"));
 	}
 
 	@Test

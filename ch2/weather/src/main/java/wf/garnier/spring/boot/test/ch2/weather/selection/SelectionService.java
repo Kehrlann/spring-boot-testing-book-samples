@@ -26,7 +26,7 @@ public class SelectionService {
 
 	public List<CityWeather> getWeatherInSelectedCities() {
 		//@formatter:off
-        return selectionRepository.findAll()
+        return selectionRepository.findAllByOrderByCityNameAsc()
                 .stream()
                 .map(Selection::getCity)
                 .map(city -> {

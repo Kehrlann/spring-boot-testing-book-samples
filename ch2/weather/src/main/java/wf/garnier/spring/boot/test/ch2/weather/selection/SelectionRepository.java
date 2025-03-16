@@ -23,4 +23,6 @@ public interface SelectionRepository extends JpaRepository<Selection, Long> {
 			""")
 	List<City> findUnselectedCities();
 
+	List<Selection> findAllByOrderByCityNameAsc();
+
 }
