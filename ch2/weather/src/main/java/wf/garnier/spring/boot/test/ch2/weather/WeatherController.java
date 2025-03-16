@@ -57,7 +57,7 @@ public class WeatherController {
 
 	@PostMapping(value = "/city/delete/{id}", produces = MediaType.TEXT_HTML_VALUE)
 	public String addCity(@PathVariable long id) {
-		selectionService.uselectCityById(id);
+		selectionService.unselectCityById(id);
 		return "redirect:/";
 	}
 

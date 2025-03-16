@@ -52,7 +52,7 @@ public class SelectionService {
 	}
 
 	@Transactional
-	public void uselectCityById(long id) {
+	public void unselectCityById(long id) {
 		selectionRepository.deleteByCityId(id);
 	}
 
