@@ -17,7 +17,7 @@ class RandomWeatherService implements WeatherService {
 	}
 
 	private double randomDecimal() {
-		return random.nextInt(-15, 36) + .1 * random.nextInt(10);
+		return random.nextInt(-150, 360) / 10.0;
 	}
 
 	private String randomWeather() {
