@@ -38,7 +38,7 @@ class WidgetController {
 		try {
 			var newWidget = widgetService.createWidget(name);
 			var createdUri = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/widget/{id}")
+				.replacePath("/widget/{id}")
 				.buildAndExpand(newWidget.id())
 				.toUri();
 			return ResponseEntity.created(createdUri).build();
