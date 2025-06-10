@@ -145,7 +145,10 @@ class ManualSpringBootTests {
         // tag::resttemplate[]
         var body = new LinkedMultiValueMap<String, String>();
         body.add("name", "test-widget");
-        var request = RequestEntity.post("/widget").contentType(MediaType.APPLICATION_FORM_URLENCODED).body(body);
+        var request = RequestEntity
+                .post("/widget")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(body);
         var response = restTemplate.exchange(request, String.class);
         // end::resttemplate[]
 

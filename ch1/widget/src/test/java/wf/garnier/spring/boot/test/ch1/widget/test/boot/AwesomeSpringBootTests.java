@@ -27,10 +27,10 @@ class AwesomeSpringBootTests {
 
 	// tag::class-members[]
 	@Autowired
-	private WidgetRepository repository; // <3>
+	private MockMvc mockMvc; // <2>
 
 	@Autowired
-	private MockMvc mockMvc; // <2>
+	private WidgetRepository repository; // <3>
 
 	@MockitoBean
 	private WidgetValidator mockValidator; // <4>
