@@ -1,2 +1,5 @@
 # editors
 .idea
+
+# OS
+.DS_Store
