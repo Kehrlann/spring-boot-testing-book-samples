@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 // tag::content[]
-@SpringBootTest
+@SpringBootTest // <1>
 class WeatherApplicationTests {
 
-	@Test
-	void contextLoads() {
+	@Test // <2>
+	void contextLoads() { // <2>
 
 	}
 

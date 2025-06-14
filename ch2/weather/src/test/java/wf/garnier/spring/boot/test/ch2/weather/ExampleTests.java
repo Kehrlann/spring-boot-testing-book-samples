@@ -22,12 +22,19 @@ import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+// tag::annotations[]
+@SpringBootTest // <1>
+@AutoConfigureMockMvc // <2>
+// end::annotations[]
+// tag::class[]
 class ExampleTests {
 
-	@Autowired
-	private MockMvcTester mvc;
+	// end::class[]
+	// tag::mockmvctester[]
+	@Autowired // <3>
+	private MockMvcTester mvc; // <3>
+
+	// end::mockmvctester[]
 
 	@Autowired
 	private SelectionRepository selectionRepository;
@@ -46,18 +53,26 @@ class ExampleTests {
 
 	}
 
+	// tag::first-test[]
 	@Test
 	void indexPageLoads() {
 		//@formatter:off
-		var response = mvc.get()
+		// 1. Arrange
+		// We do not need to set up anything in particular
+
+		// 2. Act
+		var response = mvc.get() // <4>
 				.uri("/")
 				.exchange();
-		assertThat(response)
+
+		// 3. Assert
+		assertThat(response) // <4>
 				.hasStatus(HttpStatus.OK)
 				.bodyText()
 				.contains("<h1>Weather App</h1>");
 		//@formatter:on
 	}
+	// end::first-test[]
 
 	@Test
 	void addSelectedCity() {
@@ -178,4 +193,7 @@ class ExampleTests {
 			.exchange();
 	}
 
+	// tag::class[]
+
 }
+// end::class[]
