@@ -5,10 +5,10 @@ import wf.garnier.spring.boot.test.ch2.weather.selection.CityWeather;
 import wf.garnier.spring.boot.test.ch2.weather.selection.SelectionService;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +25,7 @@ public class WeatherController {
 		this.selectionService = selectionService;
 	}
 
-	@GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
+	@GetMapping(value = "/")
 	public String index(Model model) {
 		var cities = selectionService.findUnselectedCities();
 		var citiesWithWeather = selectionService.getWeatherInSelectedCities();
@@ -34,19 +34,19 @@ public class WeatherController {
 		return "index";
 	}
 
-	@GetMapping(value = "/weather", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/api/weather")
 	@ResponseBody
 	public List<CityWeather> weather() {
 		return selectionService.getWeatherInSelectedCities();
 	}
 
-	@PostMapping(value = "/city/add", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	@PostMapping(value = "/city/add")
 	public String addCity(String city) {
 		selectionService.addCity(city);
 		return "redirect:/";
 	}
 
-	@PostMapping(value = "/city/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/api/city")
 	public ResponseEntity<Void> addCityApi(@RequestBody CityRequest req) {
 		return selectionService.addCity(req.cityName()) ? ResponseEntity.status(HttpStatus.CREATED).build()
 				: ResponseEntity.badRequest().build();
@@ -55,13 +55,13 @@ public class WeatherController {
 	public record CityRequest(String cityName) {
 	}
 
-	@PostMapping(value = "/city/delete/{id}", produces = MediaType.TEXT_HTML_VALUE)
+	@PostMapping(value = "/city/delete/{id}")
 	public String addCity(@PathVariable long id) {
 		selectionService.unselectCityById(id);
 		return "redirect:/";
 	}
 
-	@PostMapping(value = "/city/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = "/api/city")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteCity(@RequestBody CityRequest req) {
 		selectionService.unselectCityByName(req.cityName());

@@ -63,7 +63,7 @@ class ExampleTests {
 	void addSelectedCity() {
 		//@formatter:off
 		var response = mvc.post()
-				.uri("/city/add")
+				.uri("/api/city")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"cityName\": \"Paris\"}")
 				.exchange();
@@ -115,7 +115,7 @@ class ExampleTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
 		selectCity("Paris");
 
-		var response = mvc.get().uri("/weather").accept(MediaType.APPLICATION_JSON).exchange();
+		var response = mvc.get().uri("/api/weather").accept(MediaType.APPLICATION_JSON).exchange();
 		assertThat(response).hasStatus(HttpStatus.OK);
 
 		assertThat(response).bodyJson()
@@ -131,7 +131,7 @@ class ExampleTests {
 		selectCity("Beijing");
 		selectCity("Paris");
 
-		var response = mvc.get().uri("/weather").accept(MediaType.APPLICATION_JSON).exchange();
+		var response = mvc.get().uri("/api/weather").accept(MediaType.APPLICATION_JSON).exchange();
 		assertThat(response).hasStatus(HttpStatus.OK);
 
 		assertThat(response).bodyJson()
@@ -147,7 +147,7 @@ class ExampleTests {
 		selectCity("Tokyo");
 		selectCity("Quito");
 
-		var response = mvc.get().uri("/weather").accept(MediaType.APPLICATION_JSON).exchange();
+		var response = mvc.get().uri("/api/weather").accept(MediaType.APPLICATION_JSON).exchange();
 		assertThat(response).hasStatus(HttpStatus.OK);
 
 		assertThat(response).bodyJson()
@@ -160,8 +160,8 @@ class ExampleTests {
 	void deleteCity() {
 		selectCity("Paris");
 
-		var response = mvc.post()
-			.uri("/city/delete")
+		var response = mvc.delete()
+			.uri("/api/city")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content("{\"cityName\": \"Paris\"}")
 			.exchange();
@@ -172,7 +172,7 @@ class ExampleTests {
 
 	private MvcTestResult selectCity(String cityName) {
 		return mvc.post()
-			.uri("/city/add")
+			.uri("/api/city")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content("{\"cityName\": \"" + cityName + "\"}")
 			.exchange();
