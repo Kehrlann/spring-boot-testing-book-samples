@@ -30,14 +30,17 @@ import static org.mockito.Mockito.when;
 class ExampleTests {
 
 	// end::class[]
-	// tag::mockmvctester[]
-	@Autowired // <3>
-	private MockMvcTester mvc; // <3>
+	// tag::mock-mvc-tester[]
+	@Autowired // <2>
+	private MockMvcTester mvc; // <2>
 
-	// end::mockmvctester[]
+	// end::mock-mvc-tester[]
 
-	@Autowired
-	private SelectionRepository selectionRepository;
+	// tag::selection-repository[]
+	@Autowired // <1>
+	private SelectionRepository selectionRepository; // <1>
+
+	// end::selection-repository[]
 
 	@MockitoBean
 	private WeatherService weatherService;
@@ -61,7 +64,7 @@ class ExampleTests {
 		// We do not need to set up anything in particular
 
 		// 2. Act
-		var response = mvc.get() // <4>
+		var response = mvc.get() // <3>
 				.uri("/")
 				.exchange();
 
@@ -74,8 +77,26 @@ class ExampleTests {
 	}
 	// end::first-test[]
 
+	// tag::selection-test[]
 	@Test
 	void addSelectedCity() {
+		//@formatter:off
+		mvc.post()
+				.uri("/city/add")
+				.param("city", "Paris")
+				.exchange();
+		//@formatter:on
+
+		assertThat(selectionRepository.findAll()).hasSize(1) // <2>
+			.first()
+			.extracting(Selection::getCity)
+			.extracting(City::getName)
+			.isEqualTo("Paris");
+	}
+	// end::selection-test[]
+
+	@Test
+	void addSelectedCityApi() {
 		//@formatter:off
 		var response = mvc.post()
 				.uri("/api/city")
@@ -110,7 +131,11 @@ class ExampleTests {
 
 	@Test
 	void selectUnknown() {
-		var response = selectCity("Foobar");
+		var response = mvc.post()
+				.uri("/api/city")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"cityName\": \"" + "Foobar" + "\"}")
+				.exchange();
 
 		assertThat(response).hasStatus(HttpStatus.BAD_REQUEST);
 
@@ -185,13 +210,16 @@ class ExampleTests {
 		assertThat(selectionRepository.findAll()).hasSize(0);
 	}
 
+	// tag::select-city[]
 	private MvcTestResult selectCity(String cityName) {
+		//@formatter:off
 		return mvc.post()
-			.uri("/api/city")
-			.contentType(MediaType.APPLICATION_JSON)
-			.content("{\"cityName\": \"" + cityName + "\"}")
+			.uri("/city/add")
+			.param("city", cityName)
 			.exchange();
+		//@formatter:on
 	}
+	// end::select-city[]
 
 	// tag::class[]
 
