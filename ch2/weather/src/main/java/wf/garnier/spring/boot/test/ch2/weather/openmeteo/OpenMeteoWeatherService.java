@@ -28,8 +28,7 @@ class OpenMeteoWeatherService implements WeatherService {
 			.retrieve()
 			.body(ApiResponse.class);
 		// TODO: null?
-		return new WeatherData(response.current.temperature, response.current.windspeed,
-				response.current.weathercode);
+		return new WeatherData(response.current.temperature, response.current.windspeed, response.current.weathercode);
 	}
 
 	private record ApiResponse(Current current) {

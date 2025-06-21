@@ -40,8 +40,7 @@ public class Selection {
 
 	@Override
 	public String toString() {
-		return "Selection{" +
-			   "city=" + city.getName() +
-			   '}';
+		return "Selection{" + "city=" + city.getName() + '}';
 	}
+
 }

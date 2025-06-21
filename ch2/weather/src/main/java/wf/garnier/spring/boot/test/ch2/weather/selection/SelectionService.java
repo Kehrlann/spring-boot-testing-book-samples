@@ -60,4 +60,5 @@ public class SelectionService {
 	public void unselectCityByName(String cityName) {
 		selectionRepository.deleteByCityName(cityName);
 	}
+
 }

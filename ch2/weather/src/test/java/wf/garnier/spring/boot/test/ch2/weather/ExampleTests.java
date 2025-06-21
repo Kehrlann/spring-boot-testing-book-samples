@@ -45,9 +45,16 @@ class ExampleTests {
 	@MockitoBean
 	private WeatherService weatherService;
 
+	// tag::before-each[]
 	@BeforeEach
-	void setUp() {
+	void clearRepository() {
 		selectionRepository.deleteAll();
+	}
+	// end::before-each[]
+
+	@BeforeEach
+	void configureMocks() {
+		// Note: this can be folded into a single @BeforeEach method
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
@@ -132,38 +139,65 @@ class ExampleTests {
 	@Test
 	void selectUnknown() {
 		var response = mvc.post()
-				.uri("/api/city")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"cityName\": \"" + "Foobar" + "\"}")
-				.exchange();
+			.uri("/api/city")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("{\"cityName\": \"" + "Foobar" + "\"}")
+			.exchange();
 
 		assertThat(response).hasStatus(HttpStatus.BAD_REQUEST);
 
 		assertThat(selectionRepository.findAll()).hasSize(0);
 	}
 
+	// tag::no-duplicates[]
 	@Test
-	void selectTwice() {
+	void noDuplicates() {
 		selectCity("Bogotá");
 		selectCity("Bogotá");
 
 		assertThat(selectionRepository.findAll()).hasSize(1);
 	}
+	// end::no-duplicates[]
 
+	// tag::weather-data[]
 	@Test
 	void getWeather() {
+		// tag::weather-data-mock[]
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
+		// end::weather-data-mock[]
 		selectCity("Paris");
 
-		var response = mvc.get().uri("/api/weather").accept(MediaType.APPLICATION_JSON).exchange();
-		assertThat(response).hasStatus(HttpStatus.OK);
+		var response = mvc.get().uri("/api/weather").exchange();
 
-		assertThat(response).bodyJson()
-				.convertTo(list(CityWeather.class))
-				.hasSize(1)
-				.first()
-				.hasFieldOrPropertyWithValue("cityName", "Paris")
-				.hasFieldOrPropertyWithValue("temperature", 22.6);
+		//@formatter:off
+		assertThat(response)
+				.hasStatus(HttpStatus.OK)
+				.bodyJson()
+				.isLenientlyEqualTo("""
+						[
+						  {
+							"cityName": "Paris",
+							"temperature": 22.6
+						  }
+						]
+						""");
+		//@formatter:on
+	}
+	// end::weather-data[]
+
+	@Test
+	void getWeatherUsingJavaClass() {
+		selectCity("Paris");
+
+		var response = mvc.get().uri("/api/weather").exchange();
+
+		assertThat(response).hasStatus(HttpStatus.OK)
+			.bodyJson()
+			.convertTo(list(CityWeather.class))
+			.hasSize(1)
+			.first()
+			.hasFieldOrPropertyWithValue("cityName", "Paris")
+			.hasFieldOrPropertyWithValue("temperature", 20.0);
 	}
 
 	@Test
@@ -171,7 +205,7 @@ class ExampleTests {
 		selectCity("Beijing");
 		selectCity("Paris");
 
-		var response = mvc.get().uri("/api/weather").accept(MediaType.APPLICATION_JSON).exchange();
+		var response = mvc.get().uri("/api/weather").exchange();
 		assertThat(response).hasStatus(HttpStatus.OK);
 
 		assertThat(response).bodyJson()
@@ -187,7 +221,7 @@ class ExampleTests {
 		selectCity("Tokyo");
 		selectCity("Quito");
 
-		var response = mvc.get().uri("/api/weather").accept(MediaType.APPLICATION_JSON).exchange();
+		var response = mvc.get().uri("/api/weather").exchange();
 		assertThat(response).hasStatus(HttpStatus.OK);
 
 		assertThat(response).bodyJson()
