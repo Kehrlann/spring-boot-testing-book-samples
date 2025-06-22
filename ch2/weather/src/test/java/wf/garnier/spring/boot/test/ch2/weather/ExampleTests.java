@@ -42,8 +42,11 @@ class ExampleTests {
 
 	// end::selection-repository[]
 
+	// tag::mockito-bean[]
 	@MockitoBean
-	private WeatherService weatherService;
+	private WeatherService weatherService; // <1>
+
+	// end::mockito-bean[]
 
 	// tag::before-each[]
 	@BeforeEach
@@ -163,12 +166,17 @@ class ExampleTests {
 	@Test
 	void getWeather() {
 		// tag::weather-data-mock[]
-		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
+		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())) // <2>
+			.thenReturn(new WeatherData(22.6, 0, 1)); // <2>
 		// end::weather-data-mock[]
 		selectCity("Paris");
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
+		// tag::weather-data-mock[]
+		// ... assertions omitted for brevity ...
+		// end::weather-data-mock[]
+		// tag::weather-data-assertions[]
 		//@formatter:off
 		assertThat(response)
 				.hasStatus(HttpStatus.OK)
@@ -182,6 +190,7 @@ class ExampleTests {
 						]
 						""");
 		//@formatter:on
+		// end::weather-data-assertions[]
 	}
 	// end::weather-data[]
 
