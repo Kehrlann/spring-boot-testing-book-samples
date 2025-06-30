@@ -149,7 +149,7 @@ class ExampleTests {
 
 		assertThat(response).hasStatus(HttpStatus.BAD_REQUEST);
 
-		assertThat(selectionRepository.findAll()).hasSize(0);
+		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
 	// tag::no-duplicates[]
@@ -158,7 +158,7 @@ class ExampleTests {
 		selectCity("Bogotá");
 		selectCity("Bogotá");
 
-		assertThat(selectionRepository.findAll()).hasSize(1);
+		assertThat(selectionRepository.count()).isEqualTo(1);
 	}
 	// end::no-duplicates[]
 
@@ -250,7 +250,7 @@ class ExampleTests {
 			.exchange();
 
 		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
-		assertThat(selectionRepository.findAll()).hasSize(0);
+		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
 	// tag::select-city[]
