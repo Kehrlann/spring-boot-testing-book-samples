@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch3.inventory;
+package wf.garnier.spring.boot.test.ch3.configuration;
 
 import java.util.List;
 
