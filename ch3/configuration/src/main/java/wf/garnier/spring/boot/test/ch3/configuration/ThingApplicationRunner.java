@@ -7,11 +7,11 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 @Component
-class InventoryApplicationRunner implements ApplicationRunner {
+class ThingApplicationRunner implements ApplicationRunner {
 
     private final List<Thing> things;
 
-    public InventoryApplicationRunner(List<Thing> things) {
+    public ThingApplicationRunner(List<Thing> things) {
         this.things = things;
     }
 

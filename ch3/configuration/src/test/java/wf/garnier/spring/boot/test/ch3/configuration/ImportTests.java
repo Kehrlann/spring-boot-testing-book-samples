@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = { InventoryApplicationRunner.class })
+@SpringBootTest(classes = { ThingApplicationRunner.class })
 @Import(TestSpecificConfiguration.class)
 class ImportTests {
 

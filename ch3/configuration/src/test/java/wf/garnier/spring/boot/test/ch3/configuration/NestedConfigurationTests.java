@@ -9,24 +9,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(
-		classes = { ThingApplicationRunner.class, ThingConfiguration.class, CustomConfigTests.TestConfig.class })
-class CustomConfigTests {
+@SpringBootTest
+class NestedConfigurationTests {
 
 	@Test
-	void contextLoads(@Autowired List<Thing> things) {
+	void thing(@Autowired List<Thing> things) {
 		assertThat(things).map(Thing::name)
-			.containsExactlyInAnyOrder("bean-one", "bean-two", "test")
-			// This is redundant with "containsExactly..."
-			.doesNotContain("configuration-test-package");
+			.containsExactly("nested-configuration-bean")
+			.doesNotContain("bean-one", "bean-two");
 	}
 
 	@Configuration
 	static class TestConfig {
 
 		@Bean
-		public Thing three() {
-			return new Thing("test");
+		Thing testConfigThing() {
+			return new Thing("nested-configuration-bean");
 		}
 
 	}

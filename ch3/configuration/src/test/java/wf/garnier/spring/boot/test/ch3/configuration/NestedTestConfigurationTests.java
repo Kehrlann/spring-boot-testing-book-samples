@@ -10,12 +10,12 @@ import org.springframework.context.annotation.Bean;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class TestConfigurationTests {
+class NestedTestConfigurationTests {
 
 	@Test
 	void thing(@Autowired List<Thing> things) {
 		assertThat(things).map(Thing::name)
-			.containsExactlyInAnyOrder("bean-one", "bean-two", "testconfig", "configuration-test-package");
+			.containsExactlyInAnyOrder("bean-one", "bean-two", "nested-testconfig-bean", "configuration-test-package");
 	}
 
 	@TestConfiguration
@@ -23,7 +23,7 @@ class TestConfigurationTests {
 
 		@Bean
 		Thing testConfigThing() {
-			return new Thing("testconfig");
+			return new Thing("nested-testconfig-bean");
 		}
 
 	}
