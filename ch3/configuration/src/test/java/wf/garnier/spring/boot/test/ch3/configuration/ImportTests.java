@@ -14,7 +14,9 @@ class ImportTests {
 
 	@Test
 	void contextLoads(@Autowired List<Thing> things) {
-		assertThat(things).map(Thing::name).contains("configuration-test-package");
+		assertThat(things).map(Thing::name)
+			.containsExactly("configuration-test-package")
+			.doesNotContain("bean-one", "bean-two");
 	}
 
 }
