@@ -24,8 +24,6 @@ class NestedTestConfigurationTests {
 		assertThat(demoProperties.value()).isEqualTo(42);
 	}
 
-
-
 	@TestConfiguration
 	static class TestConfig {
 

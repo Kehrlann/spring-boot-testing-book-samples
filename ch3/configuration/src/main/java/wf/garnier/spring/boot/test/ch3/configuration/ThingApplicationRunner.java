@@ -9,14 +9,15 @@ import org.springframework.stereotype.Component;
 @Component
 class ThingApplicationRunner implements ApplicationRunner {
 
-    private final List<Thing> things;
+	private final List<Thing> things;
 
-    public ThingApplicationRunner(List<Thing> things) {
-        this.things = things;
-    }
+	public ThingApplicationRunner(List<Thing> things) {
+		this.things = things;
+	}
 
-    @Override
-    public void run(ApplicationArguments args) {
-        things.forEach(System.out::println);
-    }
+	@Override
+	public void run(ApplicationArguments args) {
+		things.forEach(System.out::println);
+	}
+
 }
