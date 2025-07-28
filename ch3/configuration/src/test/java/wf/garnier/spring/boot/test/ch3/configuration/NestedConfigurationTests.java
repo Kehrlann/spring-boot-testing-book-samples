@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,8 +22,8 @@ class NestedConfigurationTests {
 	}
 
 	@Test
-	void properties(@Autowired Optional<DemoProperties> demoProperties) {
-		assertThat(demoProperties).isEmpty();
+	void properties(ApplicationContext applicationContext) {
+		assertThat(applicationContext.getBeanNamesForType(DemoProperties.class)).isEmpty();
 	}
 
 	@Configuration
