@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 class TestSpecificConfiguration {
 
 	@Bean
-	Thing configurationThing() {
+	Thing testSpecificThing() {
 		return new Thing("configuration-test-package");
 	}
 

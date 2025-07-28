@@ -21,7 +21,7 @@ class NestedTestConfigurationTests {
 	@Test
 	void properties(@Autowired DemoProperties demoProperties) {
 		assertThat(demoProperties.message()).isEqualTo("Hello, world!");
-		assertThat(demoProperties.value()).isEqualTo(42);
+		assertThat(demoProperties.value()).isEqualTo(1);
 	}
 
 	@TestConfiguration
