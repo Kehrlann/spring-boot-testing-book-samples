@@ -75,9 +75,9 @@ class CustomConfigTests {
 	@Nested
 	@SpringBootTest
 	@Import(CustomConfiguration.class)
-	class ImportConfiguration {
+	class NestedAndImportConfiguration {
 
-		// Only the "CustomConfiguration" + nested "TestConfig" are picked up
+		// The "CustomConfiguration" is added to the nested "TestConfig"
 		@Test
 		void things(@Autowired List<Thing> things) {
 			assertThat(things).map(Thing::name).containsOnly("nested-test-bean", "configuration-test-package");
@@ -96,6 +96,26 @@ class CustomConfigTests {
 				return new Thing("nested-test-bean");
 			}
 
+		}
+
+	}
+
+	@Nested
+	@SpringBootTest
+	@Import(CustomConfiguration.class)
+	class ImportConfiguration {
+
+		// The "CustomConfiguration" is added to the default component-scanned
+		// configuration
+		@Test
+		void things(@Autowired List<Thing> things) {
+			assertThat(things).map(Thing::name).containsOnly("bean-one", "bean-two", "configuration-test-package");
+		}
+
+		@Test
+		void properties(@Autowired DemoProperties demoProperties) {
+			assertThat(demoProperties.message()).isEqualTo("Hello, world!");
+			assertThat(demoProperties.value()).isEqualTo(1);
 		}
 
 	}
