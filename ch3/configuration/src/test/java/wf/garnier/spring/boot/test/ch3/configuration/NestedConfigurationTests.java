@@ -1,7 +1,6 @@
 package wf.garnier.spring.boot.test.ch3.configuration;
 
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ class NestedConfigurationTests {
 	void things(@Autowired List<Thing> things) {
 		assertThat(things).map(Thing::name)
 			.containsExactly("nested-configuration-bean")
-			.doesNotContain("bean-one", "bean-two");
+			.doesNotContain("bean-one", "bean-two", "configuration-test-package");
 	}
 
 	@Test

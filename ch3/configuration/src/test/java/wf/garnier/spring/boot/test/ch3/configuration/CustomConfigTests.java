@@ -1,7 +1,6 @@
 package wf.garnier.spring.boot.test.ch3.configuration;
 
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
