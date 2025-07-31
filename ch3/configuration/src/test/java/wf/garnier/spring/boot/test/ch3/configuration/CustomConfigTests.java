@@ -19,8 +19,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CustomConfigTests {
 
 	@Nested
-	@SpringBootTest(classes = { ThingConfiguration.class })
+	// tag::classes[]
+	@SpringBootTest(classes = { ThingConfiguration.class }) // <1>
 	class CustomClassesTests {
+
+		// ... your test code ...
+		// tag::ignored[]
+		@Test
+		void things(@Autowired List<Thing> things) {
+			assertThat(things).map(Thing::name).containsOnly("bean-one", "bean-two");
+		}
+
+		@Test
+		void properties(ApplicationContext applicationContext) {
+			assertThat(applicationContext.getBeanNamesForType(DemoProperties.class)).isEmpty();
+		}
+		// end::ignored[]
+
+	}
+	// end::classes[]
+
+	@Nested
+	@SpringBootTest(classes = { ThingConfiguration.class })
+	class CustomClassesAndNestedTests {
 
 		@Test
 		void things(@Autowired List<Thing> things) {

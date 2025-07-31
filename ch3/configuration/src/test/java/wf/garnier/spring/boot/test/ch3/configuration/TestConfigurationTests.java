@@ -18,9 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TestConfigurationTests {
 
 	@Nested
+	// tag::nested-testconfiguration[]
 	@SpringBootTest
 	class NestedConfigTests {
 
+		// ... your test code ...
+		// tag::ignored[]
 		@Test
 		void things(@Autowired List<Thing> things) {
 			assertThat(things).map(Thing::name)
@@ -33,24 +36,30 @@ class TestConfigurationTests {
 			assertThat(demoProperties.message()).isEqualTo("Hello, world!");
 			assertThat(demoProperties.value()).isEqualTo(1);
 		}
+		// end::ignored[]
 
 		@TestConfiguration
 		static class TestConfig {
 
+			// ... custom beans ...
 			@Bean
-			Thing testConfigThing() {
+			Thing myCustomThing() {
 				return new Thing("nested-testconfig-bean");
 			}
 
 		}
 
 	}
+	// end::nested-testconfiguration[]
 
 	@Nested
+	// tag::import-testconfiguration[]
 	@SpringBootTest
-	@Import(CustomTestConfiguration.class)
+	@Import(CustomTestConfiguration.class) // <1>
 	class ImportConfigTests {
 
+		// ... your test code ...
+		// tag::ignored[]
 		@Test
 		void things(@Autowired List<Thing> things) {
 			assertThat(things).map(Thing::name)
@@ -63,8 +72,10 @@ class TestConfigurationTests {
 			assertThat(demoProperties.message()).isEqualTo("Hello, world!");
 			assertThat(demoProperties.value()).isEqualTo(1);
 		}
+		// end::ignored[]
 
 	}
+	// end::import-testconfiguration[]
 
 	@Nested
 	@SpringBootTest
