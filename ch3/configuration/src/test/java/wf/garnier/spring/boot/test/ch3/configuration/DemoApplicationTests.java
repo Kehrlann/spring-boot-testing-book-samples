@@ -16,7 +16,7 @@ class DemoApplicationTests {
 	@Test
 	void things(@Autowired List<Thing> things) {
 		var names = things.stream().map(Thing::name);
-		assertThat(names).containsExactlyInAnyOrder("red", "pink", "orange");
+		assertThat(names).containsExactlyInAnyOrder("red", "pink", "green", "orange");
 	}
 
 }

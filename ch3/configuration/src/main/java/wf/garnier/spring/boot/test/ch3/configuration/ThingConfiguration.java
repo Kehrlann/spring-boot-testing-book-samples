@@ -24,6 +24,11 @@ class ThingConfiguration {
 		return new Thing("pink");
 	}
 
+	@Bean
+	Thing greenThing() {
+		return new Thing("green");
+	}
+
 	@Profile("custom")
 	@Bean
 	Thing magentaThing() {

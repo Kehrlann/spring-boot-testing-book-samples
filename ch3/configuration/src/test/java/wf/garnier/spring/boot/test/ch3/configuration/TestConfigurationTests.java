@@ -27,7 +27,7 @@ class TestConfigurationTests {
 		@Test
 		void things(@Autowired List<Thing> things) {
 			assertThat(things).map(Thing::name)
-				.containsExactlyInAnyOrder("red", "pink", "nested-testconfig-bean", "orange");
+				.containsExactlyInAnyOrder("red", "pink", "green", "gold", "orange");
 		}
 
 		@Test
@@ -43,7 +43,7 @@ class TestConfigurationTests {
 			// ... custom beans ...
 			@Bean
 			Thing myCustomThing() {
-				return new Thing("nested-testconfig-bean");
+				return new Thing("gold");
 			}
 
 		}
@@ -61,7 +61,7 @@ class TestConfigurationTests {
 		// tag::ignored[]
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsExactlyInAnyOrder("red", "pink", "orange", "coral");
+			assertThat(things).map(Thing::name).containsExactlyInAnyOrder("red", "pink", "green", "orange", "coral");
 		}
 
 		@Test
@@ -80,7 +80,7 @@ class TestConfigurationTests {
 
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsExactlyInAnyOrder("red", "pink", "orange");
+			assertThat(things).map(Thing::name).containsExactlyInAnyOrder("red", "pink", "green", "orange");
 		}
 
 		@Test

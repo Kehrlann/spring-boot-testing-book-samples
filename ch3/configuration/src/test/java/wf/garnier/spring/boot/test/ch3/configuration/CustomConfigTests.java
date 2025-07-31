@@ -27,7 +27,7 @@ class CustomConfigTests {
 		// tag::ignored[]
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsOnly("red", "pink");
+			assertThat(things).map(Thing::name).containsOnly("red", "pink", "green");
 		}
 
 		@Test
@@ -45,7 +45,7 @@ class CustomConfigTests {
 
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsOnly("red", "pink");
+			assertThat(things).map(Thing::name).containsOnly("red", "pink", "green");
 		}
 
 		@Test
@@ -59,7 +59,7 @@ class CustomConfigTests {
 
 			@Bean
 			public Thing three() {
-				return new Thing("nested-test-bean");
+				return new Thing("silver");
 			}
 
 		}
@@ -73,7 +73,7 @@ class CustomConfigTests {
 		// Only the nested "TestConfig" is picked up
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsOnly("nested-test-bean");
+			assertThat(things).map(Thing::name).containsOnly("silver");
 		}
 
 		@Test
@@ -86,7 +86,7 @@ class CustomConfigTests {
 
 			@Bean
 			public Thing three() {
-				return new Thing("nested-test-bean");
+				return new Thing("silver");
 			}
 
 		}
@@ -101,7 +101,7 @@ class CustomConfigTests {
 		// The "CustomConfiguration" is added to the nested "TestConfig"
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsOnly("nested-test-bean", "orange");
+			assertThat(things).map(Thing::name).containsOnly("silver", "orange");
 		}
 
 		@Test
@@ -114,7 +114,7 @@ class CustomConfigTests {
 
 			@Bean
 			public Thing three() {
-				return new Thing("nested-test-bean");
+				return new Thing("silver");
 			}
 
 		}
@@ -130,7 +130,7 @@ class CustomConfigTests {
 		// configuration
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsOnly("red", "pink", "orange");
+			assertThat(things).map(Thing::name).containsOnly("red", "pink", "green", "orange");
 		}
 
 		@Test
