@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -25,6 +26,12 @@ class CustomConfigTests {
 
 		// ... your test code ...
 		// tag::ignored[]
+		@MockitoBean
+		Gizmo gizmo;
+
+		@MockitoBean(name = "blueWidget")
+		Widget blueWidget;
+
 		@Test
 		void things(@Autowired List<Thing> things) {
 			assertThat(things).map(Thing::name).containsOnly("red", "pink", "green");
@@ -42,6 +49,13 @@ class CustomConfigTests {
 	@Nested
 	@SpringBootTest(classes = { ThingConfiguration.class })
 	class CustomClassesAndNestedTests {
+
+		// ... your test code ...
+		@MockitoBean
+		Gizmo gizmo;
+
+		@MockitoBean(name = "blueWidget")
+		Widget blueWidget;
 
 		@Test
 		void things(@Autowired List<Thing> things) {

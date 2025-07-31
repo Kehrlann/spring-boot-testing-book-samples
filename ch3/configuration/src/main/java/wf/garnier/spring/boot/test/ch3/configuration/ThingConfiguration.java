@@ -20,12 +20,14 @@ class ThingConfiguration {
 
 	@Bean
 	Thing pinkThing(@Qualifier("redThing") Thing redThing) {
-		logger.info("pink depends on {}", redThing.name());
+		logger.info("pink depends on {}", redThing);
 		return new Thing("pink");
 	}
 
 	@Bean
-	Thing greenThing() {
+	Thing greenThing(Gizmo gizmo, @Qualifier("blueWidget") Widget blueWidget) {
+		logger.info("green depends on {}", gizmo);
+		logger.info("green depends on {}", blueWidget);
 		return new Thing("green");
 	}
 
