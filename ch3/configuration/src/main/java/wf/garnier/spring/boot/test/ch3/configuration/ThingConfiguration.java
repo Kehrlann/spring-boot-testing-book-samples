@@ -1,5 +1,9 @@
 package wf.garnier.spring.boot.test.ch3.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -7,20 +11,23 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 class ThingConfiguration {
 
+	private static final Logger logger = LoggerFactory.getLogger(ThingConfiguration.class);
+
 	@Bean
-	Thing one() {
-		return new Thing("bean-one");
+	Thing redThing() {
+		return new Thing("red");
 	}
 
 	@Bean
-	Thing two() {
-		return new Thing("bean-two");
+	Thing pinkThing(@Qualifier("redThing") Thing redThing) {
+		logger.info("pink depends on {}", redThing.name());
+		return new Thing("pink");
 	}
 
 	@Profile("custom")
 	@Bean
-	Thing withProfile() {
-		return new Thing("bean-custom-profile");
+	Thing magentaThing() {
+		return new Thing("magenta");
 	}
 
 }

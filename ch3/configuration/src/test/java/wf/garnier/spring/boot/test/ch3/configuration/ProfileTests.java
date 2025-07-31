@@ -19,8 +19,7 @@ class ProfileTests {
 	@Test
 	void things(@Autowired List<Thing> things) {
 		var names = things.stream().map(Thing::name);
-		assertThat(names).containsExactlyInAnyOrder("bean-one", "bean-two", "bean-custom-profile",
-				"configuration-test-package");
+		assertThat(names).containsExactlyInAnyOrder("red", "pink", "magenta", "orange");
 	}
 
 }

@@ -27,7 +27,7 @@ class CustomConfigTests {
 		// tag::ignored[]
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsOnly("bean-one", "bean-two");
+			assertThat(things).map(Thing::name).containsOnly("red", "pink");
 		}
 
 		@Test
@@ -45,7 +45,7 @@ class CustomConfigTests {
 
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsOnly("bean-one", "bean-two");
+			assertThat(things).map(Thing::name).containsOnly("red", "pink");
 		}
 
 		@Test
@@ -101,7 +101,7 @@ class CustomConfigTests {
 		// The "CustomConfiguration" is added to the nested "TestConfig"
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsOnly("nested-test-bean", "configuration-test-package");
+			assertThat(things).map(Thing::name).containsOnly("nested-test-bean", "orange");
 		}
 
 		@Test
@@ -130,7 +130,7 @@ class CustomConfigTests {
 		// configuration
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name).containsOnly("bean-one", "bean-two", "configuration-test-package");
+			assertThat(things).map(Thing::name).containsOnly("red", "pink", "orange");
 		}
 
 		@Test

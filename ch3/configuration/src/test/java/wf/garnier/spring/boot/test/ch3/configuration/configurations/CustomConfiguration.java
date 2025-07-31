@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 public class CustomConfiguration {
 
 	@Bean
-	Thing testSpecificThing() {
-		return new Thing("configuration-test-package");
+	Thing orangeThing() {
+		return new Thing("orange");
 	}
 
 }
