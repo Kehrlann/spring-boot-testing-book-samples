@@ -6,14 +6,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class WidgetConfiguration {
 
-    @Bean
-    Widget blueWidget() {
-        return new Widget("blue");
-    }
+	@Bean
+	Widget blueWidget() {
+		return new Widget("blue");
+	}
 
-    @Bean
-    Widget blackWidget() {
-        return new Widget("black");
-    }
+	@Bean
+	Widget blackWidget() {
+		return new Widget("black");
+	}
 
 }

@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -79,6 +80,49 @@ class CustomConfigTests {
 		}
 
 	}
+
+	@Nested
+	@SpringBootTest
+	class ReplaceBeanTests {
+
+		@TestBean
+		Thing greenThing;
+
+		static Thing greenThing() {
+			return new Thing("emerald");
+		}
+
+		@Test
+		void things(@Autowired List<Thing> things) {
+			assertThat(things).map(Thing::name).contains("emerald").doesNotContain("green");
+		}
+
+	}
+
+	@Nested
+	// tag::mockitobean-testbean[]
+	@SpringBootTest(classes = { ThingConfiguration.class })
+	class MockitoAndTestBeanTests {
+
+		@MockitoBean(name = "blueWidget") // <1>
+		Widget blueWidget;
+
+		@TestBean
+		Gizmo gizmo; // <2>
+
+		static Gizmo gizmo() { // <2>
+			return new Gizmo("test");
+		}
+
+		// ... your test code ...
+		// tag::ignored[]
+		@Test
+		void contextLoads() {
+		}
+		// end::ignored[]
+
+	}
+	// end::mockitobean-testbean[]
 
 	@Nested
 	@SpringBootTest

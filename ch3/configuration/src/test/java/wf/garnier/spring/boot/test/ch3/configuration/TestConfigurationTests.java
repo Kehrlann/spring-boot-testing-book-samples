@@ -26,8 +26,7 @@ class TestConfigurationTests {
 		// tag::ignored[]
 		@Test
 		void things(@Autowired List<Thing> things) {
-			assertThat(things).map(Thing::name)
-				.containsExactlyInAnyOrder("red", "pink", "green", "gold", "orange");
+			assertThat(things).map(Thing::name).containsExactlyInAnyOrder("red", "pink", "green", "gold", "orange");
 		}
 
 		@Test
