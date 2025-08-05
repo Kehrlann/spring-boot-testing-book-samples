@@ -14,7 +14,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @Target(ElementType.TYPE)
 @SpringBootTest(properties = "sleep.duration=100ms") // <1>
 @MockitoBean(types = { SlowApplication.FastBean.class, Gizmo.class }) // <2>
+//@formatter:off
 @interface CustomSpringTest { // <3>
+//@formatter:on
 
 }
 // end::custom-spring-test[]

@@ -3,10 +3,12 @@ package wf.garnier.spring.boot.test.ch3.contextcache;
 import java.time.Duration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.ClassOrderer;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestClassOrder;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import wf.garnier.spring.boot.test.ch3.configuration.Gizmo;
 
@@ -17,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.convention.TestBean;
@@ -306,14 +309,39 @@ class SlowApplicationTests {
 	}
 
 	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 	@Order(12)
 	@CustomSpringTest
 	class MetaAnnotationTests {
 
+		@Order(1)
 		@Test
-		void contextLoads() {
+		void makeStuff() {
 
 		}
+
+		@Order(2)
+		// tag::dirties-context[]
+		@Test
+		@DirtiesContext
+		void breakStuff() {
+			// ... some destructive test code ...
+		}
+		// end::dirties-context[]
+
+		@Order(3)
+		@Test
+		void doStuff() {
+		}
+
+		@Order(4)
+		// tag::dirties-context-before[]
+		@Test
+		@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+		void requireCleanSlate() {
+			// ...
+		}
+		// end::dirties-context-before[]
 
 	}
 	// end::ignored[]
