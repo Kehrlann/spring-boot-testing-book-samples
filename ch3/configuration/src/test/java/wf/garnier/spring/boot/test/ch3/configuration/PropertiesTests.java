@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -70,6 +71,27 @@ class PropertiesTests {
 
 	}
 	// end::properties-textblock[]
+
+	@Nested
+	// tag::property-source[]
+	@SpringBootTest
+	@TestPropertySource(locations = "classpath:/custom-values.properties", encoding = "UTF-8")
+	class PropertySourceTests {
+
+		// ... your test code ...
+		// tag::ignored[]
+		@Autowired
+		DemoProperties demoProperties;
+
+		@Test
+		void hasCustomValue() {
+			assertThat(demoProperties.message()).isEqualTo("ハロー・ワールド");
+			assertThat(demoProperties.value()).isEqualTo(81);
+		}
+		// end::ignored[]
+
+	}
+	// end::property-source[]
 
 	@Nested
 	// tag::properties-profile[]
