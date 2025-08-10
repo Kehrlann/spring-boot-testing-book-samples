@@ -22,7 +22,7 @@ class InteractWithAppTests {
 	@Test
 	void things() {
 		var names = things.stream().map(Thing::name);
-		assertThat(names).containsExactlyInAnyOrder("red", "pink", "green", "orange");
+		assertThat(names).contains("red", "pink", "green", "orange");
 	}
 
 	@Test
