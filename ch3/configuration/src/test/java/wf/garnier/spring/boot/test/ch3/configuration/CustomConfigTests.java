@@ -110,7 +110,7 @@ class CustomConfigTests {
 		@TestBean
 		Gizmo gizmo; // <2>
 
-		static Gizmo gizmo() { // <2>
+		static Gizmo gizmo() { // <3>
 			return new Gizmo("test");
 		}
 

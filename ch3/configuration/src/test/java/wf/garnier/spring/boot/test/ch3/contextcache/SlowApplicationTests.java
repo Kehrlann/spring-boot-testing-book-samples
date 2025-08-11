@@ -56,7 +56,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("🐌 Configuring slow bean...");
+			assertThat(output).contains("==> Configuring slow bean...");
 			// end::ignored[]
 		}
 
@@ -84,7 +84,7 @@ class SlowApplicationTests {
 
 		@Test
 		void doesNotLogAppStartup(CapturedOutput output) {
-			assertThat(output).doesNotContain("🐌 Configuring slow bean...");
+			assertThat(output).doesNotContain("==> Configuring slow bean...");
 			// end::ignored[]
 		}
 
@@ -97,7 +97,7 @@ class SlowApplicationTests {
 	@Nested
 	@ExtendWith(OutputCaptureExtension.class)
 	@Order(3)
-	@SpringBootTest(properties = { "some.property=42", "sleep.duration=100ms" })
+	@SpringBootTest(properties = { "some.property=42", "startup.delay=100ms" })
 	class PropertiesTests {
 
 		@BeforeAll
@@ -107,7 +107,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("🐌 Configuring slow bean...");
+			assertThat(output).contains("==> Configuring slow bean...");
 		}
 
 	}
@@ -120,7 +120,7 @@ class SlowApplicationTests {
 	@ExtendWith(OutputCaptureExtension.class)
 	@Order(4)
 	@SpringBootTest
-	@TestPropertySource(properties = { "some.property=42", "sleep.duration=100ms" })
+	@TestPropertySource(properties = { "some.property=42", "startup.delay=100ms" })
 	class PropertySourcesTests {
 
 		@BeforeAll
@@ -130,7 +130,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("🐌 Configuring slow bean...");
+			assertThat(output).contains("==> Configuring slow bean...");
 		}
 
 	}
@@ -141,7 +141,7 @@ class SlowApplicationTests {
 	@Nested
 	@ExtendWith(OutputCaptureExtension.class)
 	@Order(5)
-	@SpringBootTest(properties = "sleep.duration=100ms")
+	@SpringBootTest(properties = "startup.delay=100ms")
 	@ActiveProfiles("custom")
 	class ProfileTests {
 
@@ -152,7 +152,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("🐌 Configuring slow bean...");
+			assertThat(output).contains("==> Configuring slow bean...");
 		}
 
 	}
@@ -163,7 +163,7 @@ class SlowApplicationTests {
 	@Nested
 	@ExtendWith(OutputCaptureExtension.class)
 	@Order(6)
-	@SpringBootTest(classes = { SlowApplication.class, Gizmo.class }, properties = "sleep.duration=100ms")
+	@SpringBootTest(classes = { SlowApplication.class, Gizmo.class }, properties = "startup.delay=100ms")
 	class ClassesTests {
 
 		@BeforeAll
@@ -173,7 +173,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("🐌 Configuring slow bean...");
+			assertThat(output).contains("==> Configuring slow bean...");
 		}
 
 	}
@@ -184,7 +184,7 @@ class SlowApplicationTests {
 	@Nested
 	@ExtendWith(OutputCaptureExtension.class)
 	@Order(7)
-	@SpringBootTest(properties = "sleep.duration=100ms")
+	@SpringBootTest(properties = "startup.delay=100ms")
 	class NestedConfigurationTests {
 
 		@BeforeAll
@@ -194,7 +194,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("🐌 Configuring slow bean...");
+			assertThat(output).contains("==> Configuring slow bean...");
 		}
 
 		@TestConfiguration
@@ -212,7 +212,7 @@ class SlowApplicationTests {
 	@Nested
 	@ExtendWith(OutputCaptureExtension.class)
 	@Order(8)
-	@SpringBootTest(properties = "sleep.duration=100ms")
+	@SpringBootTest(properties = "startup.delay=100ms")
 	@AutoConfigureMockMvc
 	class ExtraAutoConfigurationTests {
 
@@ -223,7 +223,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("🐌 Configuring slow bean...");
+			assertThat(output).contains("==> Configuring slow bean...");
 		}
 
 	}
@@ -234,7 +234,7 @@ class SlowApplicationTests {
 	@Nested
 	@ExtendWith(OutputCaptureExtension.class)
 	@Order(9)
-	@SpringBootTest(properties = "sleep.duration=100ms")
+	@SpringBootTest(properties = "startup.delay=100ms")
 	class MockitoBeanTests {
 
 		@MockitoBean
@@ -247,7 +247,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("🐌 Configuring slow bean...");
+			assertThat(output).contains("==> Configuring slow bean...");
 		}
 
 	}
@@ -258,7 +258,7 @@ class SlowApplicationTests {
 	@Nested
 	@ExtendWith(OutputCaptureExtension.class)
 	@Order(10)
-	@SpringBootTest(properties = "sleep.duration=100ms")
+	@SpringBootTest(properties = "startup.delay=100ms")
 	class TestBeanTests {
 
 		@TestBean
@@ -271,7 +271,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("🐌 Configuring slow bean...");
+			assertThat(output).contains("==> Configuring slow bean...");
 		}
 
 		static SlowApplication.FastBean fastBean() {
@@ -293,7 +293,7 @@ class SlowApplicationTests {
 		@Autowired
 		SlowApplication.FastBean fastBean;
 
-		@Value("${sleep.duration:0ms}")
+		@Value("${startup.delay:0ms}")
 		Duration sleepDuration;
 
 		@BeforeAll
@@ -303,7 +303,7 @@ class SlowApplicationTests {
 
 		@Test
 		void doesNotLogAppStartup(CapturedOutput output) {
-			assertThat(output).doesNotContain("🐌 Configuring slow bean...");
+			assertThat(output).doesNotContain("==> Configuring slow bean...");
 		}
 
 	}

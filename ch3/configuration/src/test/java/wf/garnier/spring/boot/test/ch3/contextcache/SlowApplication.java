@@ -18,11 +18,11 @@ class SlowApplication {
 	//@formatter:off
 	@Bean
 	SlowBean slowBean(
-			@Value("${sleep.duration:3s}") Duration sleepDuration
-	) throws InterruptedException { // <1>
+			@Value("${startup.delay:3s}") Duration startupDelay  // <1>
+	) throws InterruptedException {
 	//@formatter:on
-		System.out.println("🐌 Configuring slow bean...");
-		Thread.sleep(sleepDuration);
+		System.out.println("==> Configuring slow bean...");
+		Thread.sleep(startupDelay);
 		return new SlowBean();
 		// tag::ignored[]
 	}
