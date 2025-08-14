@@ -3,6 +3,7 @@ package wf.garnier.spring.boot.test.ch2.weather;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch2.weather.city.City;
+import wf.garnier.spring.boot.test.ch2.weather.city.CityRepository;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherData;
 import wf.garnier.spring.boot.test.ch2.weather.openmeteo.WeatherService;
 import wf.garnier.spring.boot.test.ch2.weather.selection.CityWeather;
@@ -22,38 +23,29 @@ import static org.assertj.core.api.InstanceOfAssertFactories.list;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
-// tag::annotations[]
-@SpringBootTest // <1>
-@AutoConfigureMockMvc // <2>
-// end::annotations[]
-// tag::class[]
+@SpringBootTest
+@AutoConfigureMockMvc
 class ExampleTests {
 
-	// end::class[]
-	// tag::mock-mvc-tester[]
-	@Autowired // <2>
-	private MockMvcTester mvc; // <2>
+	@Autowired
+	private MockMvcTester mvc;
 
-	// end::mock-mvc-tester[]
+	@Autowired
+	private SelectionRepository selectionRepository;
 
-	// tag::selection-repository[]
-	@Autowired // <1>
-	private SelectionRepository selectionRepository; // <1>
-
-	// end::selection-repository[]
-
-	// tag::mockito-bean[]
 	@MockitoBean
-	private WeatherService weatherService; // <1>
+	private WeatherService weatherService;
 
-	// end::mockito-bean[]
+	@Autowired
+	private CityRepository cityRepository;
 
-	// tag::before-each[]
+	private City paris;
+
 	@BeforeEach
 	void clearRepository() {
 		selectionRepository.deleteAll();
+		paris = cityRepository.findByNameIgnoreCase("paris").get();
 	}
-	// end::before-each[]
 
 	@BeforeEach
 	void configureMocks() {
@@ -66,7 +58,6 @@ class ExampleTests {
 
 	}
 
-	// tag::first-test[]
 	@Test
 	void indexPageLoads() {
 		//@formatter:off
@@ -74,20 +65,18 @@ class ExampleTests {
 		// We do not need to set up anything in particular
 
 		// 2. Act
-		var response = mvc.get() // <3>
+		var response = mvc.get()
 				.uri("/")
 				.exchange();
 
 		// 3. Assert
-		assertThat(response) // <4>
+		assertThat(response)
 				.hasStatus(HttpStatus.OK)
 				.bodyText()
 				.contains("<h1>Weather App</h1>");
 		//@formatter:on
 	}
-	// end::first-test[]
 
-	// tag::selection-test[]
 	@Test
 	void addSelectedCity() {
 		//@formatter:off
@@ -97,13 +86,12 @@ class ExampleTests {
 				.exchange();
 		//@formatter:on
 
-		assertThat(selectionRepository.findAll()).hasSize(1) // <2>
+		assertThat(selectionRepository.findAll()).hasSize(1)
 			.first()
 			.extracting(Selection::getCity)
 			.extracting(City::getName)
 			.isEqualTo("Paris");
 	}
-	// end::selection-test[]
 
 	@Test
 	void addSelectedCityApi() {
@@ -111,7 +99,7 @@ class ExampleTests {
 		var response = mvc.post()
 				.uri("/api/city")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"cityName\": \"Paris\"}")
+				.content("{\"id\": \"%s\"}".formatted(paris.getId()))
 				.exchange();
 		//@formatter:on
 
@@ -152,7 +140,6 @@ class ExampleTests {
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
-	// tag::no-duplicates[]
 	@Test
 	void noDuplicates() {
 		selectCity("Bogotá");
@@ -160,23 +147,15 @@ class ExampleTests {
 
 		assertThat(selectionRepository.count()).isEqualTo(1);
 	}
-	// end::no-duplicates[]
 
-	// tag::weather-data[]
 	@Test
 	void getWeather() {
-		// tag::weather-data-mock[]
-		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())) // <2>
-			.thenReturn(new WeatherData(22.6, 0, 1)); // <2>
-		// end::weather-data-mock[]
+		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(22.6, 0, 1));
 		selectCity("Paris");
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
-		// tag::weather-data-mock[]
 		// ... assertions omitted for brevity ...
-		// end::weather-data-mock[]
-		// tag::weather-data-assertions[]
 		//@formatter:off
 		assertThat(response)
 				.hasStatus(HttpStatus.OK)
@@ -190,9 +169,7 @@ class ExampleTests {
 						]
 						""");
 		//@formatter:on
-		// end::weather-data-assertions[]
 	}
-	// end::weather-data[]
 
 	@Test
 	void getWeatherUsingJavaClass() {
@@ -246,14 +223,13 @@ class ExampleTests {
 		var response = mvc.delete()
 			.uri("/api/city")
 			.contentType(MediaType.APPLICATION_JSON)
-			.content("{\"cityName\": \"Paris\"}")
+			.content("{\"id\": \"%s\"}".formatted(paris.getId()))
 			.exchange();
 
 		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
-	// tag::select-city[]
 	private MvcTestResult selectCity(String cityName) {
 		//@formatter:off
 		return mvc.post()
@@ -262,9 +238,5 @@ class ExampleTests {
 			.exchange();
 		//@formatter:on
 	}
-	// end::select-city[]
-
-	// tag::class[]
 
 }
-// end::class[]
