@@ -40,12 +40,6 @@ public class WeatherController {
 		return selectionService.getWeatherInSelectedCities();
 	}
 
-	@PostMapping(value = "/city/add")
-	public String addCity(String city) {
-		selectionService.addCity(city);
-		return "redirect:/";
-	}
-
 	@PostMapping(value = "/city/add-by-id")
 	public String addCityById(long cityId) {
 		selectionService.addCityById(cityId);

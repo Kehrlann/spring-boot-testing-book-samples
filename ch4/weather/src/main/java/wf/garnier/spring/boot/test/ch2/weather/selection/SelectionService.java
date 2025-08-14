@@ -40,17 +40,6 @@ public class SelectionService {
 		return selectionRepository.findUnselectedCities();
 	}
 
-	public boolean addCity(String cityName) {
-		var city = cityRepository.findByNameIgnoreCase(cityName);
-		if (city.isPresent()) {
-			if (selectionRepository.findByCity(city.get()).isEmpty()) {
-				selectionRepository.save(new Selection(city.get()));
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public boolean addCityById(long cityId) {
 		var city = cityRepository.findById(cityId);
 		if (city.isPresent()) {
