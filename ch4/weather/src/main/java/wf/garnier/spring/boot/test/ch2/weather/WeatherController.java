@@ -53,9 +53,9 @@ public class WeatherController {
 	}
 
 	@PostMapping(value = "/api/city")
-	public ResponseEntity<Void> addCityApi(@RequestBody CityRequest req) {
+	public ResponseEntity<String> addCityApi(@RequestBody CityRequest req) {
 		return selectionService.addCityById(req.id()) ? ResponseEntity.status(HttpStatus.CREATED).build()
-				: ResponseEntity.badRequest().build();
+				: ResponseEntity.status(HttpStatus.CONFLICT).body("City already selected");
 	}
 
 	public record CityRequest(long id) {
