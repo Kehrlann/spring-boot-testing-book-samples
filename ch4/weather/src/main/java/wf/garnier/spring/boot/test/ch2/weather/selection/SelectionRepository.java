@@ -24,6 +24,17 @@ public interface SelectionRepository extends JpaRepository<Selection, Long> {
 			""")
 	List<City> findUnselectedCities();
 
+	// TODO: limit
+	@Query("""
+			SELECT c FROM City c
+			    WHERE NOT EXISTS (
+			        SELECT 1 FROM Selection s WHERE s.city.id = c.id
+			    )
+			AND c.name ILIKE %:name%
+			ORDER BY c.name ASC
+			""")
+	List<City> findUnselectedFilteredByCityNameIgnoringCase(String name);
+
 	List<Selection> findAllByOrderByCityNameAsc();
 
 }

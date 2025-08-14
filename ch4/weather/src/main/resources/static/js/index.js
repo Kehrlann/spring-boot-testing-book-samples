@@ -48,18 +48,51 @@ async function removeCity(cityId) {
     return response.ok;
 }
 
+async function searchCities(query) {
+    const response = await fetch(`/api/city?q=${encodeURIComponent(query)}`);
+    return await response.json();
+}
+
+let selectedCityId = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const addCityForm = document.querySelector('form#add-city');
+    const citySearch = document.getElementById('citySearch');
+    const cityResults = document.getElementById('cityResults');
+    
     addCityForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const formData = new FormData(addCityForm);
-        const cityId = parseInt(formData.get('cityId'));
-        if (cityId) {
-            const success = await addCity(cityId);
+        if (selectedCityId) {
+            const success = await addCity(selectedCityId);
             if (success) {
                 await refreshCities();
-                addCityForm.reset();
+                citySearch.value = '';
+                cityResults.innerHTML = '';
+                selectedCityId = null;
             }
+        }
+    });
+    
+    citySearch.addEventListener('input', async (e) => {
+        const query = e.target.value.trim();
+        if (query.length >= 2) {
+            const cities = await searchCities(query);
+            cityResults.innerHTML = cities.map(city => 
+                `<div class="autocomplete-item" data-id="${city.id}">
+                    ${city.name} (${city.country})
+                </div>`
+            ).join('');
+        } else {
+            cityResults.innerHTML = '';
+        }
+        selectedCityId = null;
+    });
+    
+    cityResults.addEventListener('click', (e) => {
+        if (e.target.classList.contains('autocomplete-item')) {
+            selectedCityId = parseInt(e.target.dataset.id);
+            citySearch.value = e.target.textContent;
+            cityResults.innerHTML = '';
         }
     });
     

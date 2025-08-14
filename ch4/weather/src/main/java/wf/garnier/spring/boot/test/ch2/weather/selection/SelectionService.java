@@ -40,6 +40,10 @@ public class SelectionService {
 		return selectionRepository.findUnselectedCities();
 	}
 
+	public List<City> searchUnselectedCities(String name) {
+		return selectionRepository.findUnselectedFilteredByCityNameIgnoringCase(name);
+	}
+
 	public boolean addCityById(long cityId) {
 		var city = cityRepository.findById(cityId);
 		if (city.isPresent()) {
