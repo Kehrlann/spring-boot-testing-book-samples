@@ -56,9 +56,4 @@ public class SelectionService {
 		selectionRepository.deleteByCityId(id);
 	}
 
-	@Transactional
-	public void unselectCityByName(String cityName) {
-		selectionRepository.deleteByCityName(cityName);
-	}
-
 }
