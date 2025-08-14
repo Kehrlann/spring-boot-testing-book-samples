@@ -20,6 +20,7 @@ public interface SelectionRepository extends JpaRepository<Selection, Long> {
 			    WHERE NOT EXISTS (
 			        SELECT 1 FROM Selection s WHERE s.city.id = c.id
 			    )
+			ORDER BY c.name ASC
 			""")
 	List<City> findUnselectedCities();
 
