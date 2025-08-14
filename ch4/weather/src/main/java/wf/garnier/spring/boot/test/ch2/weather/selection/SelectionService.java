@@ -51,6 +51,17 @@ public class SelectionService {
 		return false;
 	}
 
+	public boolean addCityById(long cityId) {
+		var city = cityRepository.findById(cityId);
+		if (city.isPresent()) {
+			if (selectionRepository.findByCity(city.get()).isEmpty()) {
+				selectionRepository.save(new Selection(city.get()));
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Transactional
 	public void unselectCityById(long id) {
 		selectionRepository.deleteByCityId(id);

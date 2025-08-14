@@ -13,14 +13,11 @@
     <!-- Add City Form -->
     <div class="card">
         <h5 class="card-title">Add a new city</h5>
-        <form action="/city/add" method="post" class="form">
-            <input list="city-list" id="city" name="city" aria-label="Select a city" autocomplete="off" data-1p-ignore
-                   data-lpignore="true" data-protonpass-ignore="true"/>
-
-            <datalist id="city-list">
-                <option th:each="city : ${cities}" th:value="${city.getName()}"
-                        th:label="${city.getName() + ' (' + city.getCountry() + ')'}"></option>
-            </datalist>
+        <form action="/city/add-by-id" method="post" class="form">
+            <select id="cityId" name="cityId" aria-label="Select a city">
+                <option th:each="city : ${cities}" th:value="${city.getId()}"
+                        th:text="${city.getName() + ' (' + city.getCountry() + ')'}"></option>
+            </select>
             <button type="submit" class="button button-primary">Add City</button>
         </form>
     </div>
@@ -28,7 +25,7 @@
     <!-- Cities List -->
     <div class="cities-grid">
         <div th:each="cityWeather : ${preferredCities}" class="card">
-            <h5 class="card-title" th:text="${cityWeather.cityName()}">City Name</h5>
+            <h5 class="card-title" th:text="${cityWeather.cityName() + ' (' + cityWeather.country() + ')'}"></h5>
             <p>
                 Temperature: <span th:text="${cityWeather.temperature()}">20</span>°C<br>
                 Wind Speed: <span th:text="${cityWeather.windSpeed()}">5</span> km/h<br>

@@ -46,13 +46,19 @@ public class WeatherController {
 		return "redirect:/";
 	}
 
+	@PostMapping(value = "/city/add-by-id")
+	public String addCityById(long cityId) {
+		selectionService.addCityById(cityId);
+		return "redirect:/";
+	}
+
 	@PostMapping(value = "/api/city")
 	public ResponseEntity<Void> addCityApi(@RequestBody CityRequest req) {
-		return selectionService.addCity(req.cityName()) ? ResponseEntity.status(HttpStatus.CREATED).build()
+		return selectionService.addCityById(req.id()) ? ResponseEntity.status(HttpStatus.CREATED).build()
 				: ResponseEntity.badRequest().build();
 	}
 
-	public record CityRequest(String cityName) {
+	public record CityRequest(long id) {
 	}
 
 	@PostMapping(value = "/city/delete/{id}")
@@ -64,7 +70,7 @@ public class WeatherController {
 	@DeleteMapping(value = "/api/city")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteCity(@RequestBody CityRequest req) {
-		selectionService.unselectCityByName(req.cityName());
+		selectionService.unselectCityById(req.id());
 	}
 
 }
