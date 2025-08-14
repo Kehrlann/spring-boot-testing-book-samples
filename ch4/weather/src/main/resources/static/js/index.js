@@ -12,7 +12,7 @@ function renderCity(cityWeather) {
                 Wind Speed: <span>${cityWeather.windSpeed}</span> km/h<br>
                 Weather: <span>${cityWeather.weather}</span>
             </p>
-            <form action="/city/delete" method="post">
+            <form data-role="delete-city">
                 <input type="hidden" name="cityId" value="${cityWeather.cityId}">
                 <button type="submit" class="button button-danger button-sm">Remove</button>
             </form>
@@ -49,7 +49,7 @@ async function removeCity(cityId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const addCityForm = document.querySelector('form[action="/city/add-by-id"]');
+    const addCityForm = document.querySelector('form#add-city');
     addCityForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(addCityForm);
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const citiesGrid = document.querySelector('.cities-grid');
     citiesGrid.addEventListener('submit', async (e) => {
-        if (e.target.matches('form[action="/city/delete"]')) {
+        if (e.target.matches('form[data-role="delete-city"]')) {
             e.preventDefault();
             const formData = new FormData(e.target);
             const cityId = parseInt(formData.get('cityId'));

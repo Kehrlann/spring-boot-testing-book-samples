@@ -14,7 +14,7 @@
     <!-- Add City Form -->
     <div class="card">
         <h5 class="card-title">Add a new city</h5>
-        <form action="/city/add-by-id" method="post" class="form">
+        <form class="form" id="add-city">
             <select id="cityId" name="cityId" aria-label="Select a city">
                 <option th:each="city : ${cities}" th:value="${city.getId()}"
                         th:text="${city.getName() + ' (' + city.getCountry() + ')'}"></option>
@@ -32,7 +32,8 @@
                 Wind Speed: <span th:text="${cityWeather.windSpeed()}">5</span> km/h<br>
                 Weather: <span th:text="${cityWeather.weather()}">Sunny</span>
             </p>
-            <form th:action="'/city/delete/' + ${cityWeather.cityId()}" method="post">
+            <form data-role="delete-city">
+                <input type="hidden" name="cityId" th:value="${cityWeather.cityId()}">
                 <button type="submit" class="button button-danger button-sm">Remove</button>
             </form>
         </div>
