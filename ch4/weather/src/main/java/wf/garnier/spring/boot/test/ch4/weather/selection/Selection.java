@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch2.weather.selection;
+package wf.garnier.spring.boot.test.ch4.weather.selection;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import wf.garnier.spring.boot.test.ch2.weather.city.City;
+import wf.garnier.spring.boot.test.ch4.weather.city.City;
 
 @Entity
 @Table(name = "preferred_city")

@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch2.weather;
+package wf.garnier.spring.boot.test.ch4.weather;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

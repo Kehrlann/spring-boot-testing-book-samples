@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch2.weather.openmeteo;
+package wf.garnier.spring.boot.test.ch4.weather.openmeteo;
 
 import java.util.Random;
 
