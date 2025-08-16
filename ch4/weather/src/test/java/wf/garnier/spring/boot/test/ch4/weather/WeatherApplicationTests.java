@@ -87,7 +87,29 @@ class WeatherApplicationTests {
 				{ "id": %s }
 				""".formatted(paris.getId())).exchange().assertThat().hasStatus(HttpStatus.CONFLICT);
 
-        assertThat(selectionRepository.findAll()).hasSize(1);
+		assertThat(selectionRepository.count()).isEqualTo(1);
+	}
+
+	@Test
+	void unselectCity() {
+		selectCity("Paris");
+
+		var response = mvc.delete().uri("/api/city").contentType(MediaType.APPLICATION_JSON).content("""
+				{ "id": %s }
+				""".formatted(paris.getId())).exchange();
+
+		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
+		assertThat(selectionRepository.count()).isEqualTo(0);
+	}
+
+	@Test
+	void unselectMissingCity() {
+		var response = mvc.delete().uri("/api/city").contentType(MediaType.APPLICATION_JSON).content("""
+				{ "id": %s }
+				""".formatted(paris.getId())).exchange();
+
+		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
+		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
 	private void selectCity(String name) {
