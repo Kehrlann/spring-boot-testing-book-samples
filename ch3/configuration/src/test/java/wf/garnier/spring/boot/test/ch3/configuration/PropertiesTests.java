@@ -75,7 +75,12 @@ class PropertiesTests {
 	@Nested
 	// tag::property-source[]
 	@SpringBootTest
-	@TestPropertySource(locations = "classpath:/custom-values.properties", encoding = "UTF-8")
+	//@formatter:off
+	@TestPropertySource(
+			locations = "classpath:/custom-values.properties",
+			encoding = "UTF-8"
+	)
+	//@formatter:on
 	class PropertySourceTests {
 
 		// ... your test code ...
