@@ -112,6 +112,33 @@ class WeatherApplicationTests {
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
+	@Test
+	void getWeather() {
+		selectCity("Paris");
+
+		var response = mvc.get().uri("/api/weather").exchange();
+
+		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isLenientlyEqualTo("""
+				[
+				  {
+				    "cityName": "Paris",
+				    "country": "France",
+				    "cityId": %s,
+				    "weather": "Clear sky",
+				    "temperature": 20.0,
+				    "windSpeed": 0.0
+				  }
+				]
+				""".formatted(paris.getId()));
+	}
+
+	@Test
+	void getWeatherNoCity() {
+		var response = mvc.get().uri("/api/weather").exchange();
+
+		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isEqualTo("[]");
+	}
+
 	private void selectCity(String name) {
 		var city = this.cityRepository.findByNameIgnoreCase(name).get();
 		selectionRepository.save(new Selection(city));
