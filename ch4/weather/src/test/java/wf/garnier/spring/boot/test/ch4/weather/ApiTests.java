@@ -170,6 +170,31 @@ class ApiTests {
 		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isEqualTo("[]");
 	}
 
+	@Test
+	void cityAutocomplete() {
+		var response = mvc.get().uri("/api/city").queryParam("q", "quito").exchange();
+
+		assertThat(response).hasStatus(HttpStatus.OK)
+			.bodyJson()
+			.extractingPath("$.[*].name")
+			.asArray()
+			.containsOnly("Quito", "Iquitos");
+	}
+
+	@Test
+	void cityAutocompleteEmpty() {
+		var response = mvc.get().uri("/api/city").queryParam("q", "").exchange();
+
+		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().extractingPath("$.length()").isEqualTo(4999);
+	}
+
+	@Test
+	void cityAutocompleteNoMatch() {
+		var response = mvc.get().uri("/api/city").queryParam("q", "r'lyeh").exchange();
+
+		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().extractingPath("$.length()").isEqualTo(0);
+	}
+
 	private City selectCity(String name) {
 		var city = this.cityRepository.findByNameIgnoreCase(name).get();
 		selectionRepository.save(new Selection(city));
