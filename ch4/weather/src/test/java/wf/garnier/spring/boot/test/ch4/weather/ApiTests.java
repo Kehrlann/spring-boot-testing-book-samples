@@ -133,15 +133,47 @@ class ApiTests {
 	}
 
 	@Test
+	void getWeatherMultipleCities() {
+		var lagos = selectCity("Lagos");
+		var shenzhen = selectCity("Shenzhen");
+		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(25, 0, 0))
+			.thenReturn(new WeatherData(17, 5, 1));
+
+		var response = mvc.get().uri("/api/weather").exchange();
+
+		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isLenientlyEqualTo("""
+				[
+				  {
+				    "cityName": "Lagos",
+				    "country": "Nigeria",
+				    "cityId": %s,
+				    "weather": "Clear sky",
+				    "temperature": 25.0,
+				    "windSpeed": 0.0
+				  },
+				  {
+				    "cityName": "Shenzhen",
+				    "country": "China",
+				    "cityId": %s,
+				    "weather": "Partly cloudy",
+				    "temperature": 17.0,
+				    "windSpeed": 5.0
+				  }
+				]
+				""".formatted(lagos.getId(), shenzhen.getId()));
+	}
+
+	@Test
 	void getWeatherNoCity() {
 		var response = mvc.get().uri("/api/weather").exchange();
 
 		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isEqualTo("[]");
 	}
 
-	private void selectCity(String name) {
+	private City selectCity(String name) {
 		var city = this.cityRepository.findByNameIgnoreCase(name).get();
 		selectionRepository.save(new Selection(city));
+		return city;
 	}
 
 }
