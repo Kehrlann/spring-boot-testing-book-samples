@@ -77,7 +77,6 @@ input:focus {
 
 .button-primary:hover {
     background: #0b5ed7;
-    transform: translateY(-1px);
 }
 
 .button-danger {
@@ -87,7 +86,6 @@ input:focus {
 
 .button-danger:hover {
     background: #bb2d3b;
-    transform: translateY(-1px);
 }
 
 .button-sm {

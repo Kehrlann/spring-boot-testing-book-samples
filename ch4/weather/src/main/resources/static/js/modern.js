@@ -3,8 +3,20 @@ async function loadWeather() {
   return await response.json();
 }
 
-function renderCity(cityWeather) {
-  return `
+function renderCity(cityWeather, isCompact = false) {
+  if (isCompact) {
+    return `
+        <div class="card card-compact" style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
+            <span style="font-weight: bold;">${cityWeather.cityName} (${cityWeather.country})</span>
+            <span>${cityWeather.temperature}°C</span>
+            <form data-role="delete-city" style="margin: 0;">
+                <input type="hidden" name="cityId" value="${cityWeather.cityId}">
+                <button type="submit" class="button button-danger button-sm">🗑️</button>
+            </form>
+        </div>
+    `;
+  } else {
+    return `
         <div class="card">
             <h5 class="card-title">${cityWeather.cityName} (${cityWeather.country})</h5>
             <p>
@@ -18,12 +30,37 @@ function renderCity(cityWeather) {
             </form>
         </div>
     `;
+  }
+}
+
+let isCompactMode = false;
+let currentCities = null;
+
+function getDisplayModeFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const display = urlParams.get('display');
+  return display === 'compact';
+}
+
+function updateURLWithDisplayMode(mode) {
+  const url = new URL(window.location);
+  url.searchParams.set('display', mode);
+  window.history.replaceState({}, '', url);
 }
 
 async function refreshCities() {
   const cities = await loadWeather();
-  const citiesGrid = document.querySelector(".cities-grid");
-  citiesGrid.innerHTML = cities.map(renderCity).join("\n");
+  currentCities = cities;
+  await rerenderCities();
+}
+
+async function rerenderCities() {
+  if (currentCities != null) {
+    const citiesGrid = document.querySelector(".cities-grid");
+    citiesGrid.innerHTML = currentCities.map(city => renderCity(city, isCompactMode)).join("\n");
+  } else {
+    await refreshCities();
+  }
 }
 
 async function addCity(cityId) {
@@ -192,9 +229,13 @@ class AutocompleteDropdown {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const citySearch = document.getElementById("citySearch");
   const cityResults = document.getElementById("cityResults");
+
+  // Initialize display mode from URL
+  isCompactMode = getDisplayModeFromURL();
+  await rerenderCities();
 
   // Initialize autocomplete dropdown
   const autocomplete = new AutocompleteDropdown(
@@ -222,5 +263,34 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
+  });
+
+  // Initialize display toggle buttons
+  const fullButton = document.getElementById("button-display-full");
+  const compactButton = document.getElementById("button-display-compact");
+
+  // Set initial button states based on URL
+  if (isCompactMode) {
+    compactButton.classList.add("button-primary");
+    fullButton.classList.remove("button-primary");
+  } else {
+    fullButton.classList.add("button-primary");
+    compactButton.classList.remove("button-primary");
+  }
+
+  fullButton.addEventListener("click", async () => {
+    isCompactMode = false;
+    fullButton.classList.add("button-primary");
+    compactButton.classList.remove("button-primary");
+    updateURLWithDisplayMode('full');
+    await rerenderCities();
+  });
+
+  compactButton.addEventListener("click", async () => {
+    isCompactMode = true;
+    compactButton.classList.add("button-primary");
+    fullButton.classList.remove("button-primary");
+    updateURLWithDisplayMode('compact');
+    await rerenderCities();
   });
 });
