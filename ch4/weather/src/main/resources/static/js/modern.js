@@ -11,7 +11,7 @@ function renderCity(cityWeather, isCompact = false) {
             <span>${cityWeather.temperature}°C</span>
             <form data-role="delete-city" style="margin: 0;">
                 <input type="hidden" name="cityId" value="${cityWeather.cityId}">
-                <button type="submit" class="button button-danger button-sm">🗑️</button>
+                <button type="submit" class="button button-danger button-sm">&#x2718;</button>
             </form>
         </div>
     `;
