@@ -1,10 +1,37 @@
+var isCompactMode = false;
+var currentCities = null;
+
+function getDisplayModeFromURL() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var display = urlParams.get('display');
+  return display === 'compact';
+}
+
+function updateURLWithDisplayMode(mode) {
+  var url = new URL(window.location);
+  url.searchParams.set('display', mode);
+  window.history.replaceState({}, '', url);
+}
+
 function loadWeather() {
   return fetch("/api/weather")
     .then(response => response.json());
 }
 
-function renderCity(cityWeather) {
-  return `
+function renderCity(cityWeather, isCompact) {
+  if (isCompact) {
+    return `
+        <div class="card card-compact" style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
+            <span style="font-weight: bold;">${cityWeather.cityName} (${cityWeather.country})</span>
+            <span>${cityWeather.temperature}°C</span>
+            <form data-role="delete-city" style="margin: 0;">
+                <input type="hidden" name="cityId" value="${cityWeather.cityId}">
+                <button type="submit" class="button button-danger button-sm">&#x2718;</button>
+            </form>
+        </div>
+    `;
+  } else {
+    return `
         <div class="card">
             <h5 class="card-title">${cityWeather.cityName} (${cityWeather.country})</h5>
             <p>
@@ -18,14 +45,25 @@ function renderCity(cityWeather) {
             </form>
         </div>
     `;
+  }
 }
 
 function refreshCities() {
   return loadWeather()
     .then(cities => {
-      const citiesGrid = document.querySelector(".cities-grid");
-      citiesGrid.innerHTML = cities.map(renderCity).join("\n");
+      currentCities = cities;
+      return rerenderCities();
     });
+}
+
+function rerenderCities() {
+  if (currentCities !== null) {
+    var citiesGrid = document.querySelector(".cities-grid");
+    citiesGrid.innerHTML = currentCities.map(city => renderCity(city, isCompactMode)).join("\n");
+    return Promise.resolve();
+  } else {
+    return refreshCities();
+  }
 }
 
 function addCity(cityId) {
@@ -194,39 +232,72 @@ AutocompleteDropdown.prototype.reset = function() {
   this.hide();
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  const citySearch = document.getElementById("citySearch");
-  const cityResults = document.getElementById("cityResults");
+document.addEventListener("DOMContentLoaded", function() {
+  var citySearch = document.getElementById("citySearch");
+  var cityResults = document.getElementById("cityResults");
+
+  // Initialize display mode from URL
+  isCompactMode = getDisplayModeFromURL();
+  rerenderCities();
 
   // Initialize autocomplete dropdown
-  const autocomplete = new AutocompleteDropdown(
+  var autocomplete = new AutocompleteDropdown(
     citySearch,
     cityResults,
     searchCities,
-    (id) => {
+    function(id) {
       return addCity(id)
-        .then(success => {
+        .then(function(success) {
           if (success) {
             return refreshCities();
           }
         });
-    },
+    }
   );
 
-  const citiesGrid = document.querySelector(".cities-grid");
-  citiesGrid.addEventListener("submit", (e) => {
+  var citiesGrid = document.querySelector(".cities-grid");
+  citiesGrid.addEventListener("submit", function(e) {
     if (e.target.matches('form[data-role="delete-city"]')) {
       e.preventDefault();
-      const formData = new FormData(e.target);
-      const cityId = parseInt(formData.get("cityId"));
+      var formData = new FormData(e.target);
+      var cityId = parseInt(formData.get("cityId"));
       if (cityId) {
         removeCity(cityId)
-          .then(success => {
+          .then(function(success) {
             if (success) {
               return refreshCities();
             }
           });
       }
     }
+  });
+
+  // Initialize display toggle buttons
+  var fullButton = document.getElementById("button-display-full");
+  var compactButton = document.getElementById("button-display-compact");
+
+  // Set initial button states based on URL
+  if (isCompactMode) {
+    compactButton.classList.add("button-primary");
+    fullButton.classList.remove("button-primary");
+  } else {
+    fullButton.classList.add("button-primary");
+    compactButton.classList.remove("button-primary");
+  }
+
+  fullButton.addEventListener("click", function() {
+    isCompactMode = false;
+    fullButton.classList.add("button-primary");
+    compactButton.classList.remove("button-primary");
+    updateURLWithDisplayMode('full');
+    rerenderCities();
+  });
+
+  compactButton.addEventListener("click", function() {
+    isCompactMode = true;
+    compactButton.classList.add("button-primary");
+    fullButton.classList.remove("button-primary");
+    updateURLWithDisplayMode('compact');
+    rerenderCities();
   });
 });
