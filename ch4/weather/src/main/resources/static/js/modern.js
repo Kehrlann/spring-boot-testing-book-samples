@@ -38,14 +38,14 @@ let currentCities = null;
 
 function getDisplayModeFromURL() {
   const urlParams = new URLSearchParams(window.location.search);
-  const display = urlParams.get('display');
-  return display === 'compact';
+  const display = urlParams.get("display");
+  return display === "compact";
 }
 
 function updateURLWithDisplayMode(mode) {
   const url = new URL(window.location);
-  url.searchParams.set('display', mode);
-  window.history.replaceState({}, '', url);
+  url.searchParams.set("display", mode);
+  window.history.replaceState({}, "", url);
 }
 
 async function refreshCities() {
@@ -57,7 +57,9 @@ async function refreshCities() {
 async function rerenderCities() {
   if (currentCities != null) {
     const citiesGrid = document.querySelector(".cities-grid");
-    citiesGrid.innerHTML = currentCities.map(city => renderCity(city, isCompactMode)).join("\n");
+    citiesGrid.innerHTML = currentCities
+      .map((city) => renderCity(city, isCompactMode))
+      .join("\n");
   } else {
     await refreshCities();
   }
@@ -282,7 +284,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     isCompactMode = false;
     fullButton.classList.add("button-primary");
     compactButton.classList.remove("button-primary");
-    updateURLWithDisplayMode('full');
+    updateURLWithDisplayMode("full");
     await rerenderCities();
   });
 
@@ -290,7 +292,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     isCompactMode = true;
     compactButton.classList.add("button-primary");
     fullButton.classList.remove("button-primary");
-    updateURLWithDisplayMode('compact');
+    updateURLWithDisplayMode("compact");
     await rerenderCities();
   });
 });
