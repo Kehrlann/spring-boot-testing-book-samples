@@ -152,6 +152,17 @@ input:focus {
     border-color: #0d6efd;
 }
 
+.compact-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .cities-grid {
