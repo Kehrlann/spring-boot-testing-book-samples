@@ -136,7 +136,8 @@ AutocompleteDropdown.prototype.handleInput = function (e) {
                   </div>`,
         )
         .join("");
-      this.selectedIndex = -1;
+      this.selectedIndex = cities.length === 1 ? 0 : -1;
+      this.updateSelection();
     });
   } else {
     this.hide();
@@ -152,7 +153,6 @@ AutocompleteDropdown.prototype.handleKeydown = function (e) {
     case 40: // arrow down
       e.preventDefault();
       this.selectedIndex = Math.min(this.selectedIndex + 1, items.length - 1);
-
       this.updateSelection();
       break;
     case 38: // arrow up

@@ -131,7 +131,8 @@ class AutocompleteDropdown {
                 </div>`,
         )
         .join("");
-      this.selectedIndex = -1;
+      this.selectedIndex = cities.length === 1 ? 0 : -1;
+      this.updateSelection();
     } else {
       this.hide();
     }

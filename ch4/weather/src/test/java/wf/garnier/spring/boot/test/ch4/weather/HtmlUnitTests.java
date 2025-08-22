@@ -5,6 +5,7 @@ import org.htmlunit.ScriptException;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.javascript.host.event.KeyboardEvent;
@@ -182,16 +183,13 @@ class HtmlUnitTests {
 	}
 
 	@Test
-	void addCity() throws IOException {
+	void addCityWithKeyboard() throws IOException {
 		HtmlPage page = webClient.getPage("/");
 
 		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
 		citySearchInput.type("Paris");
 		webClient.waitForBackgroundJavaScript(1000); // wait for autocomplete results
 
-		assertThat(page.querySelector("#cityResults").getTextContent()).contains("Paris (France)");
-
-		citySearchInput.type(KeyboardEvent.DOM_VK_DOWN); // "Down arrow"
 		citySearchInput.type(KeyboardEvent.DOM_VK_RETURN); // "Enter"
 
 		webClient.waitForBackgroundJavaScript(1000); // wait for new cities data
@@ -199,6 +197,46 @@ class HtmlUnitTests {
 		var cities = page.querySelectorAll(".cities-grid .card");
 
 		assertThat(cities).hasSize(1).first().extracting(DomNode::getTextContent).asString().contains("Paris (France)");
+	}
+
+	@Test
+	void addCityWithMouse() throws IOException {
+		HtmlPage page = webClient.getPage("/");
+
+		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
+		citySearchInput.type("Paris");
+		webClient.waitForBackgroundJavaScript(1000); // wait for autocomplete results
+
+		page.<HtmlElement>querySelector(".autocomplete-item").click();
+
+		webClient.waitForBackgroundJavaScript(1000); // wait for new cities data
+
+		var cities = page.querySelectorAll(".cities-grid .card");
+
+		assertThat(cities).hasSize(1).first().extracting(DomNode::getTextContent).asString().contains("Paris (France)");
+	}
+
+	@Test
+	void addCityWithKeyboardMultipleChoices() throws IOException {
+		HtmlPage page = webClient.getPage("/");
+
+		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
+		citySearchInput.type("Ank");
+		webClient.waitForBackgroundJavaScript(1000); // wait for autocomplete results
+
+		citySearchInput.type(KeyboardEvent.DOM_VK_DOWN); // "Down arrow"
+		citySearchInput.type(KeyboardEvent.DOM_VK_DOWN); // "Down arrow"
+		citySearchInput.type(KeyboardEvent.DOM_VK_RETURN); // "Enter"
+
+		webClient.waitForBackgroundJavaScript(1000); // wait for new cities data
+
+		var cities = page.querySelectorAll(".cities-grid .card");
+
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(DomNode::getTextContent)
+			.asString()
+			.contains("Ankara (Turkey)");
 	}
 
 	@Test
