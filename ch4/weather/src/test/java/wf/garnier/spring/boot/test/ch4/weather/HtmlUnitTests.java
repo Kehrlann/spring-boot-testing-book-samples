@@ -4,7 +4,9 @@ import java.io.IOException;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
+import org.htmlunit.javascript.host.event.KeyboardEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -157,6 +159,44 @@ class HtmlUnitTests {
 		var cities = page.querySelectorAll(".cities-grid .card");
 
 		assertThat(cities).isEmpty();
+	}
+
+	@Test
+	void autocomplete() throws IOException {
+		HtmlPage page = webClient.getPage("/");
+
+		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
+		citySearchInput.type("jak");
+		webClient.waitForBackgroundJavaScript(1000); // wait for autocomplete results
+
+		var autocompleteResults = page.querySelector("#cityResults")
+			.getChildNodes()
+			.stream()
+			.map(DomNode::getTextContent)
+			.map(String::trim);
+
+		assertThat(autocompleteResults).containsExactlyInAnyOrder("Djakotomé (Benin)", "Jakarta (Indonesia)",
+				"Kamirenjaku (Japan)");
+	}
+
+	@Test
+	void addCity() throws IOException {
+		HtmlPage page = webClient.getPage("/");
+
+		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
+		citySearchInput.type("Paris");
+		webClient.waitForBackgroundJavaScript(1000); // wait for autocomplete results
+
+		assertThat(page.querySelector("#cityResults").getTextContent()).contains("Paris (France)");
+
+		citySearchInput.type(KeyboardEvent.DOM_VK_DOWN); // "Down arrow"
+		citySearchInput.type(KeyboardEvent.DOM_VK_RETURN); // "Enter"
+
+		webClient.waitForBackgroundJavaScript(1000); // wait for new cities data
+
+		var cities = page.querySelectorAll(".cities-grid .card");
+
+		assertThat(cities).hasSize(1).first().extracting(DomNode::getTextContent).asString().contains("Paris (France)");
 	}
 
 	private City selectCity(String name) {

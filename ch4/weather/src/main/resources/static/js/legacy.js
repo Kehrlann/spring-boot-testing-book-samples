@@ -148,24 +148,25 @@ AutocompleteDropdown.prototype.handleKeydown = function (e) {
 
   if (items.length === 0) return;
 
-  switch (e.key) {
-    case "ArrowDown":
+  switch (e.keyCode) {
+    case 40: // arrow down
       e.preventDefault();
       this.selectedIndex = Math.min(this.selectedIndex + 1, items.length - 1);
+
       this.updateSelection();
       break;
-    case "ArrowUp":
+    case 38: // arrow up
       e.preventDefault();
       this.selectedIndex = Math.max(this.selectedIndex - 1, 0);
       this.updateSelection();
       break;
-    case "Enter":
+    case 13: // enter
       e.preventDefault();
       if (this.selectedIndex >= 0 && items[this.selectedIndex]) {
         this.selectItem(items[this.selectedIndex]);
       }
       break;
-    case "Escape":
+    case 27: // escape
       e.preventDefault();
       this.reset();
       break;
