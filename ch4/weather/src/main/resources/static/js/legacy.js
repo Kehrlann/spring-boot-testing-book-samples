@@ -30,7 +30,7 @@ function renderCity(cityWeather, isCompact) {
           </div>
           <div class="full-display  ${isCompact ? "hidden" : ""}">
             <h5 class="card-title">${cityWeather.cityName} (${cityWeather.country})</h5>
-            <p>
+            <p class="card-content">
                 Temperature: <span>${cityWeather.temperature}</span>°C<br>
                 Wind Speed: <span>${cityWeather.windSpeed}</span> km/h<br>
                 Weather: <span>${cityWeather.weather}</span>

@@ -61,6 +61,11 @@
             <scope>test</scope>
         </dependency>
         <!-- end::ignored[] -->
+        <dependency>
+            <groupId>org.htmlunit</groupId>
+            <artifactId>htmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <!-- end::dependencies[] -->
 

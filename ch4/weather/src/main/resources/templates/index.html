@@ -30,7 +30,8 @@
     <div class="cities-grid">
         <div th:each="cityWeather : ${preferredCities}" class="card">
             <div class="compact-display hidden">
-                <span style="font-weight: bold;" th:text="${cityWeather.cityName() + ' (' + cityWeather.country() + ')'}"></span>
+                <span style="font-weight: bold;"
+                      th:text="${cityWeather.cityName() + ' (' + cityWeather.country() + ')'}"></span>
                 <span th:text="${cityWeather.temperature}">°C</span>
                 <form data-role="delete-city-small" style="margin: 0;">
                     <input type="hidden" name="cityId" th:value="${cityWeather.cityId}">
@@ -39,7 +40,7 @@
             </div>
             <div class="full-display hidden">
                 <h5 class="card-title" th:text="${cityWeather.cityName() + ' (' + cityWeather.country() + ')'}"></h5>
-                <p>
+                <p class="card-content">
                     Temperature: <span th:text="${cityWeather.temperature()}">20</span>°C<br>
                     Wind Speed: <span th:text="${cityWeather.windSpeed()}">5</span> km/h<br>
                     Weather: <span th:text="${cityWeather.weather()}">Sunny</span>
