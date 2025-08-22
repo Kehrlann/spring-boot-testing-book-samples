@@ -16,22 +16,20 @@
     <properties>
         <java.version>21</java.version>
     </properties>
-    <!-- tag::dependencies[] -->
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId> <!--1-->
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId> <!--2-->
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId> <!--3-->
+            <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- tag::ignored[] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -47,14 +45,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- end::ignored[] -->
         <dependency>
             <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <!-- end::dependencies[] -->
 
     <build>
         <plugins>
