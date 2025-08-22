@@ -1,6 +1,7 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
 import java.io.IOException;
+import org.htmlunit.ScriptException;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlButton;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
@@ -197,6 +199,13 @@ class HtmlUnitTests {
 		var cities = page.querySelectorAll(".cities-grid .card");
 
 		assertThat(cities).hasSize(1).first().extracting(DomNode::getTextContent).asString().contains("Paris (France)");
+	}
+
+	@Test
+	void cannotLoadModernnJavascript() {
+		assertThatThrownBy(() -> webClient.getPage("/?mode=modern")).isInstanceOf(ScriptException.class)
+			.message()
+			.contains("missing ; before statement");
 	}
 
 	private City selectCity(String name) {
