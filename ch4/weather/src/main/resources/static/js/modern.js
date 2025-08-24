@@ -4,22 +4,19 @@ async function loadWeather() {
 }
 
 function renderCity(cityWeather, isCompact = false) {
-  if (isCompact) {
-    return `
-        <div class="card card-compact" style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
+  return `
+        <div class="card">
+          <div class="compact-display ${isCompact ? "" : "hidden"}">
             <span style="font-weight: bold;">${cityWeather.cityName} (${cityWeather.country})</span>
             <span>${cityWeather.temperature}°C</span>
             <form data-role="delete-city" style="margin: 0;">
-                <input type="hidden" name="cityId" value="${cityWeather.cityId}">
-                <button type="submit" class="button button-danger button-sm">&#x2718;</button>
+              <input type="hidden" name="cityId" value="${cityWeather.cityId}">
+              <button type="submit" class="button button-danger button-sm">&#x2718;</button>
             </form>
-        </div>
-    `;
-  } else {
-    return `
-        <div class="card">
+          </div>
+          <div class="full-display  ${isCompact ? "hidden" : ""}">
             <h5 class="card-title">${cityWeather.cityName} (${cityWeather.country})</h5>
-            <p>
+            <p class="card-content">
                 Temperature: <span>${cityWeather.temperature}</span>°C<br>
                 Wind Speed: <span>${cityWeather.windSpeed}</span> km/h<br>
                 Weather: <span>${cityWeather.weather}</span>
@@ -28,9 +25,9 @@ function renderCity(cityWeather, isCompact = false) {
                 <input type="hidden" name="cityId" value="${cityWeather.cityId}">
                 <button type="submit" class="button button-danger button-sm">Remove</button>
             </form>
+          </div>
         </div>
     `;
-  }
 }
 
 let isCompactMode = false;
@@ -63,6 +60,24 @@ async function rerenderCities() {
   } else {
     await refreshCities();
   }
+}
+
+function setDisplayMode(compact) {
+  isCompactMode = compact;
+  document.querySelectorAll(".card > .full-display").forEach((c) => {
+    if (!compact) {
+      c.classList.remove("hidden");
+    } else if (!c.classList.contains("hidden")) {
+      c.classList.add("hidden");
+    }
+  });
+  document.querySelectorAll(".card > .compact-display").forEach((c) => {
+    if (compact) {
+      c.classList.remove("hidden");
+    } else if (!c.classList.contains("hidden")) {
+      c.classList.add("hidden");
+    }
+  });
 }
 
 async function addCity(cityId) {
@@ -104,6 +119,7 @@ class AutocompleteDropdown {
     this.searchFunction = searchFunction;
     this.selectedIndex = -1;
     this.selectCityFunction = selectCityFunction;
+    this.currentSearchRequestId = 0;
     this.setupEventListeners();
   }
 
@@ -122,7 +138,11 @@ class AutocompleteDropdown {
   async handleInput(e) {
     const query = e.target.value.trim();
     if (query.length >= 2) {
+      const requestId = ++this.currentSearchRequestId;
       const cities = await this.searchFunction(query);
+      if (requestId !== this.currentSearchRequestId) {
+        return;
+      }
       this.results.innerHTML = cities
         .map(
           (city) =>
@@ -238,7 +258,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Initialize display mode from URL
   isCompactMode = getDisplayModeFromURL();
-  await rerenderCities();
+  setDisplayMode(isCompactMode);
 
   // Initialize autocomplete dropdown
   const autocomplete = new AutocompleteDropdown(
@@ -281,19 +301,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     compactButton.classList.remove("button-primary");
   }
 
-  fullButton.addEventListener("click", async () => {
-    isCompactMode = false;
+  fullButton.addEventListener("click", () => {
     fullButton.classList.add("button-primary");
     compactButton.classList.remove("button-primary");
     updateURLWithDisplayMode("full");
-    await rerenderCities();
+    setDisplayMode(false);
   });
 
-  compactButton.addEventListener("click", async () => {
-    isCompactMode = true;
+  compactButton.addEventListener("click", () => {
     compactButton.classList.add("button-primary");
     fullButton.classList.remove("button-primary");
     updateURLWithDisplayMode("compact");
-    await rerenderCities();
+    setDisplayMode(true);
   });
 });

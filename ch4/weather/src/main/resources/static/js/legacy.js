@@ -109,6 +109,7 @@ function AutocompleteDropdown(
   this.searchFunction = searchFunction;
   this.selectedIndex = -1;
   this.selectCityFunction = selectCityFunction;
+  this.currentSearchRequestId = 0;
   this.setupEventListeners();
 }
 
@@ -127,7 +128,11 @@ AutocompleteDropdown.prototype.setupEventListeners = function () {
 AutocompleteDropdown.prototype.handleInput = function (e) {
   const query = e.target.value.trim();
   if (query.length >= 2) {
+    const requestId = ++this.currentSearchRequestId;
     this.searchFunction(query).then((cities) => {
+      if (requestId !== this.currentSearchRequestId) {
+        return;
+      }
       this.results.innerHTML = cities
         .map(
           (city) =>

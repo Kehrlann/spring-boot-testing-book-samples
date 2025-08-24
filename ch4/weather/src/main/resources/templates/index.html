@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
     <link href="/css/styles.css" rel="stylesheet">
-    <script src="/js/legacy.js" th:if="${!modern}"></script>
-    <script src="/js/modern.js" th:if="${modern}"></script>
+    <script src="/js/legacy.js" th:if="${!modern}" defer></script>
+    <script src="/js/modern.js" th:if="${modern}" defer></script>
 </head>
 <body>
 <div class="container">
