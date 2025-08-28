@@ -118,8 +118,7 @@ class ApiTests {
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
-		assertThat(response).hasStatus(HttpStatus.OK)
-                .bodyJson().isLenientlyEqualTo("""
+		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isLenientlyEqualTo("""
 				[
 				  {
 				    "cityName": "Paris",

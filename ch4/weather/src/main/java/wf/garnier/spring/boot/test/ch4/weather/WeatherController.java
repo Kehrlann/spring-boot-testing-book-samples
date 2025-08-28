@@ -30,7 +30,7 @@ public class WeatherController {
 	public String index(Model model, String mode) {
 		var citiesWithWeather = selectionService.getWeatherInSelectedCities();
 		model.addAttribute("preferredCities", citiesWithWeather);
-        model.addAttribute("modern", "modern".equals(mode));
+		model.addAttribute("modern", "modern".equals(mode));
 		return "index";
 	}
 
