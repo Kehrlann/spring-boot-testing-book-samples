@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
@@ -26,30 +25,43 @@ public class TomcatAccessRepository extends ValveBase {
 	public record Access(String method, String path) {
 	}
 
-	private final Deque<Access> accessRecords = new ConcurrentLinkedDeque<>();
-
-	private final AtomicInteger size = new AtomicInteger(0);
-
-	private static final int MAX_SIZE = 50;
+	private final RingBuffer<Access> accessRecords = new RingBuffer<>(50);
 
 	@Override
 	public void invoke(Request request, Response response) throws IOException, ServletException {
 		var record = new Access(request.getMethod(), request.getRequestURI());
-		if (size.incrementAndGet() > MAX_SIZE) {
-			accessRecords.removeFirst();
-		}
 		accessRecords.add(record);
 		System.out.println("~~~~~~~~~~~~~ LOGGING REQUEST : " + record);
 		getNext().invoke(request, response);
 	}
 
 	public Collection<Access> getAccessRecords() {
-		return Collections.unmodifiableCollection(this.accessRecords);
+		return this.accessRecords.getEntries();
 	}
 
-	synchronized public void clear() {
-		this.accessRecords.clear();
-		this.size.set(0);
+	private static class RingBuffer<T> {
+
+		private final Deque<T> entries = new ConcurrentLinkedDeque<>();
+
+		private int size = 0;
+
+		private final int maxSize;
+
+		private RingBuffer(int maxSize) {
+			this.maxSize = maxSize;
+		}
+
+		public synchronized void add(T entry) {
+			if (this.size++ >= this.maxSize) {
+				entries.removeFirst();
+			}
+			entries.add(entry);
+		}
+
+		public Collection<T> getEntries() {
+			return Collections.unmodifiableCollection(this.entries);
+		}
+
 	}
 
 }

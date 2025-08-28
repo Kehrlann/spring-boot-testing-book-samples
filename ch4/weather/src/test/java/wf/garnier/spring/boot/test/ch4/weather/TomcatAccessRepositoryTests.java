@@ -56,6 +56,37 @@ class TomcatAccessRepositoryTests {
 				.containsExactly("GET", "/api/weather");
 		}
 
+		/**
+		 * Sanity check on the ringbuffer behavior. If this was truly important, the
+		 * {@code RingBuffer} class should be a separate class, with dedicated tests... or
+		 * even better, an off-the-shelf implementation ;)
+		 */
+		@Test
+		void ringBuffer() {
+			for (int i = 0; i < 50; i++) {
+				var response = RestClient.create()
+					.get()
+					.uri("http://localhost:%s/api/weather".formatted(port))
+					.retrieve();
+				assertThat(response.toBodilessEntity().getStatusCode()).isEqualTo(HttpStatus.OK);
+			}
+			for (int i = 0; i < 49; i++) {
+				var response = RestClient.create()
+					.get()
+					.uri("http://localhost:%s/api/city?q=Paris".formatted(port))
+					.retrieve();
+				assertThat(response.toBodilessEntity().getStatusCode()).isEqualTo(HttpStatus.OK);
+			}
+
+			assertThat(repo.getAccessRecords()).hasSize(50);
+			assertThat(repo.getAccessRecords()).first()
+				.extracting(TomcatAccessRepository.Access::path)
+				.isEqualTo("/api/weather");
+			assertThat(repo.getAccessRecords()).last()
+				.extracting(TomcatAccessRepository.Access::path)
+				.isEqualTo("/api/city");
+		}
+
 	}
 
 }
