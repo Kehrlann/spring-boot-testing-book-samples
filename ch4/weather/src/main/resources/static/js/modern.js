@@ -1,3 +1,13 @@
+/**
+ * @file A "modern" (ECMAScript 2017) implementation of our "weather application".
+ * It has _fancy_ stuff in it, like async-await! :gasp:
+ *
+ * Please note: this is NOT good JavaScript. I know enough to be dangerous, and with
+ * the help of an LLM, I can cobble something together. This does not mean you
+ * should listen to me for JS advice, ever.
+ * HIC SUNT DRACONES.
+ */
+
 async function loadWeather() {
   const response = await fetch("/api/weather");
   return await response.json();
@@ -112,7 +122,7 @@ class AutocompleteDropdown {
     inputElement,
     resultsElement,
     searchFunction,
-    selectCityFunction,
+    selectCityFunction
   ) {
     this.input = inputElement;
     this.results = resultsElement;
@@ -131,7 +141,7 @@ class AutocompleteDropdown {
     this.results.addEventListener(
       "mouseenter",
       this.handleMouseEnter.bind(this),
-      true,
+      true
     );
   }
 
@@ -148,7 +158,7 @@ class AutocompleteDropdown {
           (city) =>
             `<div class="autocomplete-item" data-id="${city.id}">
                     ${city.name} (${city.country})
-                </div>`,
+                </div>`
         )
         .join("");
       this.selectedIndex = cities.length === 1 ? 0 : -1;
@@ -270,7 +280,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (success) {
         await refreshCities();
       }
-    },
+    }
   );
 
   const citiesGrid = document.querySelector(".cities-grid");

@@ -1,3 +1,13 @@
+/**
+ * @file A "legacy" (ECMAScript 6) implementation of our "weather application". At
+ * least it has Promise!
+ *
+ * Please note: this is NOT good JavaScript. I know enough to be dangerous, and with
+ * the help of an LLM, I can cobble something together. This does not mean you
+ * should listen to me for JS advice, ever.
+ * HIC SUNT DRACONES.
+ */
+
 var isCompactMode = false;
 var currentCities = null;
 
@@ -94,7 +104,7 @@ function removeCity(cityId) {
 
 function searchCities(query) {
   return fetch(`/api/city?q=${encodeURIComponent(query)}`).then((response) =>
-    response.json(),
+    response.json()
   );
 }
 
@@ -102,7 +112,7 @@ function AutocompleteDropdown(
   inputElement,
   resultsElement,
   searchFunction,
-  selectCityFunction,
+  selectCityFunction
 ) {
   this.input = inputElement;
   this.results = resultsElement;
@@ -121,7 +131,7 @@ AutocompleteDropdown.prototype.setupEventListeners = function () {
   this.results.addEventListener(
     "mouseenter",
     this.handleMouseEnter.bind(this),
-    true,
+    true
   );
 };
 
@@ -138,7 +148,7 @@ AutocompleteDropdown.prototype.handleInput = function (e) {
           (city) =>
             `<div class="autocomplete-item" data-id="${city.id}">
                       ${city.name} (${city.country})
-                  </div>`,
+                  </div>`
         )
         .join("");
       this.selectedIndex = cities.length === 1 ? 0 : -1;
@@ -260,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
           return refreshCities();
         }
       });
-    },
+    }
   );
 
   var citiesGrid = document.querySelector(".cities-grid");
