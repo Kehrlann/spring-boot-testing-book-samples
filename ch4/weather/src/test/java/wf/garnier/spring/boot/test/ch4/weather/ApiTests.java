@@ -1,7 +1,11 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.Customization;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import wf.garnier.spring.boot.test.ch4.weather.city.City;
 import wf.garnier.spring.boot.test.ch4.weather.city.CityRepository;
 import wf.garnier.spring.boot.test.ch4.weather.openmeteo.WeatherData;
@@ -15,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.json.JsonAssert;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -68,14 +73,34 @@ class ApiTests {
 
 	@Test
 	void selectCity() {
-		var response = mvc.post().uri("/api/city").contentType(MediaType.APPLICATION_JSON).content("""
-				{ "id": %s }
-				""".formatted(paris.getId())).exchange();
+		//@formatter:off
+		var response = mvc.post()
+            .uri("/api/city")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{ \"id\": %s }".formatted(paris.getId()))
+            .exchange();
 
+		assertThat(response)
+            .hasStatus(HttpStatus.CREATED)
+            .body()
+            .isEmpty();
+		//@formatter:on
 		var cities = selectionRepository.findAll();
-		assertThat(response).hasStatus(HttpStatus.CREATED);
 		assertThat(cities).hasSize(1);
 		assertThat(cities.get(0).getCity().getName()).isEqualTo("Paris");
+	}
+
+	@Test
+	void selectCityAlternative() {
+		mvc.post()
+			.uri("/api/city")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("{ \"id\": %s }".formatted(paris.getId()))
+			.exchange()
+			.assertThat()
+			.hasStatus(HttpStatus.CREATED)
+			.body()
+			.isEmpty();
 	}
 
 	@Test
@@ -94,9 +119,13 @@ class ApiTests {
 	void unselectCity() {
 		selectCity("Paris");
 
-		var response = mvc.delete().uri("/api/city").contentType(MediaType.APPLICATION_JSON).content("""
-				{ "id": %s }
-				""".formatted(paris.getId())).exchange();
+		//@formatter:off
+		var response = mvc.delete()
+			.uri("/api/city")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("{ \"id\": %s }".formatted(paris.getId()))
+			.exchange();
+		//@formatter:on
 
 		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
 		assertThat(selectionRepository.count()).isEqualTo(0);
@@ -161,6 +190,45 @@ class ApiTests {
 				  }
 				]
 				""".formatted(lagos.getId(), shenzhen.getId()));
+	}
+
+	@Test
+	void getWeatherMultipleCitiesCustomizations() {
+		selectCity("Lagos");
+		selectCity("Shenzhen");
+
+		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(25, 0, 0))
+			.thenReturn(new WeatherData(17, 5, 1));
+
+		var response = mvc.get().uri("/api/weather").exchange();
+
+		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isEqualTo("""
+				[
+				  {
+				    "cityName": "Lagos",
+				    "country": "Nigeria",
+				    "cityId": ?,
+				    "weather": "Clear sky",
+				    "temperature": 25.0,
+				    "windSpeed": 0.0
+				  },
+				  {
+				    "cityName": "Shenzhen",
+				    "country": "China",
+				    "cityId": ?,
+				    "weather": "Partly cloudy",
+				    "temperature": 17.0,
+				    "windSpeed": 5.0
+				  }
+				]
+				""", JsonAssert.comparator(ignoringPaths("[*].cityId")));
+	}
+
+	private static CustomComparator ignoringPaths(String... path) {
+		var customizations = Arrays.stream(path)
+			.map(p -> new Customization(p, (actual, expected) -> true))
+			.toArray(Customization[]::new);
+		return new CustomComparator(JSONCompareMode.LENIENT, customizations);
 	}
 
 	@Test
