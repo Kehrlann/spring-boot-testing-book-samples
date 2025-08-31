@@ -25,23 +25,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
+// tag::class[]
 @SpringBootTest
 @AutoConfigureMockMvc
 class ApiTests {
 
+	// end::class[]
+	// tag::mock-mvc-tester[]
 	@Autowired
-	private MockMvcTester mvc;
+	MockMvcTester mvc;
+
+	// end::mock-mvc-tester[]
 
 	@Autowired
-	private SelectionRepository selectionRepository;
+	SelectionRepository selectionRepository;
 
 	@MockitoBean
-	private WeatherService weatherService;
+	WeatherService weatherService;
 
 	@Autowired
-	private CityRepository cityRepository;
+	CityRepository cityRepository;
 
-	private City paris;
+	City paris;
 
 	@BeforeEach
 	void clearRepository() {
@@ -55,12 +60,38 @@ class ApiTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
+	// tag::index-page[]
 	@Test
 	void indexPageLoads() {
-		var response = mvc.get().uri("/").exchange();
+		// tag::extract-response[]
+		//@formatter:off
+		// Extract the response into a variable
+		var response = mvc.get() // <1>
+			.uri("/") // <2>
+			.exchange(); // <3>
 
-		assertThat(response).hasStatus(HttpStatus.OK).bodyText().contains("<h1>Weather App</h1>");
+		// Assert statement-by-statement
+		assertThat(response).hasStatus(HttpStatus.OK); // <4>
+		assertThat(response).bodyText().contains("<h1>Weather App</h1>"); // <5>
+
+		// Assert fluently
+		assertThat(response)
+			.hasStatus(HttpStatus.OK) // <4>
+			.bodyText().contains("<h1>Weather App</h1>"); // <5>
+		// end::extract-response[]
+		// tag::fluent-assertions[]
+		// Assert directly from the request
+		mvc.get() // <1>
+			.uri("/") // <2>
+			.exchange()
+			.assertThat()
+			.hasStatus(HttpStatus.OK)
+			.bodyText()
+			.contains("<h1>Weather App</h1>");// <3>
+		//@formatter:on
+		// end::fluent-assertions[]
 	}
+	// end::index-page[]
 
 	@Test
 	void indexPageHasSelectedCity() {
@@ -73,21 +104,20 @@ class ApiTests {
 
 	@Test
 	void selectCity() {
-		//@formatter:off
 		var response = mvc.post()
-            .uri("/api/city")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{ \"id\": %s }".formatted(paris.getId()))
-            .exchange();
+			.uri("/api/city")
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("{ \"id\": %s }".formatted(paris.getId()))
+			.exchange();
 
-		assertThat(response)
-            .hasStatus(HttpStatus.CREATED)
-            .body()
-            .isEmpty();
-		//@formatter:on
+		assertThat(response).hasStatus(HttpStatus.CREATED).body().isEmpty();
 		var cities = selectionRepository.findAll();
-		assertThat(cities).hasSize(1);
-		assertThat(cities.get(0).getCity().getName()).isEqualTo("Paris");
+
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(Selection::getCity)
+			.extracting(City::getName)
+			.isEqualTo("Paris");
 	}
 
 	@Test
@@ -269,4 +299,7 @@ class ApiTests {
 		return city;
 	}
 
+	// tag::class[]
+
 }
+// end::class[]
