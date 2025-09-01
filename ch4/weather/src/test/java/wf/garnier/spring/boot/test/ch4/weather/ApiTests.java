@@ -27,13 +27,14 @@ import static org.mockito.Mockito.when;
 
 // tag::class[]
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc // <1>
 class ApiTests {
 
 	// end::class[]
 	// tag::mock-mvc-tester[]
-	@Autowired
-	MockMvcTester mvc;
+	//@formatter:off
+	@Autowired MockMvcTester mvc; // <1>
+	//@formatter:on
 
 	// end::mock-mvc-tester[]
 
@@ -66,18 +67,18 @@ class ApiTests {
 		// tag::extract-response[]
 		//@formatter:off
 		// Extract the response into a variable
-		var response = mvc.get() // <1>
-			.uri("/") // <2>
-			.exchange(); // <3>
+		var response = mvc.get() // <2>
+			.uri("/") // <3>
+			.exchange(); // <4>
 
 		// Assert statement-by-statement
-		assertThat(response).hasStatus(HttpStatus.OK); // <4>
-		assertThat(response).bodyText().contains("<h1>Weather App</h1>"); // <5>
+		assertThat(response).hasStatus(HttpStatus.OK); // <5>
+		assertThat(response).bodyText().contains("<h1>Weather App</h1>"); // <6>
 
 		// Assert fluently
 		assertThat(response)
-			.hasStatus(HttpStatus.OK) // <4>
-			.bodyText().contains("<h1>Weather App</h1>"); // <5>
+			.hasStatus(HttpStatus.OK) // <5>
+			.bodyText().contains("<h1>Weather App</h1>"); // <6>
 		// end::extract-response[]
 		// tag::fluent-assertions[]
 		// Assert directly from the request
