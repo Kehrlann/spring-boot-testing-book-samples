@@ -82,13 +82,13 @@ class ApiTests {
 		// end::extract-response[]
 		// tag::fluent-assertions[]
 		// Assert directly from the request
-		mvc.get() // <1>
-			.uri("/") // <2>
+		mvc.get()
+			.uri("/")
 			.exchange()
 			.assertThat()
 			.hasStatus(HttpStatus.OK)
 			.bodyText()
-			.contains("<h1>Weather App</h1>");// <3>
+			.contains("<h1>Weather App</h1>");
 		//@formatter:on
 		// end::fluent-assertions[]
 	}
