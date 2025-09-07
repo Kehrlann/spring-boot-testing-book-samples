@@ -7,24 +7,27 @@ import org.springframework.stereotype.Service;
 
 @Service
 class WidgetService {
-    private final WidgetRepository widgetRepository;
-    private final WidgetValidator widgetValidator;
 
-    public WidgetService(WidgetRepository widgetRepository, WidgetValidator widgetValidator) {
-        this.widgetRepository = widgetRepository;
-        this.widgetValidator = widgetValidator;
-    }
+	private final WidgetRepository widgetRepository;
 
-    public List<Widget> listWidgets() {
-        return widgetRepository.findAll();
-    }
+	private final WidgetValidator widgetValidator;
 
-    public Optional<Widget> findWidget(int id) {
-        return widgetRepository.findById(id);
-    }
+	public WidgetService(WidgetRepository widgetRepository, WidgetValidator widgetValidator) {
+		this.widgetRepository = widgetRepository;
+		this.widgetValidator = widgetValidator;
+	}
 
-    public Widget createWidget(String name) throws InvalidWidgetException {
-        widgetValidator.validateWidget(name);
-        return widgetRepository.createWidget(name);
-    }
+	public List<Widget> listWidgets() {
+		return widgetRepository.findAll();
+	}
+
+	public Optional<Widget> findWidget(int id) {
+		return widgetRepository.findById(id);
+	}
+
+	public Widget createWidget(String name) throws InvalidWidgetException {
+		widgetValidator.validateWidget(name);
+		return widgetRepository.createWidget(name);
+	}
+
 }

@@ -31,198 +31,190 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 // tag::content[]
 class ManualSpringBootTests {
 
-    // tag::class-members[]
-    private static ConfigurableApplicationContext app; // <1>
+	// tag::class-members[]
+	private static ConfigurableApplicationContext app; // <1>
 
-    private static RestClient restClient; // <2>
+	private static RestClient restClient; // <2>
 
-    private static int localServerPort;
+	private static int localServerPort;
 
-    // end::class-members[]
-    // tag::before-after[]
-    @BeforeAll
-    static void beforeAll() {
-        app = new SpringApplicationBuilder(TestConfiguration.class).run(); // <1>
-        localServerPort = Integer.parseInt(app.getEnvironment().getProperty("local.server.port"));
-        restClient = RestClient.create("http://localhost:" + localServerPort); // <2>
-    }
+	// end::class-members[]
+	// tag::before-after[]
+	@BeforeAll
+	static void beforeAll() {
+		app = new SpringApplicationBuilder(TestConfiguration.class).run(); // <1>
+		localServerPort = Integer.parseInt(app.getEnvironment().getProperty("local.server.port"));
+		restClient = RestClient.create("http://localhost:" + localServerPort); // <2>
+	}
 
-    @AfterAll
-    static void afterAll() {
-        app.stop(); // <3>
-    }
+	@AfterAll
+	static void afterAll() {
+		app.stop(); // <3>
+	}
 
-    // end::before-after[]
-    // tag::test[]
-    // ... boilerplate code ...
+	// end::before-after[]
+	// tag::test[]
+	// ... boilerplate code ...
 
-    @Test
-    void addWidget() { // <3>
-        // Given
-        StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class); // <4>
-        validator.makeAlwaysValid();
-        var repository = app.getBean(WidgetRepository.class); // <4>
+	@Test
+	void addWidget() { // <3>
+		// Given
+		StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class); // <4>
+		validator.makeAlwaysValid();
+		var repository = app.getBean(WidgetRepository.class); // <4>
 
-        // When
-        var response = restClient.post() // <5>
-                .uri("/widget")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body("name=test-widget")
-                .retrieve()
-                .toBodilessEntity();
+		// When
+		var response = restClient.post() // <5>
+			.uri("/widget")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("name=test-widget")
+			.retrieve()
+			.toBodilessEntity();
 
-        // Then
-        var status = response.getStatusCode().value();
-        assertThat(status).isEqualTo(HttpStatus.CREATED.value()); // <6>
-        assertThat(response.getHeaders().getLocation().getPath()).matches("^/widget/\\d+$");
-        var id = getWidgetId(response.getHeaders().getLocation());
-        var widget = repository.findById(id);
-        assertThat(widget).isPresent();
-        assertThat(widget.get().name()).isEqualTo("test-widget"); // <7>
-    }
+		// Then
+		var status = response.getStatusCode().value();
+		assertThat(status).isEqualTo(HttpStatus.CREATED.value()); // <6>
+		assertThat(response.getHeaders().getLocation().getPath()).matches("^/widget/\\d+$");
+		var id = getWidgetId(response.getHeaders().getLocation());
+		var widget = repository.findById(id);
+		assertThat(widget).isPresent();
+		assertThat(widget.get().name()).isEqualTo("test-widget"); // <7>
+	}
 
-    // end::test[]
-    // tag::ignored[]
+	// end::test[]
+	// tag::ignored[]
 
-    // Some tests that do not show up in the examples
-    @Test
-    void runsOnRandomPort() {
-        assertThat(localServerPort).isNotEqualTo(8080);
-    }
+	// Some tests that do not show up in the examples
+	@Test
+	void runsOnRandomPort() {
+		assertThat(localServerPort).isNotEqualTo(8080);
+	}
 
-    @Test
-    void addWidgetRejected() {
-        StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class);
-        validator.makeAlwaysInvalid();
-        var repository = app.getBean(WidgetRepository.class);
-        var currentCount = repository.count();
+	@Test
+	void addWidgetRejected() {
+		StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class);
+		validator.makeAlwaysInvalid();
+		var repository = app.getBean(WidgetRepository.class);
+		var currentCount = repository.count();
 
-        assertThatExceptionOfType(HttpClientErrorException.BadRequest.class).isThrownBy(() -> restClient.post()
-                .uri("/widget")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body("name=test-widget")
-                .retrieve()
-                .toBodilessEntity());
+		assertThatExceptionOfType(HttpClientErrorException.BadRequest.class).isThrownBy(() -> restClient.post()
+			.uri("/widget")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("name=test-widget")
+			.retrieve()
+			.toBodilessEntity());
 
-        assertThat(repository.count()).isEqualTo(currentCount);
-    }
+		assertThat(repository.count()).isEqualTo(currentCount);
+	}
 
-    @Test
-    void widgetIdIncrementsWithStep() {
-        StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class);
-        validator.makeAlwaysValid();
+	@Test
+	void widgetIdIncrementsWithStep() {
+		StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class);
+		validator.makeAlwaysValid();
 
-        var firstWidgetResponse = restClient.post()
-                .uri("/widget")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body("name=test-widget")
-                .retrieve()
-                .toBodilessEntity();
-        var firstId = getWidgetId(firstWidgetResponse.getHeaders().getLocation());
-        var secondWidgetResponse = restClient.post()
-                .uri("/widget")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body("name=test-widget")
-                .retrieve()
-                .toBodilessEntity();
-        var secondId = getWidgetId(secondWidgetResponse.getHeaders().getLocation());
+		var firstWidgetResponse = restClient.post()
+			.uri("/widget")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("name=test-widget")
+			.retrieve()
+			.toBodilessEntity();
+		var firstId = getWidgetId(firstWidgetResponse.getHeaders().getLocation());
+		var secondWidgetResponse = restClient.post()
+			.uri("/widget")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body("name=test-widget")
+			.retrieve()
+			.toBodilessEntity();
+		var secondId = getWidgetId(secondWidgetResponse.getHeaders().getLocation());
 
-        assertThat(secondId - firstId).isEqualTo(5);
-    }
+		assertThat(secondId - firstId).isEqualTo(5);
+	}
 
-    @Test
-    void addWidgetRestTemplate() {
-        // Given
-        StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class);
-        validator.makeAlwaysValid();
-        var repository = app.getBean(WidgetRepository.class);
+	@Test
+	void addWidgetRestTemplate() {
+		// Given
+		StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class);
+		validator.makeAlwaysValid();
+		var repository = app.getBean(WidgetRepository.class);
 
-        // When
-        var restTemplate = app.getBean(RestTemplateBuilder.class)
-                .rootUri("http://localhost:" + localServerPort)
-                .build();
+		// When
+		var restTemplate = app.getBean(RestTemplateBuilder.class)
+			.rootUri("http://localhost:" + localServerPort)
+			.build();
 
-        // tag::resttemplate[]
-        var body = new LinkedMultiValueMap<String, String>();
-        body.add("name", "test-widget");
-        var request = RequestEntity
-                .post("/widget")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body);
-        var response = restTemplate.exchange(request, String.class);
-        // end::resttemplate[]
+		// tag::resttemplate[]
+		var body = new LinkedMultiValueMap<String, String>();
+		body.add("name", "test-widget");
+		var request = RequestEntity.post("/widget").contentType(MediaType.APPLICATION_FORM_URLENCODED).body(body);
+		var response = restTemplate.exchange(request, String.class);
+		// end::resttemplate[]
 
-        var status = response.getStatusCode().value();
-        assertThat(status).isEqualTo(HttpStatus.CREATED.value());
-        var locationHeader = response.getHeaders().getLocation().getPath();
-        assertThat(locationHeader).matches("^/widget/\\d+$");
+		var status = response.getStatusCode().value();
+		assertThat(status).isEqualTo(HttpStatus.CREATED.value());
+		var locationHeader = response.getHeaders().getLocation().getPath();
+		assertThat(locationHeader).matches("^/widget/\\d+$");
 
-        var id = getWidgetId(response.getHeaders().getLocation());
-        var widget = repository.findById(id);
-        assertThat(widget).isPresent();
-        assertThat(widget.get().name()).isEqualTo("test-widget"); // <7>
-    }
+		var id = getWidgetId(response.getHeaders().getLocation());
+		var widget = repository.findById(id);
+		assertThat(widget).isPresent();
+		assertThat(widget.get().name()).isEqualTo("test-widget"); // <7>
+	}
 
-    // end::ignored[]
-    // tag::configuration[]
-    @EnableAutoConfiguration
-    @ComponentScan(basePackageClasses = WidgetApplication.class,
-            excludeFilters = {
-                    @ComponentScan.Filter(
-                            type = FilterType.ANNOTATION,
-                            classes = {SpringBootApplication.class}
-                    ),
-                    @ComponentScan.Filter(
-                            type = FilterType.ASSIGNABLE_TYPE,
-                            classes = {WidgetValidator.class}),})
-    @PropertySource("classpath:test.properties")
-    static class TestConfiguration {
+	// end::ignored[]
+	// tag::configuration[]
+	@EnableAutoConfiguration
+	@ComponentScan(basePackageClasses = WidgetApplication.class,
+			excludeFilters = {
+					@ComponentScan.Filter(type = FilterType.ANNOTATION, classes = { SpringBootApplication.class }),
+					@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { WidgetValidator.class }), })
+	@PropertySource("classpath:test.properties")
+	static class TestConfiguration {
 
-        @Bean
-        public WidgetValidator testWidgetValidator() {
-            return new StubWidgetValidator();
-        }
+		@Bean
+		public WidgetValidator testWidgetValidator() {
+			return new StubWidgetValidator();
+		}
 
-    }
+	}
 
-    // ... your test code ...
+	// ... your test code ...
 
-    // end::configuration[]
-    // tag::ignored[]
-    private static int getWidgetId(URI location) {
-        //@formatter:off
+	// end::configuration[]
+	// tag::ignored[]
+	private static int getWidgetId(URI location) {
+		//@formatter:off
 		var id = UriComponentsBuilder.fromUri(location)
 				.build()
 				.getPathSegments()
 				.getLast();
 		//@formatter:on
-        return Integer.parseInt(id);
-    }
+		return Integer.parseInt(id);
+	}
 
-    private static class StubWidgetValidator extends WidgetValidator {
+	private static class StubWidgetValidator extends WidgetValidator {
 
-        private boolean valid = true;
+		private boolean valid = true;
 
-        public StubWidgetValidator makeAlwaysValid() {
-            this.valid = true;
-            return this;
-        }
+		public StubWidgetValidator makeAlwaysValid() {
+			this.valid = true;
+			return this;
+		}
 
-        public StubWidgetValidator makeAlwaysInvalid() {
-            this.valid = false;
-            return this;
-        }
+		public StubWidgetValidator makeAlwaysInvalid() {
+			this.valid = false;
+			return this;
+		}
 
-        @Override
-        public void validateWidget(String name) throws InvalidWidgetException {
-            if (!valid) {
-                throw new InvalidWidgetException("Invalid widget, for some random reason");
-            }
-        }
+		@Override
+		public void validateWidget(String name) throws InvalidWidgetException {
+			if (!valid) {
+				throw new InvalidWidgetException("Invalid widget, for some random reason");
+			}
+		}
 
-    }
+	}
 
-    // end::ignored[]
+	// end::ignored[]
 
 }
 // end::content[]

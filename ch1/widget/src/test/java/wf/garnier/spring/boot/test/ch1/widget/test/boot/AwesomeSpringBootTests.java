@@ -92,5 +92,6 @@ class AwesomeSpringBootTests {
 		return Integer.parseInt(id);
 	}
 	// end::ignored[]
+
 }
 // end::content[]
