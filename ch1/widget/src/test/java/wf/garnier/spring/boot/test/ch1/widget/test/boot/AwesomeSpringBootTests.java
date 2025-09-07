@@ -45,11 +45,15 @@ class AwesomeSpringBootTests {
 	void addWidget() throws Exception {
 		doNothing().when(mockValidator).validateWidget(anyString()); // <1>
 
-		var location = mockMvc.perform(post("/widget").param("name", "test-widget")) // <2>
+		//@formatter:off
+		var location = mockMvc.perform(  // <2>
+				post("/widget").param("name", "test-widget") // <2>
+			)
 			.andExpect(status().isCreated()) // <3>
 			.andReturn()
 			.getResponse()
 			.getHeader("location"); // <4>
+		//@formatter:on
 
 		var id = getWidgetId(location);
 		var widget = repository.findById(id);
@@ -88,11 +92,11 @@ class AwesomeSpringBootTests {
 
 	private static int getWidgetId(String location) {
 		//@formatter:off
-        var id = UriComponentsBuilder.fromUriString(location)
-                .build()
-                .getPathSegments()
-                .getLast();
-        //@formatter:on
+		var id = UriComponentsBuilder.fromUriString(location)
+				.build()
+				.getPathSegments()
+				.getLast();
+		//@formatter:on
 		return Integer.parseInt(id);
 	}
 	// end::ignored[]
