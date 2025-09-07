@@ -142,6 +142,26 @@ class ManualSpringBootTests {
 		assertThat(secondId - firstId).isEqualTo(5);
 	}
 
+	@Test
+	void addWidgetRestClient() {
+		StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class);
+		validator.makeAlwaysValid();
+
+		// tag::restclient[]
+		var body = new LinkedMultiValueMap<String, String>();
+		body.add("name", "test-widget");
+
+		var response = restClient.post()
+			.uri("/widget")
+			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+			.body(body)
+			.retrieve()
+			.toEntity(String.class);
+		// end::restclient[]
+
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+	}
+
 	/**
 	 * Here's an example using the older
 	 * {@link org.springframework.web.client.RestTemplate} API, which you might find in
