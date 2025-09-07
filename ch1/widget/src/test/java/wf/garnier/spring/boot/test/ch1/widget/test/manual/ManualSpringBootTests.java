@@ -28,6 +28,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+/**
+ * This test showcases everything you'd need to do in a "general case" if you did not use
+ * {@link org.springframework.boot.test.context.SpringBootTest}, including building a very
+ * custom Spring configuration. You should NOT write those kind of tests in your real
+ * projects, and instead draw inspiration from
+ * {@link wf.garnier.spring.boot.test.ch1.widget.test.boot.AwesomeSpringBootTests}.
+ * <p>
+ * You can use some context-specific tricks to achieve the same results, without the
+ * complex {@link TestConfiguration} class we use here, but it goes beyond the scope of
+ * the book. If you are curious, please take a look at
+ * {@link SimpleManualSpringBootTests}.
+ */
 // tag::content[]
 class ManualSpringBootTests {
 
@@ -130,6 +142,11 @@ class ManualSpringBootTests {
 		assertThat(secondId - firstId).isEqualTo(5);
 	}
 
+	/**
+	 * Here's an example using the older
+	 * {@link org.springframework.web.client.RestTemplate} API, which you might find in
+	 * legacy applications.
+	 */
 	@Test
 	void addWidgetRestTemplate() {
 		// Given

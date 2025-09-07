@@ -22,20 +22,37 @@ import org.springframework.web.util.UriComponentsBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+/**
+ * The examples in this class are not in the book, they apply more complicated than what
+ * you'll find in {@link ManualSpringBootTests}. They use Spring-specific tricks to make
+ * the configuration simpler ... or at least different :)
+ * <p>
+ * Same advice as the other manual tests: You should NOT write these kinds of tests in
+ * your real projects, and instead draw inspiration from
+ * {@link wf.garnier.spring.boot.test.ch1.widget.test.boot.AwesomeSpringBootTests}.
+ */
 class SimpleManualSpringBootTests {
 
 	private static ConfigurableApplicationContext app;
 
 	private static RestClient restClient;
 
+	private static int localServerPort;
+
 	@BeforeAll
 	static void beforeAll() {
+		// Instead of using a @PropertySource, we can inject our own version of the Spring
+		// "Environment" class, which manages profiles and properties.
+		// See the reference docs for Environment:
+		// https://docs.spring.io/spring-framework/reference/core/beans/environment.html#page-title
+		// See the reference docs for MockEnvironment:
+		// https://docs.spring.io/spring-framework/reference/testing/unit.html#mock-objects-env
 		var customPropertiesEnvironment = new MockEnvironment().withProperty("server.port", "0")
 			.withProperty("widget.id.step", "5");
 		app = new SpringApplicationBuilder(TestConfiguration.class, WidgetApplication.class)
 			.environment(customPropertiesEnvironment)
 			.run();
-		var localServerPort = Integer.parseInt(app.getEnvironment().getProperty("local.server.port"));
+		localServerPort = Integer.parseInt(app.getEnvironment().getProperty("local.server.port"));
 		restClient = RestClient.create("http://localhost:" + localServerPort);
 	}
 
@@ -69,6 +86,11 @@ class SimpleManualSpringBootTests {
 	}
 
 	// Some tests that do not show up in the examples
+	@Test
+	void runsOnRandomPort() {
+		assertThat(localServerPort).isNotEqualTo(8080);
+	}
+
 	@Test
 	void addWidgetRejected() {
 		StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class);

@@ -18,6 +18,10 @@ import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Here is an example using the well-known {@link SpringBootTest} annotation. This is the
+ * type of test you should be writing.
+ */
 // tag::content[]
 // tag::annotations[]
 @SpringBootTest(properties = "widget.id.step=5") // <1>
