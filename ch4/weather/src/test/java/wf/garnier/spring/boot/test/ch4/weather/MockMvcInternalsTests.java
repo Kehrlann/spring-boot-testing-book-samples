@@ -118,7 +118,7 @@ class MockMvcInternalsTests {
 			assertThat(response).isEqualTo("Hello World");
 		}
 
-		@SpringBootConfiguration
+		@Configuration
 		@EnableWebMvc
 		@ImportAutoConfiguration(value = { WebMvcAutoConfiguration.class, DispatcherServletAutoConfiguration.class,
 				ServletWebServerFactoryAutoConfiguration.class })
