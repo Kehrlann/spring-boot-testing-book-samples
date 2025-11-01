@@ -1,6 +1,7 @@
 package wf.garnier.spring.boot.test.ch3.configuration;
 
 import java.util.List;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch3.configuration.configurations.CustomConfiguration;
@@ -21,18 +22,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CustomConfigTests {
 
 	@Nested
-	// tag::classes[]
+	// tag::mockito-beans[]
 	@SpringBootTest(classes = { ThingConfiguration.class }) // <1>
 	class CustomClassesTests {
 
-		// ... your test code ...
-		// tag::ignored[]
-		@MockitoBean
+		// tag::beans[]
+		@MockitoBean // <2>
 		Gizmo gizmo;
 
-		@MockitoBean(name = "blueWidget")
+		@MockitoBean(name = "blueWidget") // <3>
 		Widget blueWidget;
 
+		// end::beans[]
+		// ... your test code ...
+
+		// tag::ignored[]
 		@Test
 		void things(@Autowired List<Thing> things) {
 			assertThat(things).map(Thing::name).containsOnly("red", "pink", "green");
@@ -45,7 +49,7 @@ class CustomConfigTests {
 		// end::ignored[]
 
 	}
-	// end::classes[]
+	// end::mockito-beans[]
 
 	@Nested
 	@SpringBootTest(classes = { ThingConfiguration.class })
@@ -100,18 +104,22 @@ class CustomConfigTests {
 	}
 
 	@Nested
-	// tag::mockitobean-testbean[]
+	// tag::testbeans[]
 	@SpringBootTest(classes = { ThingConfiguration.class })
 	class MockitoAndTestBeanTests {
 
-		@MockitoBean(name = "blueWidget") // <1>
-		Widget blueWidget;
+		@TestBean // <1>
+		Gizmo gizmo;
 
-		@TestBean
-		Gizmo gizmo; // <2>
+		@TestBean(name = "blueWidget", methodName = "makeBlueWidget") // <2>
+		Widget blueWidget;
 
 		static Gizmo gizmo() { // <3>
 			return new Gizmo("test");
+		}
+
+		static Widget makeBlueWidget() { // <3>
+			return new Widget("test");
 		}
 
 		// ... your test code ...
@@ -122,7 +130,7 @@ class CustomConfigTests {
 		// end::ignored[]
 
 	}
-	// end::mockitobean-testbean[]
+	// end::testbeans[]
 
 	@Nested
 	@SpringBootTest

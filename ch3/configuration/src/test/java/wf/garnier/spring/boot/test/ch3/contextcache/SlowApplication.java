@@ -21,7 +21,7 @@ class SlowApplication {
 			@Value("${startup.delay:3s}") Duration startupDelay  // <1>
 	) throws InterruptedException {
 	//@formatter:on
-		System.out.println("==> Configuring slow bean...");
+		System.out.println(">>> Configuring slow bean...");
 		Thread.sleep(startupDelay);
 		return new SlowBean();
 		// tag::ignored[]
