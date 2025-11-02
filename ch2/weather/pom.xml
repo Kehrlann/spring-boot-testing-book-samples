@@ -20,15 +20,19 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId> <!--1-->
+            <artifactId>spring-boot-starter-webmvc</artifactId> <!--1-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId> <!--2-->
+            <artifactId>spring-boot-starter-restclient</artifactId> <!--2-->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId> <!--3-->
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId> <!--3-->
+            <artifactId>h2</artifactId> <!--4-->
             <scope>runtime</scope>
         </dependency>
         <!-- tag::ignored[] -->
@@ -44,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- Mockito config, track progress here: https://github.com/spring-io/initializr/issues/1590 -->
