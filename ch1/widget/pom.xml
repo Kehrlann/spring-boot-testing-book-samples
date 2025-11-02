@@ -44,6 +44,7 @@
             <plugin>
                 <groupId>io.spring.javaformat</groupId>
                 <artifactId>spring-javaformat-maven-plugin</artifactId>
+                <version>0.0.47</version>
             </plugin>
             <!-- Mockito config, track progress here: https://github.com/spring-io/initializr/issues/1590 -->
             <plugin>
