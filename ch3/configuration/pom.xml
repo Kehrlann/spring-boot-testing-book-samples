@@ -14,7 +14,7 @@
     <name>configuration</name>
     <description>Demo project for configuration in Spring Boot tests</description>
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
     </properties>
     <dependencies>
         <dependency>

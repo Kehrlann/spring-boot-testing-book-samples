@@ -14,7 +14,7 @@
     <name>Weather App</name>
     <description>Demo project for testing Spring Boot apps</description>
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
     </properties>
     <!-- tag::dependencies[] -->
     <dependencies>
