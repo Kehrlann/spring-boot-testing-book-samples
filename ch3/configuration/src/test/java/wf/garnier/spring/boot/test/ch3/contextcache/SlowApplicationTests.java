@@ -14,11 +14,11 @@ import wf.garnier.spring.boot.test.ch3.configuration.Gizmo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -56,7 +56,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("==> Configuring slow bean...");
+			assertThat(output).contains(">>> Configuring slow bean...");
 			// end::ignored[]
 		}
 
@@ -84,7 +84,7 @@ class SlowApplicationTests {
 
 		@Test
 		void doesNotLogAppStartup(CapturedOutput output) {
-			assertThat(output).doesNotContain("==> Configuring slow bean...");
+			assertThat(output).doesNotContain(">>> Configuring slow bean...");
 			// end::ignored[]
 		}
 
@@ -107,7 +107,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("==> Configuring slow bean...");
+			assertThat(output).contains(">>> Configuring slow bean...");
 		}
 
 	}
@@ -130,7 +130,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("==> Configuring slow bean...");
+			assertThat(output).contains(">>> Configuring slow bean...");
 		}
 
 	}
@@ -152,7 +152,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("==> Configuring slow bean...");
+			assertThat(output).contains(">>> Configuring slow bean...");
 		}
 
 	}
@@ -173,7 +173,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("==> Configuring slow bean...");
+			assertThat(output).contains(">>> Configuring slow bean...");
 		}
 
 	}
@@ -194,7 +194,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("==> Configuring slow bean...");
+			assertThat(output).contains(">>> Configuring slow bean...");
 		}
 
 		@TestConfiguration
@@ -223,7 +223,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("==> Configuring slow bean...");
+			assertThat(output).contains(">>> Configuring slow bean...");
 		}
 
 	}
@@ -247,7 +247,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("==> Configuring slow bean...");
+			assertThat(output).contains(">>> Configuring slow bean...");
 		}
 
 	}
@@ -271,7 +271,7 @@ class SlowApplicationTests {
 
 		@Test
 		void logsAppStartup(CapturedOutput output) {
-			assertThat(output).contains("==> Configuring slow bean...");
+			assertThat(output).contains(">>> Configuring slow bean...");
 		}
 
 		static SlowApplication.FastBean fastBean() {
@@ -303,7 +303,7 @@ class SlowApplicationTests {
 
 		@Test
 		void doesNotLogAppStartup(CapturedOutput output) {
-			assertThat(output).doesNotContain("==> Configuring slow bean...");
+			assertThat(output).doesNotContain(">>> Configuring slow bean...");
 		}
 
 	}
