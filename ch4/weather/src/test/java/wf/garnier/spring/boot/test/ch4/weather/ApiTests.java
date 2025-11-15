@@ -75,7 +75,7 @@ class ApiTests {
 		assertThat(response).hasStatus(HttpStatus.OK); // <5>
 		assertThat(response).bodyText().contains("<h1>Weather App</h1>"); // <6>
 
-		// Assert fluently
+		// Same assertions, but fluent-style
 		assertThat(response)
 			.hasStatus(HttpStatus.OK) // <5>
 			.bodyText().contains("<h1>Weather App</h1>"); // <6>
