@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,10 +54,10 @@ public class WeatherController {
 				: ResponseEntity.status(HttpStatus.CONFLICT).body("City already selected");
 	}
 
-	@DeleteMapping(value = "/api/city")
+	@DeleteMapping(value = "/api/city/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteCity(@RequestBody CityRequest req) {
-		selectionService.unselectCityById(req.id());
+	public void deleteCity(@PathVariable Long id) {
+		selectionService.unselectCityById(id);
 	}
 
 	public record CityRequest(long id) {

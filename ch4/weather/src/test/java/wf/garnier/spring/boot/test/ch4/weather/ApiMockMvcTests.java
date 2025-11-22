@@ -10,8 +10,8 @@ import wf.garnier.spring.boot.test.ch4.weather.selection.Selection;
 import wf.garnier.spring.boot.test.ch4.weather.selection.SelectionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -111,24 +111,14 @@ class ApiMockMvcTests {
 	void unselectCity() throws Exception {
 		selectCity("Paris");
 
-		//@formatter:off
-		mvc.perform(delete("/api/city")
-            .contentType(MediaType.APPLICATION_JSON)
-			.content("{ \"id\": %s }".formatted(paris.getId())))
-            .andExpect(status().isNoContent());
-		//@formatter:on
+		mvc.perform(delete("/api/city/{id}", paris.getId())).andExpect(status().isNoContent());
 
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
 	@Test
 	void unselectMissingCity() throws Exception {
-		//@formatter:off
-		mvc.perform(delete("/api/city")
-            .contentType(MediaType.APPLICATION_JSON)
-			.content("{ \"id\": %s }".formatted(paris.getId())))
-            .andExpect(status().isNoContent());
-		//@formatter:on
+		mvc.perform(delete("/api/city/{id}", paris.getId())).andExpect(status().isNoContent());
 
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}

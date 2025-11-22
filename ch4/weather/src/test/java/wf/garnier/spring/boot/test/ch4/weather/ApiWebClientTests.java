@@ -10,7 +10,6 @@ import wf.garnier.spring.boot.test.ch4.weather.selection.Selection;
 import wf.garnier.spring.boot.test.ch4.weather.selection.SelectionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webtestclient.AutoConfigureWebTestClient;
 import org.springframework.http.HttpStatus;
@@ -117,30 +116,26 @@ class ApiWebClientTests {
 	void unselectCity() {
 		selectCity("Paris");
 
-		var body = "{ \"id\": %s }".formatted(paris.getId());
-
-		client.method(org.springframework.http.HttpMethod.DELETE)
-			.uri("/api/city")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(body)
+		//@formatter:off
+		client.delete()
+			.uri("/api/city/{id}", paris.getId())
 			.exchange()
 			.expectStatus()
 			.isNoContent();
+		//@formatter:on
 
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
 	@Test
 	void unselectMissingCity() {
-		var body = "{ \"id\": %s }".formatted(paris.getId());
-
-		client.method(org.springframework.http.HttpMethod.DELETE)
-			.uri("/api/city")
-			.contentType(MediaType.APPLICATION_JSON)
-			.bodyValue(body)
+		//@formatter:off
+		client.delete()
+			.uri("/api/city/{id}", paris.getId())
 			.exchange()
 			.expectStatus()
 			.isNoContent();
+		//@formatter:on
 
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}

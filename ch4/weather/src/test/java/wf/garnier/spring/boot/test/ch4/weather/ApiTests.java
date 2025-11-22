@@ -1,6 +1,7 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
 import java.util.Arrays;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.Customization;
@@ -152,9 +153,7 @@ class ApiTests {
 
 		//@formatter:off
 		var response = mvc.delete()
-			.uri("/api/city")
-			.contentType(MediaType.APPLICATION_JSON)
-			.content("{ \"id\": %s }".formatted(paris.getId()))
+			.uri("/api/city/{id}", paris.getId())
 			.exchange();
 		//@formatter:on
 
@@ -164,9 +163,7 @@ class ApiTests {
 
 	@Test
 	void unselectMissingCity() {
-		var response = mvc.delete().uri("/api/city").contentType(MediaType.APPLICATION_JSON).content("""
-				{ "id": %s }
-				""".formatted(paris.getId())).exchange();
+		var response = mvc.delete().uri("/api/city/{id}", paris.getId()).exchange();
 
 		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
 		assertThat(selectionRepository.count()).isEqualTo(0);

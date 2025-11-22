@@ -93,12 +93,8 @@ function addCity(cityId) {
 }
 
 function removeCity(cityId) {
-  return fetch("/api/city", {
+  return fetch(`/api/city/${cityId}`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: cityId }),
   }).then((response) => response.ok);
 }
 

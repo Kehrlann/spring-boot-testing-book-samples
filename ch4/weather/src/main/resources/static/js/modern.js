@@ -102,12 +102,8 @@ async function addCity(cityId) {
 }
 
 async function removeCity(cityId) {
-  const response = await fetch("/api/city", {
+  const response = await fetch(`/api/city/${cityId}`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: cityId }),
   });
   return response.ok;
 }
