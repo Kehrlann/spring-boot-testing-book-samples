@@ -242,6 +242,8 @@ class SeleniumTests {
 
 		var citySearchInput = driver.findElement(By.id("citySearch"));
 		citySearchInput.sendKeys("Ank");
+		// Ensure the auto-complete is shown
+		driver.findElement(By.cssSelector(".autocomplete-item"));
 
 		citySearchInput.sendKeys(org.openqa.selenium.Keys.ARROW_DOWN);
 		citySearchInput.sendKeys(org.openqa.selenium.Keys.ARROW_DOWN);
