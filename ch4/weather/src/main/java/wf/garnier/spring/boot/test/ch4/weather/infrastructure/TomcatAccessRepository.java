@@ -1,11 +1,12 @@
 package wf.garnier.spring.boot.test.ch4.weather.infrastructure;
 
-import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
+import jakarta.servlet.ServletException;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
@@ -13,10 +14,11 @@ import org.apache.catalina.valves.ValveBase;
 import org.springframework.stereotype.Component;
 
 /**
- * Showcases some Servlet container-only business logic, that does not show up in MockMvc
- * tests.
+ * A Tomcat {@link org.apache.catalina.Valve} which records requests made to the
+ * application. It showcases some Servlet container-only business logic, that does not
+ * show up in MockMvc tests.
  * <p>
- * Do NOT do this in production. If you'd like to record access, see
+ * Do NOT do this in production. If you'd like to record access, see the built-in
  * {@link org.apache.catalina.valves.AccessLogValve}.
  */
 @Component
