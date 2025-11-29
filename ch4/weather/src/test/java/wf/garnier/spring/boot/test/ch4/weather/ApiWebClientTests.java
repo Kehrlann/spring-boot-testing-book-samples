@@ -56,9 +56,22 @@ class ApiWebClientTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
-	// tag::test[]
 	@Test
 	void indexPageLoads() {
+		client.get()
+			.uri("/")
+			.exchange()
+			.expectStatus()
+			.isOk()
+			.expectBody(String.class)
+			.value(body -> assertThat(body).contains("<h1>Weather App</h1>"));
+	}
+
+	// tag::test[]
+	@Test
+	void indexPageHasSelectedCity() {
+		selectCity("Paris");
+
 		//@formatter:off
 		client.get()
 			.uri("/")
@@ -67,35 +80,24 @@ class ApiWebClientTests {
 			.isOk() // <4>
 			.expectBody(String.class) // <4>
 			.value(body -> // <4>
-                assertThat(body).contains("<h1>Weather App</h1>") // <4>
-            );
+			    assertThat(body).contains("Paris (France)") // <4>
+			);
 		//@formatter:on
 	}
 	// end::test[]
 
 	// tag::test-assertj[]
 	@Test
-	void assertjVariant() {
+	void indexPageHasSelectedCityAssertJ() {
+		selectCity("Paris");
+
 		var webClientResponse = client.get().uri("/").exchange(); // <1>
 		var response = WebTestClientResponse.from(webClientResponse); // <2>
 		assertThat(response).hasStatusOk() // <3>
 			.bodyText()
-			.contains("<h1>Weather App</h1>");
+			.contains("Paris (France)");
 	}
 	// end::test-assertj[]
-
-	@Test
-	void indexPageHasSelectedCity() {
-		selectCity("Paris");
-
-		client.get()
-			.uri("/")
-			.exchange()
-			.expectStatus()
-			.isOk()
-			.expectBody(String.class)
-			.value(body -> assertThat(body).contains("Paris (France)"));
-	}
 
 	@Test
 	void selectCity() {

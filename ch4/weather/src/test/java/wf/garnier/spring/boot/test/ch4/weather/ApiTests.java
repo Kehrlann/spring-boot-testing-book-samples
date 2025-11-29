@@ -62,11 +62,24 @@ class ApiTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
-	// tag::index-page[]
 	@Test
 	void indexPageLoads() {
-		// tag::extract-response[]
 		//@formatter:off
+		// Extract the response into a variable
+		var response = mvc.get()
+			.uri("/")
+			.exchange();
+
+		assertThat(response)
+			.hasStatus(HttpStatus.OK)
+			.bodyText().contains("<h1>Weather App</h1>");
+		//@formatter:on
+	}
+
+	// tag::index-page[]
+	@Test
+	void indexPageHasSelectedCity() {
+		selectCity("Paris");
 		// Extract the response into a variable
 		var response = mvc.get() // <2>
 			.uri("/") // <3>
@@ -74,35 +87,32 @@ class ApiTests {
 
 		// Assert statement-by-statement
 		assertThat(response).hasStatus(HttpStatus.OK); // <5>
-		assertThat(response).bodyText().contains("<h1>Weather App</h1>"); // <6>
+		assertThat(response).bodyText().contains("Paris (France)"); // <6>
 
 		// Same assertions, but fluent-style
-		assertThat(response)
-			.hasStatus(HttpStatus.OK) // <5>
-			.bodyText().contains("<h1>Weather App</h1>"); // <6>
-		// end::extract-response[]
-		// tag::fluent-assertions[]
-		// Assert directly from the request
-		mvc.get()
-			.uri("/")
-			.exchange()
-			.assertThat()
-			.hasStatus(HttpStatus.OK)
-			.bodyText()
-			.contains("<h1>Weather App</h1>");
+		//@formatter:off
+		assertThat(response).hasStatus(HttpStatus.OK) // <5>
+			.bodyText().contains("Paris (France)"); // <6>
 		//@formatter:on
-		// end::fluent-assertions[]
 	}
 	// end::index-page[]
 
+	// tag::fluent-assertions[]
 	@Test
-	void indexPageHasSelectedCity() {
+	void indexPageHasSelectedCityFluent() {
 		selectCity("Paris");
 
-		var response = mvc.get().uri("/").exchange();
-
-		assertThat(response).hasStatus(HttpStatus.OK).bodyText().contains("Paris (France)");
+		//@formatter:off
+		mvc.get()
+				.uri("/")
+				.exchange()
+				.assertThat()
+				.hasStatus(HttpStatus.OK)
+				.bodyText()
+				.contains("Paris (France)");
+		//@formatter:on
 	}
+	// end::fluent-assertions[]
 
 	@Test
 	void selectCity() {
@@ -169,25 +179,33 @@ class ApiTests {
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
+	// tag::api-test[]
 	@Test
 	void getWeather() {
-		selectCity("Paris");
+		var paris = selectCity("Paris");
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
-		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isLenientlyEqualTo("""
-				[
-				  {
-				    "cityName": "Paris",
-				    "country": "France",
-				    "cityId": %s,
-				    "weather": "Clear sky",
-				    "temperature": 20.0,
-				    "windSpeed": 0.0
-				  }
-				]
-				""".formatted(paris.getId()));
+		//@formatter:off
+		assertThat(response)
+			.hasStatus(HttpStatus.OK)
+			.bodyJson().isLenientlyEqualTo(
+					"""
+					[
+					  {
+					    "cityName": "Paris",
+					    "country": "France",
+					    "cityId": %s,
+					    "weather": "Clear sky",
+					    "temperature": 20.0,
+					    "windSpeed": 0.0
+					  }
+					]
+					""".formatted(paris.getId())
+			);
+		//@formatter:on
 	}
+	// end::api-test[]
 
 	@Test
 	void getWeatherMultipleCities() {

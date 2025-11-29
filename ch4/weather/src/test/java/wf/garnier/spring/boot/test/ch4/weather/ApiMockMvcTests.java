@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -66,9 +65,18 @@ class ApiMockMvcTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
-	// tag::mockmvc-test[]
 	@Test
 	void indexPageLoads() throws Exception {
+		mvc.perform(get("/"))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Matchers.containsString("<h1>Weather App</h1>")));
+	}
+
+	// tag::mockmvc-test[]
+	@Test
+	void indexPageHasSelectedCity() throws Exception {
+		selectCity("Paris");
+
 		//@formatter:off
 		mvc.perform(
                 MockMvcRequestBuilders.get("/")  // <2>
@@ -78,7 +86,7 @@ class ApiMockMvcTests {
             )
             .andExpect(
                 MockMvcResultMatchers.content().string( // <4>
-                        Matchers.containsString("<h1>Weather App</h1>") // <5>
+                        Matchers.containsString("Paris (France)") // <5>
                 )
             );
 		//@formatter:on
@@ -86,23 +94,12 @@ class ApiMockMvcTests {
 	// end::mockmvc-test[]
 
 	@Test
-	void indexPageHasSelectedCity() throws Exception {
-		selectCity("Paris");
-
-		//@formatter:off
-	     mvc.perform(get("/"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Paris (France)")));
-	     //@formatter:on
-	}
-
-	@Test
 	void selectCity() throws Exception {
 		//@formatter:off
 		mvc.perform(post("/api/city")
-            .contentType(MediaType.APPLICATION_JSON)
+			.contentType(MediaType.APPLICATION_JSON)
 			.content("{ \"id\": %s }".formatted(paris.getId())))
-            .andExpect(status().isCreated());
+			.andExpect(status().isCreated());
 		//@formatter:on
 
 		var cities = selectionRepository.findAll();
@@ -114,13 +111,13 @@ class ApiMockMvcTests {
 	void selectCityTwice() throws Exception {
 		//@formatter:off
 		mvc.perform(post("/api/city")
-            .contentType(MediaType.APPLICATION_JSON)
+			.contentType(MediaType.APPLICATION_JSON)
 			.content("{ \"id\": %s }".formatted(paris.getId())))
-            .andExpect(status().isCreated());
+			.andExpect(status().isCreated());
 		mvc.perform(post("/api/city")
-            .contentType(MediaType.APPLICATION_JSON)
+			.contentType(MediaType.APPLICATION_JSON)
 			.content("{ \"id\": %s }".formatted(paris.getId())))
-            .andExpect(status().isConflict());
+			.andExpect(status().isConflict());
 		//@formatter:on
 
 		assertThat(selectionRepository.count()).isEqualTo(1);
