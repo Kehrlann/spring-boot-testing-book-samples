@@ -1,6 +1,7 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
 import java.io.IOException;
+
 import org.htmlunit.ScriptException;
 import org.htmlunit.WebClient;
 import org.htmlunit.html.DomNode;
@@ -20,20 +21,25 @@ import wf.garnier.spring.boot.test.ch4.weather.selection.Selection;
 import wf.garnier.spring.boot.test.ch4.weather.selection.SelectionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
+// tag::class[]
 @SpringBootTest
 @AutoConfigureMockMvc
 class HtmlUnitTests {
 
+	// end::class[]
+	// tag::webclient[]
 	@Autowired
 	private WebClient webClient;
+
+	// end:webclient[]
 
 	@Autowired
 	private CityRepository cityRepository;
@@ -51,23 +57,25 @@ class HtmlUnitTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
+	// tag::simple-test[]
 	@Test
 	void mainPage() throws IOException {
 		selectCity("Paris");
 
 		HtmlPage page = webClient.getPage("/");
 
-		var cities = page.querySelectorAll(".cities-grid > .card");
+		var cities = page.querySelectorAll(".cities-grid > .card > .full-display");
 
 		assertThat(cities).hasSize(1)
 			.first()
-			.extracting(c -> c.querySelector(".full-display").getTextContent())
+			.extracting(DomNode::getTextContent)
 			.asString()
 			.contains("Paris (France)")
 			.contains("Temperature: 20.0°C")
 			.contains("Wind Speed: 0.0 km/h")
 			.contains("Weather: Clear sky");
 	}
+	// end::simple-test[]
 
 	@Test
 	void mainPageNoCities() throws IOException {
@@ -252,4 +260,7 @@ class HtmlUnitTests {
 		return city;
 	}
 
+	// tag::class[]
+
 }
+// end::class[]

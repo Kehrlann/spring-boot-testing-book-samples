@@ -49,31 +49,39 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- tag::webflux-test-dependency[] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- end::webflux-test-dependency[] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-restclient-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- tag::webtestclient-test-dependency[] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webclient-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- end::webtestclient-test-dependency[] -->
+        <!-- tag::htmlunit[] -->
         <dependency>
             <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- end::htmlunit[] -->
+        <!-- tag::selenium[] -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- end::selenium[] -->
         <!-- Mockito config, track progress here: https://github.com/spring-io/initializr/issues/1590 -->
         <dependency>
             <groupId>org.mockito</groupId>

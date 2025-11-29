@@ -1,5 +1,6 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch4.weather.city.City;
@@ -15,6 +16,8 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.containsString;
@@ -27,12 +30,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+// tag::class[]
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc // <1>
 class ApiMockMvcTests {
 
+	// end::class[]
+
+	// tag::mockmvc[]
 	@Autowired
-	private MockMvc mvc;
+	private MockMvc mvc; // <1>
+
+	// end::mockmvc[]
 
 	@Autowired
 	private SelectionRepository selectionRepository;
@@ -57,14 +66,24 @@ class ApiMockMvcTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
+	// tag::mockmvc-test[]
 	@Test
 	void indexPageLoads() throws Exception {
 		//@formatter:off
-		mvc.perform(get("/"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("<h1>Weather App</h1>")));
+		mvc.perform(
+                MockMvcRequestBuilders.get("/")  // <2>
+            )
+            .andExpect(
+                MockMvcResultMatchers.status().isOk()  // <3>
+            )
+            .andExpect(
+                MockMvcResultMatchers.content().string( // <4>
+                        Matchers.containsString("<h1>Weather App</h1>") // <5>
+                )
+            );
 		//@formatter:on
 	}
+	// end::mockmvc-test[]
 
 	@Test
 	void indexPageHasSelectedCity() throws Exception {
@@ -195,4 +214,7 @@ class ApiMockMvcTests {
 		return city;
 	}
 
+	// tag::class[]
+
 }
+// end::class[]

@@ -16,17 +16,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.test.web.reactive.server.assertj.WebTestClientResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
+// tag::class[]
 @SpringBootTest
-@AutoConfigureWebTestClient
+@AutoConfigureWebTestClient // <1>
 class ApiWebClientTests {
 
-	@Autowired
-	private WebTestClient client;
+	// end::class[]
 
+	// tag::web-test-client[]
+	@Autowired
+	private WebTestClient client; // <2>
+
+	// end::web-test-client[]
 	@Autowired
 	private SelectionRepository selectionRepository;
 
@@ -50,16 +56,33 @@ class ApiWebClientTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
+	// tag::test[]
 	@Test
 	void indexPageLoads() {
+		//@formatter:off
 		client.get()
 			.uri("/")
-			.exchange()
-			.expectStatus()
-			.isOk()
-			.expectBody(String.class)
-			.value(body -> assertThat(body).contains("<h1>Weather App</h1>"));
+			.exchange() // <3>
+			.expectStatus() // <4>
+			.isOk() // <4>
+			.expectBody(String.class) // <4>
+			.value(body -> // <4>
+                assertThat(body).contains("<h1>Weather App</h1>") // <4>
+            );
+		//@formatter:on
 	}
+	// end::test[]
+
+	// tag::test-assertj[]
+	@Test
+	void assertjVariant() {
+		var webClientResponse = client.get().uri("/").exchange(); // <1>
+		var response = WebTestClientResponse.from(webClientResponse); // <2>
+		assertThat(response).hasStatusOk() // <3>
+			.bodyText()
+			.contains("<h1>Weather App</h1>");
+	}
+	// end::test-assertj[]
 
 	@Test
 	void indexPageHasSelectedCity() {
@@ -233,10 +256,47 @@ class ApiWebClientTests {
 			.isEqualTo(0);
 	}
 
+	/// This test uses a _generic_ {@link WebTestClient} to call {@code manning.com}.
+	/// It does **NOT** use the auto-configured, auto-wired instance, which points to
+	/// the app under test.
+	// tag::webtestclient-manning[]
+	@Test
+	void testManningWebsite() {
+		var client = WebTestClient.bindToServer().build(); // <1>
+
+		//@formatter:off
+		client.get()
+			.uri("https://www.manning.com/terms-of-use") // <2>
+			.exchange() // <3>
+			.expectStatus()
+			.isOk()
+			.expectBody(String.class)
+			.value(b -> assertThat(b)
+				.containsIgnoringCase("General terms of Use")
+			);
+		//@formatter:on
+		// tag::ignored[]
+		// You can also build a WebTestClient with a base-url, so you can call the path
+		// directly.
+		var manningClient = WebTestClient.bindToServer().baseUrl("https://www.manning.com").build();
+		manningClient.get()
+			.uri("/terms-of-use")
+			.exchange()
+			.expectStatus()
+			.isOk()
+			.expectBody(String.class)
+			.value(b -> assertThat(b).containsIgnoringCase("General terms of Use"));
+		// end::ignored[]
+	}
+	// end::webtestclient-manning[]
+
 	private City selectCity(String name) {
 		var city = this.cityRepository.findByNameIgnoreCase(name).get();
 		selectionRepository.save(new Selection(city));
 		return city;
 	}
 
+	// tag::class[]
+
 }
+// end::class[]

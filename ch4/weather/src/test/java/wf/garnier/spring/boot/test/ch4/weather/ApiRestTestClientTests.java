@@ -16,16 +16,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.client.RestTestClient;
+import org.springframework.test.web.servlet.client.assertj.RestTestClientResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
+// tag::class[]
 @SpringBootTest
 @AutoConfigureRestTestClient
 class ApiRestTestClientTests {
 
+	// end::class[]
+	// tag::resttestclient[]
 	@Autowired
 	private RestTestClient client;
+
+	// end::resttestclient[]
 
 	@Autowired
 	private SelectionRepository selectionRepository;
@@ -50,16 +56,27 @@ class ApiRestTestClientTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
+	//@formatter:off
+    // tag::test[]
 	@Test
 	void indexPageLoads() {
-		client.get()
-			.uri("/")
-			.exchange()
-			.expectStatus()
-			.isOk()
+		// without assertj
+		client.get().uri("/").exchange()
+			.expectStatus().isOk()
 			.expectBody(String.class)
-			.value(body -> assertThat(body).contains("<h1>Weather App</h1>"));
+			.value(body -> assertThat(body)
+    			.contains("<h1>Weather App</h1>")
+			);
+
+		// with assertj
+		var rawResponse = client.get().uri("/").exchange();
+		var response = RestTestClientResponse.from(rawResponse);
+		assertThat(response).hasStatusOk()
+			.bodyText()
+			.contains("<h1>Weather App</h1>");
 	}
+    // end::test[]
+	//@formatter:on
 
 	@Test
 	void indexPageHasSelectedCity() {
@@ -235,5 +252,7 @@ class ApiRestTestClientTests {
 		selectionRepository.save(new Selection(city));
 		return city;
 	}
+	// tag::class[]
 
 }
+// end::class[]
