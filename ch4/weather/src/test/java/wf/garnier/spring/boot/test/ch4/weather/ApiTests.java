@@ -1,7 +1,13 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.Customization;
@@ -23,6 +29,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.json.JsonAssert;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.data.Percentage.withPercentage;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
@@ -188,24 +195,67 @@ class ApiTests {
 
 		//@formatter:off
 		assertThat(response)
-			.hasStatus(HttpStatus.OK)
-			.bodyJson().isLenientlyEqualTo(
-					"""
-					[
-					  {
-					    "cityName": "Paris",
-					    "country": "France",
-					    "cityId": %s,
-					    "weather": "Clear sky",
-					    "temperature": 20.0,
-					    "windSpeed": 0.0
-					  }
-					]
-					""".formatted(paris.getId())
-			);
+            .hasStatus(HttpStatus.OK).bodyJson()
+            .isLenientlyEqualTo("""
+            [
+              {
+                "cityName": "Paris",
+                "country": "France",
+                "weather": "Clear sky",
+                "temperature": 20.0,
+                "windSpeed": 0.0
+              }
+            ]
+            """)
+            .extractingPath("$.[0].cityId").isEqualTo(paris.getId());
+        // tag::json-convertto[]
+		assertThat(response)
+			.bodyJson()
+			.convertTo(InstanceOfAssertFactories.list(WeatherResponse.class))
+			.hasSize(1)
+			.first()
+			.satisfies(wr -> {
+				assertThat(wr.cityName()).isEqualTo("Paris");
+				assertThat(wr.temperature()).isCloseTo(20, withPercentage(10));
+			});
+        // end::json-convertto[]
+        // tag::json-path-and-convertto[]
+		assertThat(response)
+			.bodyJson()
+			.extractingPath("$.[0]")
+			.convertTo(WeatherResponse.class)
+			.satisfies(wr -> {
+				assertThat(wr.cityName()).isEqualTo("Paris");
+				assertThat(wr.temperature()).isCloseTo(20, withPercentage(10));
+			});
+        // end::json-path-and-convertto[]
 		//@formatter:on
 	}
 	// end::api-test[]
+
+	/**
+	 * {@link MockMvcTester} only understands bytes, strings or JSON as a response. To
+	 * read any other format, including XML, you must deserialize it yourself.
+	 */
+	@Test
+	void getWeatherXml() throws IOException {
+		selectCity("Paris");
+
+		var response = mvc.get().uri("/api/weather").accept(MediaType.APPLICATION_XML).exchange();
+
+		assertThat(response).hasStatus2xxSuccessful();
+
+		var xmlBody = response.getResponse().getContentAsByteArray(); // or
+																		// getContentAsString
+		var xmlMapper = XmlMapper.builder().build();
+		var body = xmlMapper.readValue(xmlBody, new TypeReference<List<WeatherResponse>>() {
+		}); // yuck
+
+		assertThat(body).hasSize(1).first().satisfies(wr -> {
+			assertThat(wr.cityName()).isEqualTo("Paris");
+			assertThat(wr.temperature()).isCloseTo(20, withPercentage(10));
+		});
+	}
 
 	@Test
 	void getWeatherMultipleCities() {
@@ -316,6 +366,11 @@ class ApiTests {
 	}
 
 	// tag::class[]
+
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	record WeatherResponse(String cityName, String country, Double temperature) {
+
+	}
 
 }
 // end::class[]

@@ -10,7 +10,7 @@ public class City {
 
 	@Id
 	@GeneratedValue
-	private Long id;
+	private Integer id;
 
 	private String name;
 
@@ -31,7 +31,7 @@ public class City {
 		this.longitude = longitude;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 

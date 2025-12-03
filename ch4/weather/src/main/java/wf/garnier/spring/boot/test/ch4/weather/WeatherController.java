@@ -1,6 +1,7 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
 import java.util.List;
+
 import wf.garnier.spring.boot.test.ch4.weather.city.City;
 import wf.garnier.spring.boot.test.ch4.weather.selection.CityWeather;
 import wf.garnier.spring.boot.test.ch4.weather.selection.SelectionService;

@@ -1,6 +1,7 @@
 package wf.garnier.spring.boot.test.ch4.weather.selection;
 
 import java.util.List;
+
 import wf.garnier.spring.boot.test.ch4.weather.city.City;
 import wf.garnier.spring.boot.test.ch4.weather.city.CityRepository;
 import wf.garnier.spring.boot.test.ch4.weather.openmeteo.WeatherService;
