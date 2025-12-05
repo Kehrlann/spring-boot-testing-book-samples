@@ -7,12 +7,17 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import jakarta.servlet.http.Cookie;
 import org.assertj.core.api.InstanceOfAssertFactories;
+import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.skyscreamer.jsonassert.comparator.CustomComparator;
+import org.skyscreamer.jsonassert.comparator.DefaultComparator;
+import org.skyscreamer.jsonassert.comparator.JSONComparator;
 import wf.garnier.spring.boot.test.ch4.weather.city.City;
 import wf.garnier.spring.boot.test.ch4.weather.city.CityRepository;
 import wf.garnier.spring.boot.test.ch4.weather.openmeteo.WeatherData;
@@ -25,9 +30,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.json.JsonAssert;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Percentage.withPercentage;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -123,13 +130,19 @@ class ApiTests {
 
 	@Test
 	void selectCity() {
+		// tag::post-request[]
 		var response = mvc.post()
 			.uri("/api/city")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content("{ \"id\": %s }".formatted(paris.getId()))
 			.exchange();
 
-		assertThat(response).hasStatus(HttpStatus.CREATED).body().isEmpty();
+		//@formatter:off
+		assertThat(response)
+			.hasStatus(HttpStatus.CREATED)
+			.body().isEmpty();
+		//@formatter:on
+		// end::post-request[]
 		var cities = selectionRepository.findAll();
 
 		assertThat(cities).hasSize(1)
@@ -150,6 +163,14 @@ class ApiTests {
 			.hasStatus(HttpStatus.CREATED)
 			.body()
 			.isEmpty();
+
+		var cities = selectionRepository.findAll();
+
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(Selection::getCity)
+			.extracting(City::getName)
+			.isEqualTo("Paris");
 	}
 
 	@Test
@@ -288,6 +309,10 @@ class ApiTests {
 				""".formatted(lagos.getId(), shenzhen.getId()));
 	}
 
+	/**
+	 * You can use the {@link CustomComparator} to apply custom evaluation conditions.
+	 * Here, we are ignoring the cityId by path, but also
+	 */
 	@Test
 	void getWeatherMultipleCitiesCustomizations() {
 		selectCity("Lagos");
@@ -318,6 +343,27 @@ class ApiTests {
 				  }
 				]
 				""", JsonAssert.comparator(ignoringPaths("[*].cityId")));
+
+		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isEqualTo("""
+				[
+				  {
+				    "cityName": "Lagos",
+				    "country": "Nigeria",
+				    "cityId": ?,
+				    "weather": "Clear sky",
+				    "temperature": 25.0,
+				    "windSpeed": 0.0
+				  },
+				  {
+				    "cityName": "Shenzhen",
+				    "country": "China",
+				    "cityId": ?,
+				    "weather": "Partly cloudy",
+				    "temperature": 17.0,
+				    "windSpeed": 5.0
+				  }
+				]
+				""", JsonAssert.comparator(ignoringValues("?")));
 	}
 
 	private static CustomComparator ignoringPaths(String... path) {
@@ -325,6 +371,19 @@ class ApiTests {
 			.map(p -> new Customization(p, (actual, expected) -> true))
 			.toArray(Customization[]::new);
 		return new CustomComparator(JSONCompareMode.LENIENT, customizations);
+	}
+
+	private static JSONComparator ignoringValues(String... values) {
+		return new DefaultComparator(JSONCompareMode.LENIENT) {
+			@Override
+			public void compareValues(String prefix, Object expectedValue, Object actualValue, JSONCompareResult result)
+					throws JSONException {
+				if (Arrays.asList(values).contains(expectedValue.toString())) {
+					return;
+				}
+				super.compareValues(prefix, expectedValue, actualValue, result);
+			}
+		};
 	}
 
 	@Test
@@ -358,6 +417,29 @@ class ApiTests {
 
 		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().extractingPath("$.length()").isEqualTo(0);
 	}
+
+	// tag::request-post-processor[]
+	private static RequestPostProcessor apiUser(String username) {
+		return (MockHttpServletRequest request) -> {
+			request.addHeader("accept", "application/vnd.api+json");
+			request.addHeader("x-answer ", "42");
+			request.setCookies(new Cookie("user", username));
+			return request;
+		};
+	}
+
+	@Test
+	void withRequestPostProcessor() {
+		//@formatter:off
+		var response = mvc.get()
+			.uri("/api/city")
+			.with(apiUser("daniel"))
+			.exchange();
+		//@formatter:on
+
+		// ...
+	}
+	// end::request-post-processor[]
 
 	private City selectCity(String name) {
 		var city = this.cityRepository.findByNameIgnoreCase(name).get();
