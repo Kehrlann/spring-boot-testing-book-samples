@@ -37,9 +37,9 @@ class HtmlUnitTests {
 	// end::class[]
 	// tag::webclient[]
 	@Autowired
-	private WebClient webClient;
+	private WebClient webClient; // <1>
 
-	// end:webclient[]
+	// end::webclient[]
 
 	@Autowired
 	private CityRepository cityRepository;
@@ -62,13 +62,17 @@ class HtmlUnitTests {
 	void mainPage() throws IOException {
 		selectCity("Paris");
 
-		HtmlPage page = webClient.getPage("/");
+		HtmlPage page = webClient.getPage("/"); // <2>
 
-		var cities = page.querySelectorAll(".cities-grid > .card > .full-display");
+		//@formatter:off
+		var cities = page.querySelectorAll(
+                ".cities-grid > .card > .full-display" // <3>
+        );
+		//@formatter:on
 
-		assertThat(cities).hasSize(1)
+		assertThat(cities).hasSize(1) // <4>
 			.first()
-			.extracting(DomNode::getTextContent)
+			.extracting(DomNode::getTextContent) // <5>
 			.asString()
 			.contains("Paris (France)")
 			.contains("Temperature: 20.0°C")
