@@ -5,15 +5,19 @@ import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch4.weather.infrastructure.TomcatAccessRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.client.RestTestClient;
+import org.springframework.test.web.servlet.client.assertj.RestTestClientResponse;
 import org.springframework.web.client.RestClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TomcatAccessRepositoryTests {
+class TomcatTests {
 
 	@Nested
 	@SpringBootTest
@@ -33,10 +37,21 @@ class TomcatAccessRepositoryTests {
 			assertThat(repo.getAccessRecords()).isEmpty();
 		}
 
+		@Test
+		void doesNotDisplayCustom404Page() {
+			var response = mvc.get().uri("/does-not-exist").exchange();
+
+			assertThat(response).hasStatus(HttpStatus.NOT_FOUND)
+				.hasErrorMessage("No static resource does-not-exist.")
+				.bodyText()
+				.isEmpty();
+		}
+
 	}
 
 	@Nested
 	@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+	@AutoConfigureRestTestClient
 	class FullServerTests {
 
 		@LocalServerPort
@@ -44,6 +59,21 @@ class TomcatAccessRepositoryTests {
 
 		@Autowired
 		TomcatAccessRepository repo;
+
+		@Autowired
+		RestTestClient client;
+
+		@Test
+		void displaysCustom404Page() {
+			var responseSpec = client.get().uri("/does-not-exist").accept(MediaType.TEXT_HTML).exchange();
+
+			var response = RestTestClientResponse.from(responseSpec);
+
+			assertThat(response).hasStatus(HttpStatus.NOT_FOUND)
+				.bodyText()
+				.containsIgnoringCase("404 NOT FOUND")
+				.containsIgnoringCase("This is not the page you are looking for");
+		}
 
 		@Test
 		void recordsAccess() {
@@ -57,9 +87,12 @@ class TomcatAccessRepositoryTests {
 		}
 
 		/**
-		 * Sanity check on the ringbuffer behavior. If this was truly important, the
-		 * {@code RingBuffer} class should be a separate class, with dedicated tests... or
-		 * even better, an off-the-shelf implementation ;)
+		 * Our {@link TomcatAccessRepository} stores data in a ring buffer. This test
+		 * performs a sanity check on the ring buffer behavior.
+		 * <p>
+		 * If this was production code the {@code RingBuffer} class should be a separate
+		 * class, with dedicated tests... or even better, an off-the-shelf implementation
+		 * ;)
 		 */
 		@Test
 		void ringBuffer() {

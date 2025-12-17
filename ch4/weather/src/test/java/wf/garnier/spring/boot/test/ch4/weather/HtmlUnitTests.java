@@ -1,6 +1,7 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.htmlunit.ScriptException;
 import org.htmlunit.WebClient;
@@ -65,7 +66,7 @@ class HtmlUnitTests {
 		HtmlPage page = webClient.getPage("/"); // <2>
 
 		//@formatter:off
-		var cities = page.querySelectorAll(
+		List<DomNode> cities = page.querySelectorAll(
                 ".cities-grid > .card > .full-display" // <3>
         );
 		//@formatter:on
@@ -211,22 +212,27 @@ class HtmlUnitTests {
 		assertThat(cities).hasSize(1).first().extracting(DomNode::getTextContent).asString().contains("Paris (France)");
 	}
 
+	// tag::javascript[]
 	@Test
 	void addCityWithMouse() throws IOException {
 		HtmlPage page = webClient.getPage("/");
 
-		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
-		citySearchInput.type("Paris");
-		webClient.waitForBackgroundJavaScript(1000); // wait for autocomplete results
+		HtmlInput citySearchInput = page.querySelector("input#citySearch");
+		citySearchInput.type("bogot"); // <1>
+		webClient.waitForBackgroundJavaScript(1000); // <3>
 
-		page.<HtmlElement>querySelector(".autocomplete-item").click();
-
-		webClient.waitForBackgroundJavaScript(1000); // wait for new cities data
+		page.<HtmlElement>querySelector(".autocomplete-item").click(); // <2>
+		webClient.waitForBackgroundJavaScript(1000); // <3>
 
 		var cities = page.querySelectorAll(".cities-grid .card");
 
-		assertThat(cities).hasSize(1).first().extracting(DomNode::getTextContent).asString().contains("Paris (France)");
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(DomNode::getTextContent)
+			.asString()
+			.contains("Bogotá (Colombia)");
 	}
+	// end::javascript[]
 
 	@Test
 	void addCityWithKeyboardMultipleChoices() throws IOException {
@@ -240,7 +246,7 @@ class HtmlUnitTests {
 		citySearchInput.type(KeyboardEvent.DOM_VK_DOWN); // "Down arrow"
 		citySearchInput.type(KeyboardEvent.DOM_VK_RETURN); // "Enter"
 
-		webClient.waitForBackgroundJavaScript(1000); // wait for new cities data
+		webClient.waitForBackgroundJavaScript(1000); // wait for weather data
 
 		var cities = page.querySelectorAll(".cities-grid .card");
 
