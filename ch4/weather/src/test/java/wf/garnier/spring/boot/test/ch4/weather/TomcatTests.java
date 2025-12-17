@@ -1,5 +1,6 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch4.weather.infrastructure.TomcatAccessRepository;
@@ -61,14 +62,20 @@ class TomcatTests {
 		TomcatAccessRepository repo;
 
 		@Autowired
-		RestTestClient client;
+		RestTestClient testClient;
+
+		RestClient restClient;
+
+		@BeforeEach
+		void setUp() {
+			restClient = RestClient.builder().baseUrl("http://localhost:%s".formatted(port)).build();
+		}
 
 		@Test
 		void displaysCustom404Page() {
-			var responseSpec = client.get().uri("/does-not-exist").accept(MediaType.TEXT_HTML).exchange();
+			var responseSpec = testClient.get().uri("/does-not-exist").accept(MediaType.TEXT_HTML).exchange();
 
 			var response = RestTestClientResponse.from(responseSpec);
-
 			assertThat(response).hasStatus(HttpStatus.NOT_FOUND)
 				.bodyText()
 				.containsIgnoringCase("404 NOT FOUND")
@@ -77,7 +84,7 @@ class TomcatTests {
 
 		@Test
 		void recordsAccess() {
-			var response = RestClient.create().get().uri("http://localhost:%s/api/weather".formatted(port)).retrieve();
+			var response = restClient.get().uri("/api/weather".formatted(port)).retrieve();
 
 			assertThat(response.toBodilessEntity().getStatusCode()).isEqualTo(HttpStatus.OK);
 			assertThat(repo.getAccessRecords()).hasSize(1)
