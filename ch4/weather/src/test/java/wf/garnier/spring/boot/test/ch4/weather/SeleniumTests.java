@@ -1,6 +1,7 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
 import java.time.Duration;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.service.DriverService;
 import org.openqa.selenium.support.ui.FluentWait;
 import wf.garnier.spring.boot.test.ch4.weather.city.City;
 import wf.garnier.spring.boot.test.ch4.weather.city.CityRepository;
@@ -27,10 +29,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+// tag::class[]
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class SeleniumTests {
 
+	// end::class[]
 	@Autowired
 	private CityRepository cityRepository;
 
@@ -40,36 +45,34 @@ class SeleniumTests {
 	@MockitoBean
 	private WeatherService weatherService;
 
-	@LocalServerPort
-	private int port;
-
-	private static ChromeDriverService driverService;
-
-	private static RemoteWebDriver driver;
+	// tag::setup-webdriver[]
+	//@formatter:off
+	@LocalServerPort int port;
+	static DriverService driverService;
+	static RemoteWebDriver driver;
+	//@formatter:on
 
 	@BeforeAll
 	static void startChromeDriverService() throws Exception {
-		driverService = new ChromeDriverService.Builder().usingAnyFreePort().build();
-		driverService.start();
+		driverService = ChromeDriverService.createDefaultService(); // <1>
+		driverService.start(); // <1>
+
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--headless=new");
-		driver = new RemoteWebDriver(driverService.getUrl(), options);
+		driver = new RemoteWebDriver(driverService.getUrl(), options); // <2>
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1)); // <3>
 	}
 
 	@AfterAll
 	static void stopChromeDriverService() {
-		driverService.stop();
+		driverService.stop(); // <4>
 	}
+	// end::setup-webdriver[]
 
 	@BeforeEach
 	void setUp() {
 		selectionRepository.deleteAll();
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
-	}
-
-	@BeforeEach
-	void setupWebdriver() {
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
 	}
 
 	@Test
@@ -260,4 +263,7 @@ class SeleniumTests {
 		return city;
 	}
 
+	// tag::class[]
+
 }
+// end::class[]
