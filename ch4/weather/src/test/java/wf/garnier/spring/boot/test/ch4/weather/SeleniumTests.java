@@ -1,5 +1,6 @@
 package wf.garnier.spring.boot.test.ch4.weather;
 
+import java.io.IOException;
 import java.time.Duration;
 
 import org.junit.jupiter.api.AfterAll;
@@ -9,11 +10,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.remote.service.DriverService;
 import org.openqa.selenium.support.ui.FluentWait;
 import wf.garnier.spring.boot.test.ch4.weather.city.City;
 import wf.garnier.spring.boot.test.ch4.weather.city.CityRepository;
@@ -48,31 +49,33 @@ class SeleniumTests {
 	// tag::setup-webdriver[]
 	//@formatter:off
 	@LocalServerPort int port;
-	static DriverService driverService;
-	static RemoteWebDriver driver;
+	static ChromeDriverService driverService;
+	static WebDriver driver;
 	//@formatter:on
 
 	@BeforeAll
-	static void startChromeDriverService() throws Exception {
+	static void startChromeBrowser() throws Exception {
 		driverService = ChromeDriverService.createDefaultService(); // <1>
 		driverService.start(); // <1>
 
 		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--headless=new");
-		driver = new RemoteWebDriver(driverService.getUrl(), options); // <2>
+		options.addArguments("--headless");
+		driver = new ChromeDriver(driverService, options); // <2>
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1)); // <3>
 	}
 
 	@AfterAll
-	static void stopChromeDriverService() {
+	static void stopChromeBrowser() {
+		driver.close(); // <4>
 		driverService.stop(); // <4>
 	}
 	// end::setup-webdriver[]
 
 	@BeforeEach
-	void setUp() {
+	void setUp() throws IOException {
 		selectionRepository.deleteAll();
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
+		ChromeDriverService.createDefaultService().start();
 	}
 
 	@Test
