@@ -3,8 +3,6 @@ package wf.garnier.spring.boot.test.ch4.weather;
 import java.io.IOException;
 import java.time.Duration;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -24,52 +22,43 @@ import wf.garnier.spring.boot.test.ch4.weather.selection.Selection;
 import wf.garnier.spring.boot.test.ch4.weather.selection.SelectionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Scope;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-// tag::class[]
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-class SeleniumTests {
+/**
+ * These are the same tests as {@link SeleniumTests}, but instead of using a static
+ * {@link org.openqa.selenium.WebDriver}, we provide it as a bean in a configuration
+ * class. This is useful when you want a single browser to be open for all tests.
+ */
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class SeleniumDriverAsBeanTests {
 
-	// end::class[]
 	@Autowired
 	private CityRepository cityRepository;
 
 	@Autowired
 	private SelectionRepository selectionRepository;
 
+	@Autowired
+	private WeatherController controller;
+
 	@MockitoBean
 	private WeatherService weatherService;
 
-	// tag::setup-webdriver[]
-	//@formatter:off
-	@LocalServerPort int port;
-	static ChromeDriverService driverService;
-	static WebDriver driver;
-	//@formatter:on
+	@LocalServerPort
+	int port;
 
-	@BeforeAll
-	static void startChromeBrowser() throws Exception {
-		driverService = ChromeDriverService.createDefaultService(); // <1>
-		driverService.start(); // <1>
-
-		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--headless");
-		driver = new ChromeDriver(driverService, options); // <2>
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1)); // <3>
-	}
-
-	@AfterAll
-	static void stopChromeBrowser() {
-		driver.quit(); // <4>
-		driverService.stop(); // <4>
-	}
-	// end::setup-webdriver[]
+	@Autowired
+	private ChromeDriver driver;
 
 	@BeforeEach
 	void setUp() {
@@ -119,6 +108,7 @@ class SeleniumTests {
 	}
 
 	@Nested
+	@Import(WebDriverConfiguration.class)
 	class DisplayModeTests {
 
 		enum DisplayMode {
@@ -265,7 +255,43 @@ class SeleniumTests {
 		return city;
 	}
 
-	// tag::class[]
+	@TestConfiguration
+	static class WebDriverConfiguration {
+
+		@Bean(destroyMethod = "stop")
+		ChromeDriverService driverService() throws IOException {
+			var service = ChromeDriverService.createDefaultService();
+			service.start();
+			return service;
+		}
+
+		/**
+		 * Any {@link WebDriver} bean will be put in a special "webDriver" scope by Spring
+		 * Boot Tests. This will recreate a browser for every single test, which is the
+		 * opposite of what we're trying to achieve here (one browser for all tests).
+		 * Therefore, we declare the "singleton" scope manually, and tell Spring Boot
+		 * Tests to back off.
+		 *
+		 * @see org.springframework.boot.webmvc.test.autoconfigure.WebDriverScope
+		 */
+		@Bean(destroyMethod = "quit")
+		@Scope("prototype")
+		ChromeDriver webDriver(ChromeDriverService driverService) {
+			ChromeOptions options = new ChromeOptions();
+			options.addArguments("--headless");
+			var driver = new ChromeDriver(driverService, options);
+			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
+			return driver;
+		}
+
+		@Bean
+		BeanFactoryPostProcessor bfpp() {
+			return beanFactory -> {
+				var webDriver = beanFactory.getBeanDefinition("webDriver");
+				System.out.println(webDriver);
+			};
+		}
+
+	}
 
 }
-// end::class[]
