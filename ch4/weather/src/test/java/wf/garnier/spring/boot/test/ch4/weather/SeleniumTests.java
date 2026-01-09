@@ -83,7 +83,7 @@ class SeleniumTests {
 		selectCity("Paris");
 		driver.get(baseUrl);
 
-		var cities = driver.findElements(By.cssSelector(".cities-grid > .card > .full-display"));
+		var cities = driver.findElements(By.cssSelector(".cities-grid > .card"));
 
 		assertThat(cities).hasSize(1)
 			.first()
@@ -111,73 +111,12 @@ class SeleniumTests {
 
 		driver.get(baseUrl);
 
-		var cities = driver.findElements(By.cssSelector(".cities-grid > .card > .full-display > .card-title"))
+		var cities = driver.findElements(By.cssSelector(".cities-grid > .card > .card-title"))
 			.stream()
 			.map(WebElement::getText)
 			.toList();
 
 		assertThat(cities).containsExactly("Delhi (India)", "Paris (France)");
-	}
-
-	@Nested
-	class DisplayModeTests {
-
-		enum DisplayMode {
-
-			FULL, COMPACT
-
-		}
-
-		@Test
-		void initialDefaultFullDisplay() {
-			selectCity("Paris");
-
-			driver.get(baseUrl);
-
-			assertDisplay(DisplayMode.FULL);
-		}
-
-		@Test
-		void initialFullDisplay() {
-			selectCity("Paris");
-
-			driver.get(baseUrl + "&display=full");
-
-			assertDisplay(DisplayMode.FULL);
-		}
-
-		@Test
-		void initialCompactDisplay() {
-			selectCity("Paris");
-
-			driver.get(baseUrl + "&display=compact");
-
-			assertDisplay(DisplayMode.COMPACT);
-		}
-
-		@Test
-		void toggleDisplay() {
-			selectCity("Paris");
-
-			driver.get(baseUrl);
-
-			driver.findElement(By.id("button-display-compact")).click();
-			assertDisplay(DisplayMode.COMPACT);
-			assertThat(driver.getCurrentUrl()).contains("display=compact");
-
-			driver.findElement(By.id("button-display-full")).click();
-			assertDisplay(DisplayMode.FULL);
-			assertThat(driver.getCurrentUrl()).contains("display=full");
-		}
-
-		void assertDisplay(DisplayMode mode) {
-			var compactDisplay = driver.findElement(By.cssSelector(".cities-grid > .card > .compact-display"));
-			var fullDisplay = driver.findElement(By.cssSelector(".cities-grid > .card > .full-display"));
-
-			assertThat(compactDisplay.isDisplayed()).isEqualTo(mode == DisplayMode.COMPACT);
-			assertThat(fullDisplay.isDisplayed()).isEqualTo(mode == DisplayMode.FULL);
-		}
-
 	}
 
 	@Test

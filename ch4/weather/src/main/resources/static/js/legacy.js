@@ -8,48 +8,25 @@
  * HIC SUNT DRACONES.
  */
 
-var isCompactMode = false;
 var currentCities = null;
-
-function getDisplayModeFromURL() {
-  var urlParams = new URLSearchParams(window.location.search);
-  var display = urlParams.get("display");
-  return display === "compact";
-}
-
-function updateURLWithDisplayMode(mode) {
-  var url = new URL(window.location);
-  url.searchParams.set("display", mode);
-  window.history.replaceState({}, "", url);
-}
 
 function loadWeather() {
   return fetch("/api/weather").then((response) => response.json());
 }
 
-function renderCity(cityWeather, isCompact) {
+function renderCity(cityWeather) {
   return `
         <div class="card">
-          <div class="compact-display ${isCompact ? "" : "hidden"}">
-            <span style="font-weight: bold;">${cityWeather.cityName} (${cityWeather.country})</span>
-            <span>${cityWeather.temperature}°C</span>
-            <form data-role="delete-city" style="margin: 0;">
+          <h5 class="card-title">${cityWeather.cityName} (${cityWeather.country})</h5>
+          <p class="card-content">
+              Temperature: <span>${cityWeather.temperature}</span>°C<br>
+              Wind Speed: <span>${cityWeather.windSpeed}</span> km/h<br>
+              Weather: <span>${cityWeather.weather}</span>
+          </p>
+          <form data-role="delete-city">
               <input type="hidden" name="cityId" value="${cityWeather.cityId}">
-              <button type="submit" class="button button-danger button-sm">&#x2718;</button>
-            </form>
-          </div>
-          <div class="full-display  ${isCompact ? "hidden" : ""}">
-            <h5 class="card-title">${cityWeather.cityName} (${cityWeather.country})</h5>
-            <p class="card-content">
-                Temperature: <span>${cityWeather.temperature}</span>°C<br>
-                Wind Speed: <span>${cityWeather.windSpeed}</span> km/h<br>
-                Weather: <span>${cityWeather.weather}</span>
-            </p>
-            <form data-role="delete-city">
-                <input type="hidden" name="cityId" value="${cityWeather.cityId}">
-                <button type="submit" class="button button-danger button-sm">Remove</button>
-            </form>
-          </div>
+              <button type="submit" class="button button-danger button-sm">Remove</button>
+          </form>
         </div>
     `;
 }
@@ -59,26 +36,8 @@ function refreshCities() {
     currentCities = cities;
     var citiesGrid = document.querySelector(".cities-grid");
     citiesGrid.innerHTML = currentCities
-      .map((city) => renderCity(city, isCompactMode))
+      .map((city) => renderCity(city))
       .join("\n");
-  });
-}
-
-function setDisplayMode(compact) {
-  isCompactMode = compact;
-  document.querySelectorAll(".card > .full-display").forEach((c) => {
-    if (!compact) {
-      c.classList.remove("hidden");
-    } else if (!c.classList.contains("hidden")) {
-      c.classList.add("hidden");
-    }
-  });
-  document.querySelectorAll(".card > .compact-display").forEach((c) => {
-    if (compact) {
-      c.classList.remove("hidden");
-    } else if (!c.classList.contains("hidden")) {
-      c.classList.add("hidden");
-    }
   });
 }
 
@@ -251,10 +210,6 @@ document.addEventListener("DOMContentLoaded", function () {
   var citySearch = document.getElementById("citySearch");
   var cityResults = document.getElementById("cityResults");
 
-  // Initialize display mode from URL
-  isCompactMode = getDisplayModeFromURL();
-  setDisplayMode(isCompactMode);
-
   // Initialize autocomplete dropdown
   var autocomplete = new AutocompleteDropdown(
     citySearch,
@@ -283,32 +238,5 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
     }
-  });
-
-  // Initialize display toggle buttons
-  var fullButton = document.getElementById("button-display-full");
-  var compactButton = document.getElementById("button-display-compact");
-
-  // Set initial button states based on URL
-  if (isCompactMode) {
-    compactButton.classList.add("button-primary");
-    fullButton.classList.remove("button-primary");
-  } else {
-    fullButton.classList.add("button-primary");
-    compactButton.classList.remove("button-primary");
-  }
-
-  fullButton.addEventListener("click", function () {
-    fullButton.classList.add("button-primary");
-    compactButton.classList.remove("button-primary");
-    updateURLWithDisplayMode("full");
-    setDisplayMode(false);
-  });
-
-  compactButton.addEventListener("click", function () {
-    compactButton.classList.add("button-primary");
-    fullButton.classList.remove("button-primary");
-    updateURLWithDisplayMode("compact");
-    setDisplayMode(true);
   });
 });

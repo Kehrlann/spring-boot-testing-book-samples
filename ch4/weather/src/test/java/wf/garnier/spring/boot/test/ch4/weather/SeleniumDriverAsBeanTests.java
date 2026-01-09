@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.Duration;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -27,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,7 +69,7 @@ class SeleniumDriverAsBeanTests {
 		selectCity("Paris");
 		driver.get("http://localhost:" + port + "/?mode=modern");
 
-		var cities = driver.findElements(By.cssSelector(".cities-grid > .card > .full-display"));
+		var cities = driver.findElements(By.cssSelector(".cities-grid > .card"));
 
 		assertThat(cities).hasSize(1)
 			.first()
@@ -99,74 +97,12 @@ class SeleniumDriverAsBeanTests {
 
 		driver.get("http://localhost:" + port + "/?mode=modern");
 
-		var cities = driver.findElements(By.cssSelector(".cities-grid > .card > .full-display > .card-title"))
+		var cities = driver.findElements(By.cssSelector(".cities-grid > .card > .card-title"))
 			.stream()
 			.map(WebElement::getText)
 			.toList();
 
 		assertThat(cities).containsExactly("Delhi (India)", "Paris (France)");
-	}
-
-	@Nested
-	@Import(WebDriverConfiguration.class)
-	class DisplayModeTests {
-
-		enum DisplayMode {
-
-			FULL, COMPACT
-
-		}
-
-		@Test
-		void initialDefaultFullDisplay() {
-			selectCity("Paris");
-
-			driver.get("http://localhost:" + port + "/?mode=modern");
-
-			assertDisplay(DisplayMode.FULL);
-		}
-
-		@Test
-		void initialFullDisplay() {
-			selectCity("Paris");
-
-			driver.get("http://localhost:" + port + "/?mode=modern&display=full");
-
-			assertDisplay(DisplayMode.FULL);
-		}
-
-		@Test
-		void initialCompactDisplay() {
-			selectCity("Paris");
-
-			driver.get("http://localhost:" + port + "/?mode=modern&display=compact");
-
-			assertDisplay(DisplayMode.COMPACT);
-		}
-
-		@Test
-		void toggleDisplay() {
-			selectCity("Paris");
-
-			driver.get("http://localhost:" + port + "/?mode=modern");
-
-			driver.findElement(By.id("button-display-compact")).click();
-			assertDisplay(DisplayMode.COMPACT);
-			assertThat(driver.getCurrentUrl()).contains("display=compact");
-
-			driver.findElement(By.id("button-display-full")).click();
-			assertDisplay(DisplayMode.FULL);
-			assertThat(driver.getCurrentUrl()).contains("display=full");
-		}
-
-		void assertDisplay(DisplayMode mode) {
-			var compactDisplay = driver.findElement(By.cssSelector(".cities-grid > .card > .compact-display"));
-			var fullDisplay = driver.findElement(By.cssSelector(".cities-grid > .card > .full-display"));
-
-			assertThat(compactDisplay.isDisplayed()).isEqualTo(mode == DisplayMode.COMPACT);
-			assertThat(fullDisplay.isDisplayed()).isEqualTo(mode == DisplayMode.FULL);
-		}
-
 	}
 
 	@Test

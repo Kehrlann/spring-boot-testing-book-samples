@@ -19,39 +19,21 @@
             <input type="text" id="citySearch" placeholder="Type to search cities..." autocomplete="off">
             <div id="cityResults" class="autocomplete-results"></div>
         </div>
-        <!-- Spacer -->
-        <div>&nbsp;</div>
-        <div>
-            <b>Display:</b>
-            <button id="button-display-full" class="button button-sm">Full</button>
-            <button id="button-display-compact" class="button button-sm">Compact</button>
-        </div>
     </div>
 
     <!-- Cities List -->
     <div class="cities-grid">
         <div th:each="cityWeather : ${preferredCities}" class="card">
-            <div class="compact-display hidden">
-                <span style="font-weight: bold;"
-                      th:text="${cityWeather.cityName() + ' (' + cityWeather.country() + ')'}"></span>
-                <span th:text="${cityWeather.temperature}">°C</span>
-                <form data-role="delete-city-small" style="margin: 0;">
-                    <input type="hidden" name="cityId" th:value="${cityWeather.cityId}">
-                    <button type="submit" class="button button-danger button-sm">&#x2718;</button>
-                </form>
-            </div>
-            <div class="full-display hidden">
-                <h5 class="card-title" th:text="${cityWeather.cityName() + ' (' + cityWeather.country() + ')'}"></h5>
-                <p class="card-content">
-                    Temperature: <span th:text="${cityWeather.temperature()}">20</span>°C<br>
-                    Wind Speed: <span th:text="${cityWeather.windSpeed()}">5</span> km/h<br>
-                    Weather: <span th:text="${cityWeather.weather()}">Sunny</span>
-                </p>
-                <form data-role="delete-city">
-                    <input type="hidden" name="cityId" th:value="${cityWeather.cityId()}">
-                    <button type="submit" class="button button-danger button-sm">Remove</button>
-                </form>
-            </div>
+            <h5 class="card-title" th:text="${cityWeather.cityName() + ' (' + cityWeather.country() + ')'}"></h5>
+            <p class="card-content">
+                Temperature: <span th:text="${cityWeather.temperature()}">20</span>°C<br>
+                Wind Speed: <span th:text="${cityWeather.windSpeed()}">5</span> km/h<br>
+                Weather: <span th:text="${cityWeather.weather()}">Sunny</span>
+            </p>
+            <form data-role="delete-city">
+                <input type="hidden" name="cityId" th:value="${cityWeather.cityId()}">
+                <button type="submit" class="button button-danger button-sm">Remove</button>
+            </form>
         </div>
     </div>
 </div>

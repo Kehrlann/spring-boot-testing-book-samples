@@ -67,7 +67,7 @@ class HtmlUnitTests {
 
 		//@formatter:off
 		List<DomNode> cities = page.querySelectorAll(
-                ".cities-grid > .card > .full-display" // <3>
+                ".cities-grid > .card" // <3>
         );
 		//@formatter:on
 
@@ -101,66 +101,6 @@ class HtmlUnitTests {
 		var cities = page.querySelectorAll(".cities-grid .card-title").stream().map(DomNode::getTextContent);
 
 		assertThat(cities).containsExactly("Delhi (India)", "Paris (France)");
-	}
-
-	@Nested
-	class DisplayModeTests {
-
-		enum DisplayMode {
-
-			FULL, COMPACT
-
-		}
-
-		@Test
-		void initialDefaultFullDisplay() throws IOException {
-			selectCity("Paris");
-
-			HtmlPage page = webClient.getPage("/");
-
-			assertDisplay(page, DisplayMode.FULL);
-		}
-
-		@Test
-		void initialFullDisplay() throws IOException {
-			selectCity("Paris");
-
-			HtmlPage page = webClient.getPage("/?display=full");
-
-			assertDisplay(page, DisplayMode.FULL);
-		}
-
-		@Test
-		void initialCompactDisplay() throws IOException {
-			selectCity("Paris");
-
-			HtmlPage page = webClient.getPage("/?display=compact");
-
-			assertDisplay(page, DisplayMode.COMPACT);
-		}
-
-		@Test
-		void toggleDisplay() throws IOException {
-			selectCity("Paris");
-
-			HtmlPage page = webClient.getPage("/");
-
-			page.<HtmlButton>querySelector("#button-display-compact").click();
-			assertDisplay(page, DisplayMode.COMPACT);
-			assertThat(page.getUrl().getQuery()).isEqualTo("display=compact");
-			page.<HtmlButton>querySelector("#button-display-full").click();
-			assertDisplay(page, DisplayMode.FULL);
-			assertThat(page.getUrl().getQuery()).isEqualTo("display=full");
-		}
-
-		static void assertDisplay(HtmlPage page, DisplayMode mode) {
-			var compactDisplay = page.querySelector(".cities-grid > .card > .compact-display");
-			var fullDisplay = page.querySelector(".cities-grid > .card > .full-display");
-
-			assertThat(compactDisplay.isDisplayed()).isEqualTo(mode == DisplayMode.COMPACT);
-			assertThat(fullDisplay.isDisplayed()).isEqualTo(mode == DisplayMode.FULL);
-		}
-
 	}
 
 	@Test
