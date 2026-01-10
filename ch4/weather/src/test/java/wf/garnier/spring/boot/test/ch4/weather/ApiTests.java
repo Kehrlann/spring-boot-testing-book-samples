@@ -94,18 +94,14 @@ class ApiTests {
 	@Test
 	void indexPageHasSelectedCity() {
 		selectCity("Paris");
-		// Extract the response into a variable
+
 		var response = mvc.get() // <2>
 			.uri("/") // <3>
 			.exchange(); // <4>
 
-		// Assert statement-by-statement
-		assertThat(response).hasStatus(HttpStatus.OK); // <5>
-		assertThat(response).bodyText().contains("Paris (France)"); // <6>
-
-		// Same assertions, but fluent-style
 		//@formatter:off
-		assertThat(response).hasStatus(HttpStatus.OK) // <5>
+		assertThat(response)
+			.hasStatus(HttpStatus.OK) // <5>
 			.bodyText().contains("Paris (France)"); // <6>
 		//@formatter:on
 	}
@@ -447,12 +443,13 @@ class ApiTests {
 		return city;
 	}
 
-	// tag::class[]
-
+	// tag::weather-response[]
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	record WeatherResponse(String cityName, String country, Double temperature) {
-
-	}
+	record WeatherResponse(
+		String cityName, String country, Double temperature
+	) {}
+	// end::weather-response[]
+	// tag::class[]
 
 }
 // end::class[]
