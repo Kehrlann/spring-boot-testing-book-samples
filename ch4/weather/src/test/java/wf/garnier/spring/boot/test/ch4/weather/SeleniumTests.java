@@ -140,14 +140,11 @@ class SeleniumTests {
 	// tag::autocomplete-test[]
 	@Test
 	void autocomplete() {
-		// Arrange
 		driver.get("http://localhost:" + port + "/?mode=modern"); // <1>
 
-		// Act
 		var citySearchInput = driver.findElement(By.id("citySearch")); // <2>
 		citySearchInput.sendKeys("jak"); // <3>
 
-		// Assert
 		var autocompleteResults = // <4>
 				driver.findElement(By.id("cityResults"))
 					.findElements(By.cssSelector(".autocomplete-item"))

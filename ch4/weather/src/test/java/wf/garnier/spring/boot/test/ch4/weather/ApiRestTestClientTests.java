@@ -293,12 +293,12 @@ class ApiRestTestClientTests {
 		selectionRepository.save(new Selection(city));
 		return city;
 	}
-	// tag::class[]
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	record WeatherResponse(String cityName, String country, Double temperature) {
 
 	}
+	// tag::class[]
 
 }
 // end::class[]

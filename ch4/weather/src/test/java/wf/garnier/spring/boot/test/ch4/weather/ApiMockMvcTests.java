@@ -79,16 +79,16 @@ class ApiMockMvcTests {
 
 		//@formatter:off
 		mvc.perform(
-                MockMvcRequestBuilders.get("/")  // <2>
-            )
-            .andExpect(
-                MockMvcResultMatchers.status().isOk()  // <3>
-            )
-            .andExpect(
-                MockMvcResultMatchers.content().string( // <4>
-                        Matchers.containsString("Paris (France)") // <5>
-                )
-            );
+				MockMvcRequestBuilders.get("/")  // <2>
+			)
+			.andExpect(
+				MockMvcResultMatchers.status().isOk()  // <3>
+			)
+			.andExpect(
+				MockMvcResultMatchers.content().string( // <4>
+						Matchers.containsString("Paris (France)") // <4>
+				)
+			);
 		//@formatter:on
 	}
 	// end::mockmvc-test[]

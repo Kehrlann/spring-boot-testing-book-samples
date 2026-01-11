@@ -60,8 +60,9 @@ class TomcatTests {
 
 		// end::class[]
 		// tag::local-server-port[]
-		@LocalServerPort
-		int port;
+		//@formatter:off
+		@LocalServerPort int port;
+		//@formatter:on
 
 		// end::local-server-port[]
 		// tag::rest-test-client[]
