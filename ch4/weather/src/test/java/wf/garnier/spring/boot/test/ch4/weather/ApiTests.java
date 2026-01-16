@@ -212,8 +212,10 @@ class ApiTests {
 
 		//@formatter:off
 		assertThat(response)
-            .hasStatus(HttpStatus.OK).bodyJson()
-            .isLenientlyEqualTo("""
+			.hasStatus(HttpStatus.OK)
+			.bodyJson() // <1>
+			.isLenientlyEqualTo( // <2>
+            """
             [
               {
                 "cityName": "Paris",
@@ -224,7 +226,8 @@ class ApiTests {
               }
             ]
             """)
-            .extractingPath("$.[0].cityId").isEqualTo(paris.getId());
+			.extractingPath("$.[0].cityId") // <3>
+				.isEqualTo(paris.getId());
         // tag::json-convertto[]
 		assertThat(response)
 			.bodyJson()
@@ -443,12 +446,14 @@ class ApiTests {
 		return city;
 	}
 
+	//@formatter:off
 	// tag::weather-response[]
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	record WeatherResponse(
 		String cityName, String country, Double temperature
 	) {}
 	// end::weather-response[]
+	//@formatter:on
 	// tag::class[]
 
 }
