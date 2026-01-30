@@ -42,14 +42,12 @@ import static org.mockito.Mockito.when;
 
 // tag::class[]
 @SpringBootTest
-@AutoConfigureMockMvc // <1>
+@AutoConfigureMockMvc <1>
 class ApiTests {
 
 	// end::class[]
 	// tag::mock-mvc-tester[]
-	//@formatter:off
-	@Autowired MockMvcTester mvc; // <1>
-	//@formatter:on
+	@Autowired MockMvcTester mvc; <1>
 
 	// end::mock-mvc-tester[]
 
@@ -78,7 +76,6 @@ class ApiTests {
 
 	@Test
 	void indexPageLoads() {
-		//@formatter:off
 		// Extract the response into a variable
 		var response = mvc.get()
 			.uri("/")
@@ -87,7 +84,6 @@ class ApiTests {
 		assertThat(response)
 			.hasStatus(HttpStatus.OK)
 			.bodyText().contains("<h1>Weather App</h1>");
-		//@formatter:on
 	}
 
 	// tag::index-page[]
@@ -95,15 +91,13 @@ class ApiTests {
 	void indexPageHasSelectedCity() {
 		selectCity("Paris");
 
-		var response = mvc.get() // <2>
-			.uri("/") // <3>
-			.exchange(); // <4>
+		var response = mvc.get() <2>
+			.uri("/") <3>
+			.exchange(); <4>
 
-		//@formatter:off
 		assertThat(response)
-			.hasStatus(HttpStatus.OK) // <5>
-			.bodyText().contains("Paris (France)"); // <6>
-		//@formatter:on
+			.hasStatus(HttpStatus.OK) <5>
+			.bodyText().contains("Paris (France)"); <6>
 	}
 	// end::index-page[]
 
@@ -112,7 +106,6 @@ class ApiTests {
 	void indexPageHasSelectedCityFluent() {
 		selectCity("Paris");
 
-		//@formatter:off
 		mvc.get()
 				.uri("/")
 				.exchange()
@@ -120,7 +113,6 @@ class ApiTests {
 				.hasStatus(HttpStatus.OK)
 				.bodyText()
 				.contains("Paris (France)");
-		//@formatter:on
 	}
 	// end::fluent-assertions[]
 
@@ -133,11 +125,9 @@ class ApiTests {
 			.content("{ \"id\": %s }".formatted(paris.getId()))
 			.exchange();
 
-		//@formatter:off
 		assertThat(response)
 			.hasStatus(HttpStatus.CREATED)
 			.body().isEmpty();
-		//@formatter:on
 		// end::post-request[]
 		var cities = selectionRepository.findAll();
 
@@ -185,11 +175,9 @@ class ApiTests {
 	void unselectCity() {
 		selectCity("Paris");
 
-		//@formatter:off
 		var response = mvc.delete()
 			.uri("/api/city/{id}", paris.getId())
 			.exchange();
-		//@formatter:on
 
 		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
 		assertThat(selectionRepository.count()).isEqualTo(0);
@@ -210,11 +198,10 @@ class ApiTests {
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
-		//@formatter:off
 		assertThat(response)
 			.hasStatus(HttpStatus.OK)
-			.bodyJson() // <1>
-			.isLenientlyEqualTo( // <2>
+			.bodyJson() <1>
+			.isLenientlyEqualTo( <2>
             """
             [
               {
@@ -226,7 +213,7 @@ class ApiTests {
               }
             ]
             """)
-			.extractingPath("$.[0].cityId") // <3>
+			.extractingPath("$.[0].cityId") <3>
 				.isEqualTo(paris.getId());
         // tag::json-convertto[]
 		assertThat(response)
@@ -249,7 +236,6 @@ class ApiTests {
 				assertThat(wr.temperature()).isCloseTo(20, withPercentage(10));
 			});
         // end::json-path-and-convertto[]
-		//@formatter:on
 	}
 	// end::api-test[]
 
@@ -429,12 +415,10 @@ class ApiTests {
 
 	@Test
 	void withRequestPostProcessor() {
-		//@formatter:off
 		var response = mvc.get()
 			.uri("/api/city")
 			.with(apiUser("daniel"))
 			.exchange();
-		//@formatter:on
 
 		// ...
 	}
@@ -446,14 +430,12 @@ class ApiTests {
 		return city;
 	}
 
-	//@formatter:off
 	// tag::weather-response[]
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	record WeatherResponse(
 		String cityName, String country, Double temperature
 	) {}
 	// end::weather-response[]
-	//@formatter:on
 	// tag::class[]
 
 }

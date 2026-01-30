@@ -23,28 +23,28 @@ import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
 // tag::annotations[]
-@SpringBootTest // <1>
-@AutoConfigureMockMvc // <2>
+@SpringBootTest <1>
+@AutoConfigureMockMvc <2>
 // end::annotations[]
 // tag::class[]
 class ExampleTests {
 
 	// end::class[]
 	// tag::mock-mvc-tester[]
-	@Autowired // <2>
-	private MockMvcTester mvc; // <2>
+	@Autowired <2>
+	private MockMvcTester mvc; <2>
 
 	// end::mock-mvc-tester[]
 
 	// tag::selection-repository[]
-	@Autowired // <1>
-	private SelectionRepository selectionRepository; // <1>
+	@Autowired <1>
+	private SelectionRepository selectionRepository; <1>
 
 	// end::selection-repository[]
 
 	// tag::mockito-bean[]
 	@MockitoBean
-	private WeatherService weatherService; // <1>
+	private WeatherService weatherService; <1>
 
 	// end::mockito-bean[]
 
@@ -69,35 +69,31 @@ class ExampleTests {
 	// tag::first-test[]
 	@Test
 	void indexPageLoads() {
-		//@formatter:off
 		// 1. Arrange
 		// We do not need to set up anything in particular
 
 		// 2. Act
-		var response = mvc.get() // <3>
+		var response = mvc.get() <3>
 				.uri("/")
 				.exchange();
 
 		// 3. Assert
-		assertThat(response) // <4>
+		assertThat(response) <4>
 				.hasStatus(HttpStatus.OK)
 				.bodyText()
 				.contains("<h1>Weather App</h1>");
-		//@formatter:on
 	}
 	// end::first-test[]
 
 	// tag::selection-test[]
 	@Test
 	void addSelectedCity() {
-		//@formatter:off
 		mvc.post()
 				.uri("/city/add")
 				.param("city", "Paris")
 				.exchange();
-		//@formatter:on
 
-		assertThat(selectionRepository.findAll()).hasSize(1) // <2>
+		assertThat(selectionRepository.findAll()).hasSize(1) <2>
 			.first()
 			.extracting(Selection::getCity)
 			.extracting(City::getName)
@@ -107,13 +103,11 @@ class ExampleTests {
 
 	@Test
 	void addSelectedCityApi() {
-		//@formatter:off
 		var response = mvc.post()
 				.uri("/api/city")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"cityName\": \"Paris\"}")
 				.exchange();
-		//@formatter:on
 
 		assertThat(response).hasStatus(HttpStatus.CREATED);
 
@@ -128,7 +122,6 @@ class ExampleTests {
 	void indexPageWithCity() {
 		selectCity("Paris");
 
-		//@formatter:off
 		var response = mvc.get()
 				.uri("/")
 				.exchange();
@@ -136,7 +129,6 @@ class ExampleTests {
 				.hasStatus(HttpStatus.OK)
 				.bodyText()
 				.contains("Paris");
-		//@formatter:on
 	}
 
 	@Test
@@ -166,8 +158,8 @@ class ExampleTests {
 	@Test
 	void getWeather() {
 		// tag::weather-data-mock[]
-		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())) // <2>
-			.thenReturn(new WeatherData(22.6, 0, 1)); // <2>
+		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())) <2>
+			.thenReturn(new WeatherData(22.6, 0, 1)); <2>
 		// end::weather-data-mock[]
 		selectCity("Paris");
 
@@ -177,7 +169,6 @@ class ExampleTests {
 		// ... assertions omitted for brevity ...
 		// end::weather-data-mock[]
 		// tag::weather-data-assertions[]
-		//@formatter:off
 		assertThat(response)
 				.hasStatus(HttpStatus.OK)
 				.bodyJson()
@@ -189,7 +180,6 @@ class ExampleTests {
 						  }
 						]
 						""");
-		//@formatter:on
 		// end::weather-data-assertions[]
 	}
 	// end::weather-data[]
@@ -255,12 +245,10 @@ class ExampleTests {
 
 	// tag::select-city[]
 	private MvcTestResult selectCity(String cityName) {
-		//@formatter:off
 		return mvc.post()
 			.uri("/city/add")
 			.param("city", cityName)
 			.exchange();
-		//@formatter:on
 	}
 	// end::select-city[]
 
