@@ -24,41 +24,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 // tag::content[]
 // tag::annotations[]
-@SpringBootTest(properties = "widget.id.step=5") // <1>
-@AutoConfigureMockMvc // <2>
+@SpringBootTest(properties = "widget.id.step=5") <1>
+@AutoConfigureMockMvc <2>
 // end::annotations[]
 class AwesomeSpringBootTests {
 
 	// tag::class-members[]
 	@Autowired
-	private MockMvc mockMvc; // <2>
+	private MockMvc mockMvc; <2>
 
 	@Autowired
-	private WidgetRepository repository; // <3>
+	private WidgetRepository repository; <3>
 
 	@MockitoBean
-	private WidgetValidator mockValidator; // <4>
+	private WidgetValidator mockValidator; <4>
 
 	// end::class-members[]
 	// tag::test[]
 	@Test
 	void addWidget() throws Exception {
-		doNothing().when(mockValidator).validateWidget(anyString()); // <1>
+		doNothing().when(mockValidator).validateWidget(anyString()); <1>
 
-		//@formatter:off
-		var location = mockMvc.perform(  // <2>
-				post("/widget").param("name", "test-widget") // <2>
+		var location = mockMvc.perform(  <2>
+				post("/widget").param("name", "test-widget") <2>
 			)
-			.andExpect(status().isCreated()) // <3>
+			.andExpect(status().isCreated()) <3>
 			.andReturn()
 			.getResponse()
-			.getHeader("location"); // <4>
-		//@formatter:on
+			.getHeader("location"); <4>
 
 		var id = getWidgetId(location);
 		var widget = repository.findById(id);
 		assertThat(widget).isPresent();
-		assertThat(widget.get().name()).isEqualTo("test-widget"); // <5>
+		assertThat(widget.get().name()).isEqualTo("test-widget"); <5>
 	}
 
 	// end::test[]
@@ -91,12 +89,10 @@ class AwesomeSpringBootTests {
 	}
 
 	private static int getWidgetId(String location) {
-		//@formatter:off
 		var id = UriComponentsBuilder.fromUriString(location)
 				.build()
 				.getPathSegments()
 				.getLast();
-		//@formatter:on
 		return Integer.parseInt(id);
 	}
 	// end::ignored[]
