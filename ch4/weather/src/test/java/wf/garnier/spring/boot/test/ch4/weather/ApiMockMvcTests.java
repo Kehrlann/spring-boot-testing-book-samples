@@ -31,14 +31,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // tag::class[]
 @SpringBootTest
-@AutoConfigureMockMvc // <1>
+@AutoConfigureMockMvc <1>
 class ApiMockMvcTests {
 
 	// end::class[]
 
 	// tag::mockmvc[]
 	@Autowired
-	private MockMvc mvc; // <1>
+	private MockMvc mvc; <1>
 
 	// end::mockmvc[]
 
@@ -77,30 +77,26 @@ class ApiMockMvcTests {
 	void indexPageHasSelectedCity() throws Exception {
 		selectCity("Paris");
 
-		//@formatter:off
 		mvc.perform(
-				MockMvcRequestBuilders.get("/")  // <2>
+				MockMvcRequestBuilders.get("/")  <2>
 			)
 			.andExpect(
-				MockMvcResultMatchers.status().isOk()  // <3>
+				MockMvcResultMatchers.status().isOk()  <3>
 			)
 			.andExpect(
-				MockMvcResultMatchers.content().string( // <4>
-						Matchers.containsString("Paris (France)") // <4>
+				MockMvcResultMatchers.content().string( <4>
+						Matchers.containsString("Paris (France)") <4>
 				)
 			);
-		//@formatter:on
 	}
 	// end::mockmvc-test[]
 
 	@Test
 	void selectCity() throws Exception {
-		//@formatter:off
 		mvc.perform(post("/api/city")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content("{ \"id\": %s }".formatted(paris.getId())))
 			.andExpect(status().isCreated());
-		//@formatter:on
 
 		var cities = selectionRepository.findAll();
 		assertThat(cities).hasSize(1);
@@ -109,7 +105,6 @@ class ApiMockMvcTests {
 
 	@Test
 	void selectCityTwice() throws Exception {
-		//@formatter:off
 		mvc.perform(post("/api/city")
 			.contentType(MediaType.APPLICATION_JSON)
 			.content("{ \"id\": %s }".formatted(paris.getId())))
@@ -118,7 +113,6 @@ class ApiMockMvcTests {
 			.contentType(MediaType.APPLICATION_JSON)
 			.content("{ \"id\": %s }".formatted(paris.getId())))
 			.andExpect(status().isConflict());
-		//@formatter:on
 
 		assertThat(selectionRepository.count()).isEqualTo(1);
 	}
