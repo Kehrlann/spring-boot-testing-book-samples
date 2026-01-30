@@ -26,11 +26,9 @@ class WidgetController {
 
 	@GetMapping("/widget/{id}")
 	public ResponseEntity<Widget> getWidget(@PathVariable int id) {
-		//@formatter:off
 		return widgetService.findWidget(id)
 				.map(ResponseEntity::ok)
 				.orElse(ResponseEntity.notFound().build());
-		//@formatter:on
 	}
 
 	@PostMapping("/widget")

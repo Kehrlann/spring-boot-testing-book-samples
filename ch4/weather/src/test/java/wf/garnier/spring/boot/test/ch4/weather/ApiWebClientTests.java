@@ -23,14 +23,14 @@ import static org.mockito.Mockito.when;
 
 // tag::class[]
 @SpringBootTest
-@AutoConfigureWebTestClient // <1>
+@AutoConfigureWebTestClient <1>
 class ApiWebClientTests {
 
 	// end::class[]
 
 	// tag::web-test-client[]
 	@Autowired
-	private WebTestClient client; // <2>
+	private WebTestClient client; <2>
 
 	// end::web-test-client[]
 	@Autowired
@@ -72,17 +72,15 @@ class ApiWebClientTests {
 	void indexPageHasSelectedCity() {
 		selectCity("Paris");
 
-		//@formatter:off
 		client.get()
 			.uri("/")
-			.exchange() // <3>
-			.expectStatus() // <4>
-			.isOk() // <4>
-			.expectBody(String.class) // <4>
-			.value(body -> // <4>
-				assertThat(body).contains("Paris (France)") // <4>
+			.exchange() <3>
+			.expectStatus() <4>
+			.isOk() <4>
+			.expectBody(String.class) <4>
+			.value(body -> <4>
+				assertThat(body).contains("Paris (France)") <4>
 			);
-		//@formatter:on
 	}
 	// end::test[]
 
@@ -91,9 +89,9 @@ class ApiWebClientTests {
 	void indexPageHasSelectedCityAssertJ() {
 		selectCity("Paris");
 
-		var webClientResponse = client.get().uri("/").exchange(); // <1>
-		var response = WebTestClientResponse.from(webClientResponse); // <2>
-		assertThat(response).hasStatusOk() // <3>
+		var webClientResponse = client.get().uri("/").exchange(); <1>
+		var response = WebTestClientResponse.from(webClientResponse); <2>
+		assertThat(response).hasStatusOk() <3>
 			.bodyText()
 			.contains("Paris (France)");
 	}
@@ -141,26 +139,22 @@ class ApiWebClientTests {
 	void unselectCity() {
 		selectCity("Paris");
 
-		//@formatter:off
 		client.delete()
 			.uri("/api/city/{id}", paris.getId())
 			.exchange()
 			.expectStatus()
 			.isNoContent();
-		//@formatter:on
 
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
 	@Test
 	void unselectMissingCity() {
-		//@formatter:off
 		client.delete()
 			.uri("/api/city/{id}", paris.getId())
 			.exchange()
 			.expectStatus()
 			.isNoContent();
-		//@formatter:on
 
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
@@ -264,19 +258,17 @@ class ApiWebClientTests {
 	// tag::webtestclient-manning[]
 	@Test
 	void testManningWebsite() {
-		var client = WebTestClient.bindToServer().build(); // <1>
+		var client = WebTestClient.bindToServer().build(); <1>
 
-		//@formatter:off
 		client.get()
-			.uri("https://www.manning.com/terms-of-use") // <2>
-			.exchange() // <3>
+			.uri("https://www.manning.com/terms-of-use") <2>
+			.exchange() <3>
 			.expectStatus()
 			.isOk()
 			.expectBody(String.class)
 			.value(b -> assertThat(b)
 				.containsIgnoringCase("General terms of Use")
 			);
-		//@formatter:on
 		// tag::ignored[]
 		// You can also build a WebTestClient with a base-url, so you can call the path
 		// directly.

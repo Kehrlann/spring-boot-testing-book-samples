@@ -23,14 +23,14 @@ class CustomConfigTests {
 
 	@Nested
 	// tag::mockito-beans[]
-	@SpringBootTest(classes = { ThingConfiguration.class }) // <1>
+	@SpringBootTest(classes = { ThingConfiguration.class }) <1>
 	class CustomClassesTests {
 
 		// tag::beans[]
-		@MockitoBean // <2>
+		@MockitoBean <2>
 		Gizmo gizmo;
 
-		@MockitoBean(name = "blueWidget") // <3>
+		@MockitoBean(name = "blueWidget") <3>
 		Widget blueWidget;
 
 		// end::beans[]
@@ -108,17 +108,17 @@ class CustomConfigTests {
 	@SpringBootTest(classes = { ThingConfiguration.class })
 	class MockitoAndTestBeanTests {
 
-		@TestBean // <1>
+		@TestBean <1>
 		Gizmo gizmo;
 
-		@TestBean(name = "blueWidget", methodName = "makeBlueWidget") // <2>
+		@TestBean(name = "blueWidget", methodName = "makeBlueWidget") <2>
 		Widget blueWidget;
 
-		static Gizmo gizmo() { // <3>
+		static Gizmo gizmo() { <3>
 			return new Gizmo("test");
 		}
 
-		static Widget makeBlueWidget() { // <3>
+		static Widget makeBlueWidget() { <3>
 			return new Widget("test");
 		}
 

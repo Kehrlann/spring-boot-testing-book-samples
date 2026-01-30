@@ -53,7 +53,7 @@ class TestConfigurationTests {
 	@Nested
 	// tag::import-testconfiguration[]
 	@SpringBootTest
-	@Import(CustomTestConfiguration.class) // <1>
+	@Import(CustomTestConfiguration.class) <1>
 	class ImportConfigTests {
 
 		// ... your test code ...
