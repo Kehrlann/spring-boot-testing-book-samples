@@ -44,9 +44,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 class ManualSpringBootTests {
 
 	// tag::class-members[]
-	private static ConfigurableApplicationContext app; // <1>
+	private static ConfigurableApplicationContext app; <1>
 
-	private static RestClient restClient; // <2>
+	private static RestClient restClient; <2>
 
 	private static int localServerPort;
 
@@ -54,14 +54,14 @@ class ManualSpringBootTests {
 	// tag::before-after[]
 	@BeforeAll
 	static void beforeAll() {
-		app = new SpringApplicationBuilder(TestConfiguration.class).run(); // <1>
+		app = new SpringApplicationBuilder(TestConfiguration.class).run(); <1>
 		localServerPort = Integer.parseInt(app.getEnvironment().getProperty("local.server.port"));
-		restClient = RestClient.create("http://localhost:" + localServerPort); // <2>
+		restClient = RestClient.create("http://localhost:" + localServerPort); <2>
 	}
 
 	@AfterAll
 	static void afterAll() {
-		app.stop(); // <3>
+		app.stop(); <3>
 	}
 
 	// end::before-after[]
@@ -69,14 +69,14 @@ class ManualSpringBootTests {
 	// ... boilerplate code ...
 
 	@Test
-	void addWidget() { // <3>
+	void addWidget() { <3>
 		// Given
-		StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class); // <4>
+		StubWidgetValidator validator = (StubWidgetValidator) app.getBean(WidgetValidator.class); <4>
 		validator.makeAlwaysValid();
-		var repository = app.getBean(WidgetRepository.class); // <4>
+		var repository = app.getBean(WidgetRepository.class); <4>
 
 		// When
-		var response = restClient.post() // <5>
+		var response = restClient.post() <5>
 			.uri("/widget")
 			.contentType(MediaType.APPLICATION_FORM_URLENCODED)
 			.body("name=test-widget")
@@ -85,12 +85,12 @@ class ManualSpringBootTests {
 
 		// Then
 		var status = response.getStatusCode().value();
-		assertThat(status).isEqualTo(HttpStatus.CREATED.value()); // <6>
+		assertThat(status).isEqualTo(HttpStatus.CREATED.value()); <6>
 		assertThat(response.getHeaders().getLocation().getPath()).matches("^/widget/\\d+$");
 		var id = getWidgetId(response.getHeaders().getLocation());
 		var widget = repository.findById(id);
 		assertThat(widget).isPresent();
-		assertThat(widget.get().name()).isEqualTo("test-widget"); // <7>
+		assertThat(widget.get().name()).isEqualTo("test-widget"); <7>
 	}
 
 	// end::test[]
@@ -194,7 +194,7 @@ class ManualSpringBootTests {
 		var id = getWidgetId(response.getHeaders().getLocation());
 		var widget = repository.findById(id);
 		assertThat(widget).isPresent();
-		assertThat(widget.get().name()).isEqualTo("test-widget"); // <7>
+		assertThat(widget.get().name()).isEqualTo("test-widget"); <7>
 	}
 
 	// end::ignored[]
@@ -219,12 +219,10 @@ class ManualSpringBootTests {
 	// end::configuration[]
 	// tag::ignored[]
 	private static int getWidgetId(URI location) {
-		//@formatter:off
 		var id = UriComponentsBuilder.fromUri(location)
 				.build()
 				.getPathSegments()
 				.getLast();
-		//@formatter:on
 		return Integer.parseInt(id);
 	}
 

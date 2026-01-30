@@ -15,12 +15,10 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 class SlowApplication {
 
-	//@formatter:off
 	@Bean
 	SlowBean slowBean(
-			@Value("${startup.delay:3s}") Duration startupDelay  // <1>
+			@Value("${startup.delay:3s}") Duration startupDelay  <1>
 	) throws InterruptedException {
-	//@formatter:on
 		System.out.println(">>> Configuring slow bean...");
 		Thread.sleep(startupDelay);
 		return new SlowBean();
@@ -28,7 +26,7 @@ class SlowApplication {
 	}
 
 	@Bean
-	FastBean fastBean() { // <2>
+	FastBean fastBean() { <2>
 		return new FastBean();
 	}
 
