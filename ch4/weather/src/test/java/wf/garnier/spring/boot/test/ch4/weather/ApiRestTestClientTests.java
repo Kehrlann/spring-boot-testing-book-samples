@@ -64,7 +64,7 @@ class ApiRestTestClientTests {
 	}
 
 	//@formatter:off
-    // tag::test[]
+	// tag::test[]
 	@Test
 	void indexPageLoads() {
 		// without assertj
@@ -72,7 +72,7 @@ class ApiRestTestClientTests {
 			.expectStatus().isOk()
 			.expectBody(String.class)
 			.value(body -> assertThat(body)
-    			.contains("<h1>Weather App</h1>")
+				.contains("<h1>Weather App</h1>")
 			);
 
 		// with assertj
@@ -82,7 +82,7 @@ class ApiRestTestClientTests {
 			.bodyText()
 			.contains("<h1>Weather App</h1>");
 	}
-    // end::test[]
+	// end::test[]
 	//@formatter:on
 
 	@Test

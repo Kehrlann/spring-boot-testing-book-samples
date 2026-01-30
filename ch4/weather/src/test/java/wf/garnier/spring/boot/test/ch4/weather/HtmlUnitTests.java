@@ -67,8 +67,8 @@ class HtmlUnitTests {
 
 		//@formatter:off
 		List<DomNode> cities = page.querySelectorAll(
-                ".cities-grid > .card" // <3>
-        );
+				".cities-grid > .card" // <3>
+		);
 		//@formatter:on
 
 		assertThat(cities).hasSize(1) // <4>

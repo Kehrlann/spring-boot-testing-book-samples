@@ -80,7 +80,7 @@ class ApiWebClientTests {
 			.isOk() // <4>
 			.expectBody(String.class) // <4>
 			.value(body -> // <4>
-			    assertThat(body).contains("Paris (France)") // <4>
+				assertThat(body).contains("Paris (France)") // <4>
 			);
 		//@formatter:on
 	}
