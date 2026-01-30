@@ -37,7 +37,7 @@ class HtmlUnitTests {
 	// end::class[]
 	// tag::webclient[]
 	@Autowired
-	private WebClient webClient; // <1>
+	private WebClient webClient; <1>
 
 	// end::webclient[]
 
@@ -62,17 +62,15 @@ class HtmlUnitTests {
 	void mainPage() throws IOException {
 		selectCity("Paris");
 
-		HtmlPage page = webClient.getPage("/"); // <2>
+		HtmlPage page = webClient.getPage("/"); <2>
 
-		//@formatter:off
 		List<DomNode> cities = page.querySelectorAll(
-				".cities-grid > .card" // <3>
+				".cities-grid > .card" <3>
 		);
-		//@formatter:on
 
-		assertThat(cities).hasSize(1) // <4>
+		assertThat(cities).hasSize(1) <4>
 			.first()
-			.extracting(DomNode::getTextContent) // <5>
+			.extracting(DomNode::getTextContent) <5>
 			.asString()
 			.contains("Paris (France)")
 			.contains("Temperature: 20.0°C")
@@ -157,11 +155,11 @@ class HtmlUnitTests {
 		HtmlPage page = webClient.getPage("/");
 
 		HtmlInput citySearchInput = page.querySelector("input#citySearch");
-		citySearchInput.type("bogot"); // <1>
-		webClient.waitForBackgroundJavaScript(1000); // <3>
+		citySearchInput.type("bogot"); <1>
+		webClient.waitForBackgroundJavaScript(1000); <3>
 
-		page.<HtmlElement>querySelector(".autocomplete-item").click(); // <2>
-		webClient.waitForBackgroundJavaScript(1000); // <3>
+		page.<HtmlElement>querySelector(".autocomplete-item").click(); <2>
+		webClient.waitForBackgroundJavaScript(1000); <3>
 
 		var cities = page.querySelectorAll(".cities-grid .card");
 

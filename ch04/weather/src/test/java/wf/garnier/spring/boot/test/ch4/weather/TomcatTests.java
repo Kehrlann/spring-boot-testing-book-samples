@@ -55,19 +55,17 @@ class TomcatTests {
 	@Nested
 	// tag::class[]
 	@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-	@AutoConfigureRestTestClient // <1>
+	@AutoConfigureRestTestClient <1>
 	class FullServerTests {
 
 		// end::class[]
 		// tag::local-server-port[]
-		//@formatter:off
 		@LocalServerPort int port;
-		//@formatter:on
 
 		// end::local-server-port[]
 		// tag::rest-test-client[]
 		@Autowired
-		RestTestClient testClient; // <2>
+		RestTestClient testClient; <2>
 
 		// end::rest-test-client[]
 
@@ -84,12 +82,10 @@ class TomcatTests {
 		// tag::test[]
 		@Test
 		void displaysCustom404Page() {
-			//@formatter:off
 			var responseSpec = testClient.get()
-					.uri("/does-not-exist") // <3>
+					.uri("/does-not-exist") <3>
 					.accept(MediaType.TEXT_HTML)
 					.exchange();
-			//@formatter:on
 
 			var response = RestTestClientResponse.from(responseSpec);
 
@@ -110,13 +106,11 @@ class TomcatTests {
 				})
 				.build();
 			// end::ignored[]
-			//@formatter:off
 			var response = restClient
 					.get()
 					.uri("http://localhost:%s/does-not-exit".formatted(port))
 					.accept(MediaType.TEXT_HTML)
 					.retrieve();
-			//@formatter:on
 
 			// ... tests ...
 			// tag::ignored[]

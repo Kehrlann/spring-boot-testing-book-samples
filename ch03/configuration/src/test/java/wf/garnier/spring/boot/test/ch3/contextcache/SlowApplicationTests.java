@@ -31,14 +31,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * spring startup logs.
  */
 // tag::slow-tests[]
-@TestClassOrder(ClassOrderer.OrderAnnotation.class) // <1>
+@TestClassOrder(ClassOrderer.OrderAnnotation.class) <1>
 class SlowApplicationTests {
 
 	// tag::ignored[]
 	@Nested
 	@ExtendWith(OutputCaptureExtension.class)
 	// end::ignored[]
-	@Order(1) // <1>
+	@Order(1) <1>
 	@SpringBootTest
 	class SlowTests {
 
@@ -66,7 +66,7 @@ class SlowApplicationTests {
 	@Nested
 	@ExtendWith(OutputCaptureExtension.class)
 	// end::ignored[]
-	@Order(2) // <1>
+	@Order(2) <1>
 	@SpringBootTest
 	class FastTests {
 

@@ -63,7 +63,6 @@ class ApiRestTestClientTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
-	//@formatter:off
 	// tag::test[]
 	@Test
 	void indexPageLoads() {
@@ -83,7 +82,6 @@ class ApiRestTestClientTests {
 			.contains("<h1>Weather App</h1>");
 	}
 	// end::test[]
-	//@formatter:on
 
 	@Test
 	void indexPageHasSelectedCity() {
@@ -140,26 +138,22 @@ class ApiRestTestClientTests {
 	void unselectCity() {
 		selectCity("Paris");
 
-		//@formatter:off
 		client.delete()
 			.uri("/api/city/{id}", paris.getId())
 			.exchange()
 			.expectStatus()
 			.isNoContent();
-		//@formatter:on
 
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
 
 	@Test
 	void unselectMissingCity() {
-		//@formatter:off
 		client.delete()
 			.uri("/api/city/{id}", paris.getId())
 			.exchange()
 			.expectStatus()
 			.isNoContent();
-		//@formatter:on
 
 		assertThat(selectionRepository.count()).isEqualTo(0);
 	}
