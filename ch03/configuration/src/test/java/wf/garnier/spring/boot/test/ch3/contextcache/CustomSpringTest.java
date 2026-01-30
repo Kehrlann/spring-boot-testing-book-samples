@@ -12,11 +12,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 // tag::custom-spring-test[]
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@SpringBootTest(properties = "startup.delay=100ms") // <1>
-@MockitoBean(types = { SlowApplication.FastBean.class, Gizmo.class }) // <2>
-//@formatter:off
-@interface CustomSpringTest { // <3>
-//@formatter:on
+@SpringBootTest(properties = "startup.delay=100ms") <1>
+@MockitoBean(types = { SlowApplication.FastBean.class, Gizmo.class }) <2>
+@interface CustomSpringTest { <3>
 
 }
 // end::custom-spring-test[]

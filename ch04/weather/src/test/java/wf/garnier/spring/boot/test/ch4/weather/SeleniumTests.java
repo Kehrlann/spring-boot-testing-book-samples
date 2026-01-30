@@ -46,28 +46,26 @@ class SeleniumTests {
 	private WeatherService weatherService;
 
 	// tag::setup-webdriver[]
-	//@formatter:off
 	@LocalServerPort int port;
 	static ChromeDriverService driverService;
 	static WebDriver driver;
 	private String baseUrl;
-	//@formatter:on
 
 	@BeforeAll
 	static void startChromeBrowser() throws Exception {
-		driverService = ChromeDriverService.createDefaultService(); // <1>
-		driverService.start(); // <1>
+		driverService = ChromeDriverService.createDefaultService(); <1>
+		driverService.start(); <1>
 
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--headless");
-		driver = new ChromeDriver(driverService, options); // <2>
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1)); // <3>
+		driver = new ChromeDriver(driverService, options); <2>
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1)); <3>
 	}
 
 	@AfterAll
 	static void stopChromeBrowser() {
-		driver.quit(); // <4>
-		driverService.stop(); // <4>
+		driver.quit(); <4>
+		driverService.stop(); <4>
 	}
 	// end::setup-webdriver[]
 
@@ -140,25 +138,23 @@ class SeleniumTests {
 	// tag::autocomplete-test[]
 	@Test
 	void autocomplete() {
-		driver.get("http://localhost:" + port + "/?mode=modern"); // <1>
+		driver.get("http://localhost:" + port + "/?mode=modern"); <1>
 
-		var citySearchInput = driver.findElement(By.id("citySearch")); // <2>
-		citySearchInput.sendKeys("jak"); // <3>
+		var citySearchInput = driver.findElement(By.id("citySearch")); <2>
+		citySearchInput.sendKeys("jak"); <3>
 
-		var autocompleteResults = // <4>
+		var autocompleteResults = <4>
 				driver.findElement(By.id("cityResults"))
 					.findElements(By.cssSelector(".autocomplete-item"))
 					.stream()
 					.map(WebElement::getText)
 					.map(String::trim);
-		//@formatter:off
-		assertThat(autocompleteResults) // <5>
-			.containsExactly( // <5>
+		assertThat(autocompleteResults) <5>
+			.containsExactly( <5>
 					"Djakotomé (Benin)",
 					"Jakarta (Indonesia)",
 					"Kamirenjaku (Japan)"
 			);
-		//@formatter:on
 	}
 	// end::autocomplete-test[]
 

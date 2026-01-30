@@ -13,10 +13,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class InteractWithAppTests {
 
-	@Autowired // <1>
+	@Autowired <1>
 	List<Thing> things;
 
-	@Value("${demo.value}") // <2>
+	@Value("${demo.value}") <2>
 	int value;
 
 	@Test
@@ -31,7 +31,7 @@ class InteractWithAppTests {
 	}
 
 	@Test
-	void redThing(@Qualifier("redThing") @Autowired Thing redThing) { // <3>
+	void redThing(@Qualifier("redThing") @Autowired Thing redThing) { <3>
 		assertThat(redThing.name()).isEqualTo("red");
 	}
 	// tag::ignored[]

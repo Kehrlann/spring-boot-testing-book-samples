@@ -142,12 +142,10 @@ class SimpleManualSpringBootTests {
 	}
 
 	private static int getWidgetId(URI location) {
-		//@formatter:off
 		var id = UriComponentsBuilder.fromUri(location)
 				.build()
 				.getPathSegments()
 				.getLast();
-		//@formatter:on
 		return Integer.parseInt(id);
 	}
 
