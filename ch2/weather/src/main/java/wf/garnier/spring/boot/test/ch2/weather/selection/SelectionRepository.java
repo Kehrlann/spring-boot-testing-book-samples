@@ -17,9 +17,9 @@ public interface SelectionRepository extends JpaRepository<Selection, Long> {
 
 	@Query("""
 			SELECT c FROM City c
-			    WHERE NOT EXISTS (
-			        SELECT 1 FROM Selection s WHERE s.city.id = c.id
-			    )
+				WHERE NOT EXISTS (
+					SELECT 1 FROM Selection s WHERE s.city.id = c.id
+				)
 			""")
 	List<City> findUnselectedCities();
 

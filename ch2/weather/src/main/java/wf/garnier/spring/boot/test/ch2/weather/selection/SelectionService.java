@@ -26,14 +26,14 @@ public class SelectionService {
 
 	public List<CityWeather> getWeatherInSelectedCities() {
 		//@formatter:off
-        return selectionRepository.findAllByOrderByCityNameAsc()
-                .stream()
-                .map(Selection::getCity)
-                .map(city -> {
-                    var weatherData = weatherService.getCurrentWeather(city.getLatitude(), city.getLongitude());
-                    return new CityWeather(city, weatherData);
-                }).toList();
-        //@formatter:on
+		return selectionRepository.findAllByOrderByCityNameAsc()
+				.stream()
+				.map(Selection::getCity)
+				.map(city -> {
+					var weatherData = weatherService.getCurrentWeather(city.getLatitude(), city.getLongitude());
+					return new CityWeather(city, weatherData);
+				}).toList();
+		//@formatter:on
 	}
 
 	public List<City> findUnselectedCities() {
