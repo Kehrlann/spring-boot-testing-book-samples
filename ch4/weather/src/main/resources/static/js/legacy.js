@@ -5,7 +5,7 @@
  * Please note: this is NOT good JavaScript. I know enough to be dangerous, and with
  * the help of an LLM, I can cobble something together. This does not mean you
  * should listen to me for JS advice, ever.
- * HIC SUNT DRACONES.
+ * HIC SUNT DRACONES. (https://en.wikipedia.org/wiki/Here_be_dragons)
  */
 
 var currentCities = null;

@@ -12,7 +12,6 @@ import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.javascript.host.event.KeyboardEvent;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch4.weather.city.City;
 import wf.garnier.spring.boot.test.ch4.weather.city.CityRepository;

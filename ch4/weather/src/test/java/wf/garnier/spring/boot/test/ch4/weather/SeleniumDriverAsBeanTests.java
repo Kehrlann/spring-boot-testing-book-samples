@@ -21,6 +21,7 @@ import wf.garnier.spring.boot.test.ch4.weather.selection.Selection;
 import wf.garnier.spring.boot.test.ch4.weather.selection.SelectionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -45,9 +46,6 @@ class SeleniumDriverAsBeanTests {
 
 	@Autowired
 	private SelectionRepository selectionRepository;
-
-	@Autowired
-	private WeatherController controller;
 
 	@MockitoBean
 	private WeatherService weatherService;
@@ -211,7 +209,7 @@ class SeleniumDriverAsBeanTests {
 		 * @see org.springframework.boot.webmvc.test.autoconfigure.WebDriverScope
 		 */
 		@Bean(destroyMethod = "quit")
-		@Scope("prototype")
+		@Scope(BeanDefinition.SCOPE_SINGLETON)
 		ChromeDriver webDriver(ChromeDriverService driverService) {
 			ChromeOptions options = new ChromeOptions();
 			options.addArguments("--headless");
