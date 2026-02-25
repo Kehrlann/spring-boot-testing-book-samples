@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: wf.garnier.spring.boot.test.ch5.ticket.test.listener.NotificationListenerTests
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.879 s -- in wf.garnier.spring.boot.test.ch5.ticket.test.listener.NotificationListenerTests

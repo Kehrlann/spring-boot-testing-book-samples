@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Ticket #' + ${ticket.id}">Ticket</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; color: #1f2937; }
+        h1 { margin-bottom: 0.25rem; }
+        .back-link { display: inline-block; margin-bottom: 1.5rem; color: #2563eb; text-decoration: none; font-size: 0.95rem; }
+        .back-link:hover { text-decoration: underline; }
+        .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem 2rem; margin-bottom: 1.5rem; }
+        .card h2 { margin-top: 0; font-size: 1.15rem; color: #374151; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.75rem; }
+        .detail-grid { display: grid; grid-template-columns: 10rem 1fr; gap: 0.5rem 1rem; }
+        .detail-grid dt { font-weight: 600; color: #6b7280; }
+        .detail-grid dd { margin: 0; }
+        .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.85em; }
+        .OPEN { background: #dbeafe; color: #1e40af; }
+        .IN_PROGRESS { background: #fef3c7; color: #92400e; }
+        .RESOLVED { background: #d1fae5; color: #065f46; }
+        .CLOSED { background: #e5e7eb; color: #374151; }
+        .CRITICAL { color: #dc2626; font-weight: bold; }
+        .HIGH { color: #ea580c; }
+        .MEDIUM { color: #ca8a04; }
+        .LOW { color: #65a30d; }
+        .actions { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .actions .action-group { flex: 1; min-width: 240px; }
+        .action-group label { display: block; font-weight: 600; margin-bottom: 0.4rem; font-size: 0.95rem; }
+        .action-group .inline-form { display: flex; gap: 0.5rem; align-items: center; }
+        .action-group select { padding: 0.45rem 0.65rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.95rem; font-family: inherit; background: #fff; flex: 1; }
+        .action-group select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+        .btn { padding: 0.45rem 1rem; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 500; cursor: pointer; }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-primary:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+    <h1 th:text="'Ticket #' + ${ticket.id} + ' — ' + ${ticket.title}"></h1>
+    <a class="back-link" th:href="@{/}">&larr; Back to list</a>
+
+    <div class="card">
+        <h2>Details</h2>
+        <dl class="detail-grid">
+            <dt>Status</dt>
+            <dd><span class="badge" th:classappend="${ticket.status}" th:text="${ticket.status}"></span></dd>
+            <dt>Priority</dt>
+            <dd><span th:classappend="${ticket.priority}" th:text="${ticket.priority}"></span></dd>
+            <dt>Assigned To</dt>
+            <dd th:text="${ticket.assignedAgent != null ? ticket.assignedAgent.name : 'Unassigned'}"></dd>
+            <dt>Description</dt>
+            <dd th:text="${ticket.description ?: '—'}"></dd>
+            <dt>Created</dt>
+            <dd th:text="${ticket.createdAt}"></dd>
+            <dt>Updated</dt>
+            <dd th:text="${ticket.updatedAt}"></dd>
+        </dl>
+    </div>
+
+    <div class="card">
+        <h2>Actions</h2>
+        <div class="actions">
+            <div class="action-group">
+                <label for="agentId">Assign to agent</label>
+                <form th:action="@{'/tickets/' + ${ticket.id} + '/assign'}" method="post" class="inline-form">
+                    <select name="agentId" id="agentId" required>
+                        <option value="">-- Select agent --</option>
+                        <option th:each="agent : ${agents}"
+                                th:value="${agent.id}"
+                                th:text="${agent.name}"
+                                th:selected="${ticket.assignedAgent != null and ticket.assignedAgent.id == agent.id}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Assign</button>
+                </form>
+            </div>
+            <div class="action-group">
+                <label for="status">Change status</label>
+                <form th:action="@{'/tickets/' + ${ticket.id} + '/status'}" method="post" class="inline-form">
+                    <select name="status" id="status" required>
+                        <option th:each="s : ${statuses}"
+                                th:value="${s}"
+                                th:text="${s}"
+                                th:selected="${ticket.status == s}"></option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
