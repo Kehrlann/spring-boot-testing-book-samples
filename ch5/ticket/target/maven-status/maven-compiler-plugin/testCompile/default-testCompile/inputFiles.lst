@@ -1,9 +1,0 @@
-/Users/dgarnier/book/gitlab/garniermoiroux/code/ch5/ticket/src/test/java/wf/garnier/spring/boot/test/ch5/ticket/TicketApplicationTests.java
-/Users/dgarnier/book/gitlab/garniermoiroux/code/ch5/ticket/src/test/java/wf/garnier/spring/boot/test/ch5/ticket/test/datajpa/CommentRepositoryTests.java
-/Users/dgarnier/book/gitlab/garniermoiroux/code/ch5/ticket/src/test/java/wf/garnier/spring/boot/test/ch5/ticket/test/datajpa/TicketRepositoryTests.java
-/Users/dgarnier/book/gitlab/garniermoiroux/code/ch5/ticket/src/test/java/wf/garnier/spring/boot/test/ch5/ticket/test/listener/AuditLogListenerTests.java
-/Users/dgarnier/book/gitlab/garniermoiroux/code/ch5/ticket/src/test/java/wf/garnier/spring/boot/test/ch5/ticket/test/listener/NotificationListenerTests.java
-/Users/dgarnier/book/gitlab/garniermoiroux/code/ch5/ticket/src/test/java/wf/garnier/spring/boot/test/ch5/ticket/test/listener/SlaMonitorListenerTests.java
-/Users/dgarnier/book/gitlab/garniermoiroux/code/ch5/ticket/src/test/java/wf/garnier/spring/boot/test/ch5/ticket/test/slice/EventListenerTest.java
-/Users/dgarnier/book/gitlab/garniermoiroux/code/ch5/ticket/src/test/java/wf/garnier/spring/boot/test/ch5/ticket/test/slice/EventListenerTypeExcludeFilter.java
-/Users/dgarnier/book/gitlab/garniermoiroux/code/ch5/ticket/src/test/java/wf/garnier/spring/boot/test/ch5/ticket/test/webmvc/TicketControllerWebMvcTest.java

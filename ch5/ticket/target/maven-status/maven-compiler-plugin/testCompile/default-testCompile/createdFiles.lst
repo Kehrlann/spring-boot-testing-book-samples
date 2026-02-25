@@ -1,9 +1,0 @@
-wf/garnier/spring/boot/test/ch5/ticket/test/slice/EventListenerTest.class
-wf/garnier/spring/boot/test/ch5/ticket/test/listener/SlaMonitorListenerTests.class
-wf/garnier/spring/boot/test/ch5/ticket/test/listener/AuditLogListenerTests.class
-wf/garnier/spring/boot/test/ch5/ticket/test/slice/EventListenerTypeExcludeFilter.class
-wf/garnier/spring/boot/test/ch5/ticket/test/listener/NotificationListenerTests.class
-wf/garnier/spring/boot/test/ch5/ticket/test/datajpa/CommentRepositoryTests.class
-wf/garnier/spring/boot/test/ch5/ticket/test/webmvc/TicketControllerWebMvcTest.class
-wf/garnier/spring/boot/test/ch5/ticket/TicketApplicationTests.class
-wf/garnier/spring/boot/test/ch5/ticket/test/datajpa/TicketRepositoryTests.class
