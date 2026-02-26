@@ -5,10 +5,10 @@ import java.util.Optional;
 
 import wf.garnier.spring.boot.test.ch5.ticket.agent.Agent;
 import wf.garnier.spring.boot.test.ch5.ticket.agent.AgentRepository;
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketAssignedEvent;
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketCreatedEvent;
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketResolvedEvent;
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketStatusChangedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketAssignedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketCreatedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketResolvedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketStatusChangedEvent;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -19,16 +19,13 @@ public class TicketService {
 
 	private final TicketRepository ticketRepository;
 
-	private final CommentRepository commentRepository;
-
 	private final AgentRepository agentRepository;
 
 	private final ApplicationEventPublisher eventPublisher;
 
-	public TicketService(TicketRepository ticketRepository, CommentRepository commentRepository,
-			AgentRepository agentRepository, ApplicationEventPublisher eventPublisher) {
+	public TicketService(TicketRepository ticketRepository, AgentRepository agentRepository,
+			ApplicationEventPublisher eventPublisher) {
 		this.ticketRepository = ticketRepository;
-		this.commentRepository = commentRepository;
 		this.agentRepository = agentRepository;
 		this.eventPublisher = eventPublisher;
 	}
@@ -45,23 +42,12 @@ public class TicketService {
 		return ticketRepository.findById(id);
 	}
 
-	public List<Comment> findComments(Long ticketId) {
-		return commentRepository.findByTicketIdOrderByCreatedAtDesc(ticketId);
-	}
-
 	@Transactional
 	public Ticket create(String title, String description, TicketPriority priority) {
 		var ticket = new Ticket(title, description, priority);
 		ticket = ticketRepository.save(ticket);
 		eventPublisher.publishEvent(new TicketCreatedEvent(ticket));
 		return ticket;
-	}
-
-	@Transactional
-	public Comment addComment(Long ticketId, String authorName, String content) {
-		var ticket = ticketRepository.findById(ticketId).orElseThrow();
-		var comment = new Comment(ticket, authorName, content);
-		return commentRepository.save(comment);
 	}
 
 	@Transactional

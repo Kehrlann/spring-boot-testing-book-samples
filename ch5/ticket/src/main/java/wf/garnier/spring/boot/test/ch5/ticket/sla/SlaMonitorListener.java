@@ -1,9 +1,9 @@
-package wf.garnier.spring.boot.test.ch5.ticket.listener;
+package wf.garnier.spring.boot.test.ch5.ticket.sla;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketResolvedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketResolvedEvent;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

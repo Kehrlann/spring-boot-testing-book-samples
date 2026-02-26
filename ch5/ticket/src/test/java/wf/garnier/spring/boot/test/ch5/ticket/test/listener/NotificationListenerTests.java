@@ -2,10 +2,10 @@ package wf.garnier.spring.boot.test.ch5.ticket.test.listener;
 
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch5.ticket.agent.Agent;
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketAssignedEvent;
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketCreatedEvent;
-import wf.garnier.spring.boot.test.ch5.ticket.listener.NotificationBroadcaster;
-import wf.garnier.spring.boot.test.ch5.ticket.listener.NotificationMessage;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketAssignedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketCreatedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.notification.NotificationBroadcaster;
+import wf.garnier.spring.boot.test.ch5.ticket.notification.NotificationMessage;
 import wf.garnier.spring.boot.test.ch5.ticket.test.slice.EventListenerTest;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.Ticket;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketPriority;

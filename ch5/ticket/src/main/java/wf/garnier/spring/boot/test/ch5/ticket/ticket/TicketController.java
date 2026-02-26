@@ -1,13 +1,8 @@
-package wf.garnier.spring.boot.test.ch5.ticket;
+package wf.garnier.spring.boot.test.ch5.ticket.ticket;
 
 import java.util.List;
 
-import wf.garnier.spring.boot.test.ch5.ticket.listener.NotificationBroadcaster;
-import wf.garnier.spring.boot.test.ch5.ticket.ticket.Comment;
-import wf.garnier.spring.boot.test.ch5.ticket.ticket.Ticket;
-import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketPriority;
-import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketService;
-import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketStatus;
+import wf.garnier.spring.boot.test.ch5.ticket.notification.NotificationBroadcaster;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -106,18 +101,9 @@ public class TicketController {
 
 	@GetMapping("/api/tickets/{id}")
 	@ResponseBody
-	public TicketDetail getTicket(@PathVariable Long id) {
-		var ticket = ticketService.findById(id)
+	public Ticket getTicket(@PathVariable Long id) {
+		return ticketService.findById(id)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found"));
-		var comments = ticketService.findComments(id);
-		return new TicketDetail(ticket, comments);
-	}
-
-	@PostMapping("/api/tickets/{id}/comments")
-	@ResponseBody
-	@ResponseStatus(HttpStatus.CREATED)
-	public Comment addComment(@PathVariable Long id, @Valid @RequestBody AddCommentRequest request) {
-		return ticketService.addComment(id, request.authorName(), request.content());
 	}
 
 	@PutMapping("/api/tickets/{id}/assign")
@@ -140,13 +126,7 @@ public class TicketController {
 	public record CreateTicketRequest(@NotBlank String title, String description, @NotNull TicketPriority priority) {
 	}
 
-	public record AddCommentRequest(@NotBlank String authorName, @NotBlank String content) {
-	}
-
 	public record AssignRequest(long agentId) {
-	}
-
-	public record TicketDetail(Ticket ticket, List<Comment> comments) {
 	}
 
 	public static class CreateTicketForm {

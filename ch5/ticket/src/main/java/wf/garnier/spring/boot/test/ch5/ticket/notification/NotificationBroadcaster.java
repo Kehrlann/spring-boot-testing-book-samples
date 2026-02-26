@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.ticket.listener;
+package wf.garnier.spring.boot.test.ch5.ticket.notification;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -23,17 +23,14 @@ public class NotificationBroadcaster {
 		var emitter = new SseEmitter(0L);
 		emitters.add(emitter);
 		emitter.onCompletion(() -> {
-			System.out.println("🤡🤡🤡🤡 COMPLETION");
-            emitters.remove(emitter);
-        });
+			emitters.remove(emitter);
+		});
 		emitter.onTimeout(() -> {
-			System.out.println("🤡🤡🤡🤡 TIMEOUT");
-            emitters.remove(emitter);
-        });
+			emitters.remove(emitter);
+		});
 		emitter.onError((_ex) -> {
-			System.out.println("🤡🤡🤡🤡 ERROR");
-            emitters.remove(emitter);
-        });
+			emitters.remove(emitter);
+		});
 		synchronized (recentMessages) {
 			for (var message : recentMessages) {
 				try {

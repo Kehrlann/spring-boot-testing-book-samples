@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.ticket.listener;
+package wf.garnier.spring.boot.test.ch5.ticket.sla;
 
 import java.time.LocalDateTime;
 

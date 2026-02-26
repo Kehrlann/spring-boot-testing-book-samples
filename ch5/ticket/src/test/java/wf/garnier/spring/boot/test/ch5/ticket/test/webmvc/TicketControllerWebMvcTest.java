@@ -1,14 +1,12 @@
 package wf.garnier.spring.boot.test.ch5.ticket.test.webmvc;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import wf.garnier.spring.boot.test.ch5.ticket.TicketController;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketController;
 import wf.garnier.spring.boot.test.ch5.ticket.agent.Agent;
-import wf.garnier.spring.boot.test.ch5.ticket.listener.NotificationBroadcaster;
-import wf.garnier.spring.boot.test.ch5.ticket.ticket.Comment;
+import wf.garnier.spring.boot.test.ch5.ticket.notification.NotificationBroadcaster;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.Ticket;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketPriority;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketService;
@@ -20,9 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -118,27 +114,19 @@ class TicketControllerWebMvcTest {
 	}
 
 	@Test
-	void getTicketDetailReturnsTicketAndComments() {
+	void getTicketReturnsTicket() {
 		var ticket = new Ticket("Dashboard slow", "Takes 10 seconds", TicketPriority.HIGH);
-		var comment = new Comment(ticket, "Alice", "Investigating.");
 		when(ticketService.findById(1L)).thenReturn(Optional.of(ticket));
-		when(ticketService.findComments(1L)).thenReturn(List.of(comment));
 
 		//@formatter:off
-		var response = mvc.get()
+		mvc.get()
 			.uri("/api/tickets/{id}", 1L)
-			.exchange();
-
-		assertThat(response)
+			.exchange()
+			.assertThat()
 			.hasStatus(HttpStatus.OK)
 			.bodyJson()
-			.extractingPath("$.ticket.title")
+			.extractingPath("$.title")
 			.isEqualTo("Dashboard slow");
-
-		assertThat(response)
-			.bodyJson()
-			.extractingPath("$.comments[0].authorName")
-			.isEqualTo("Alice");
 		//@formatter:on
 	}
 

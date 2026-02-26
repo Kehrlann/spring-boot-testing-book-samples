@@ -1,8 +1,8 @@
-package wf.garnier.spring.boot.test.ch5.ticket.listener;
+package wf.garnier.spring.boot.test.ch5.ticket.notification;
 
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketAssignedEvent;
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketCreatedEvent;
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketStatusChangedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketAssignedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketCreatedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketStatusChangedEvent;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;

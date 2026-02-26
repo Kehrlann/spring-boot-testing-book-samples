@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.ticket.event;
+package wf.garnier.spring.boot.test.ch5.ticket.ticket.event;
 
 import wf.garnier.spring.boot.test.ch5.ticket.agent.Agent;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.Ticket;

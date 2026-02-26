@@ -2,9 +2,9 @@ package wf.garnier.spring.boot.test.ch5.ticket.test.listener;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import wf.garnier.spring.boot.test.ch5.ticket.event.TicketResolvedEvent;
-import wf.garnier.spring.boot.test.ch5.ticket.listener.NotificationBroadcaster;
-import wf.garnier.spring.boot.test.ch5.ticket.listener.SlaRecordRepository;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketResolvedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.notification.NotificationBroadcaster;
+import wf.garnier.spring.boot.test.ch5.ticket.sla.SlaRecordRepository;
 import wf.garnier.spring.boot.test.ch5.ticket.test.slice.EventListenerTest;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.Ticket;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketPriority;
