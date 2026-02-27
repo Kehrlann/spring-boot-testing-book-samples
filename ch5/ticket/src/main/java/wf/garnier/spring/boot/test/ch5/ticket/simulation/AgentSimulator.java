@@ -3,18 +3,16 @@ package wf.garnier.spring.boot.test.ch5.ticket.simulation;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import wf.garnier.spring.boot.test.ch5.ticket.agent.AgentRepository;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketService;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketStatus;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("simulation")
 public class AgentSimulator {
 
 	private static final Logger logger = LoggerFactory.getLogger(AgentSimulator.class);

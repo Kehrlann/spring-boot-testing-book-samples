@@ -2,7 +2,11 @@ package wf.garnier.spring.boot.test.ch5.ticket.agent;
 
 import java.util.Objects;
 
+import wf.garnier.spring.boot.test.ch5.ticket.notification.NotificationChannel;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,12 +22,20 @@ public class Agent {
 
 	private String email;
 
+	@Enumerated(EnumType.STRING)
+	private NotificationChannel notificationChannel;
+
 	protected Agent() {
 	}
 
 	public Agent(String name, String email) {
+		this(name, email, NotificationChannel.EMAIL);
+	}
+
+	public Agent(String name, String email, NotificationChannel notificationChannel) {
 		this.name = name;
 		this.email = email;
+		this.notificationChannel = notificationChannel;
 	}
 
 	public Long getId() {
@@ -36,6 +48,10 @@ public class Agent {
 
 	public String getEmail() {
 		return email;
+	}
+
+	public NotificationChannel getNotificationChannel() {
+		return notificationChannel;
 	}
 
 	@Override

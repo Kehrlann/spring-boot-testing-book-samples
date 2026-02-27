@@ -1,13 +1,13 @@
-INSERT INTO agent (id, name, email) VALUES (1, 'Alice Martin', 'alice@example.com');
-INSERT INTO agent (id, name, email) VALUES (2, 'Bob Chen', 'bob@example.com');
-INSERT INTO agent (id, name, email) VALUES (3, 'Carol Davis', 'carol@example.com');
-INSERT INTO agent (id, name, email) VALUES (4, 'David Kim', 'david@example.com');
-INSERT INTO agent (id, name, email) VALUES (5, 'Eva Müller', 'eva@example.com');
-INSERT INTO agent (id, name, email) VALUES (6, 'Frank Nguyen', 'frank@example.com');
-INSERT INTO agent (id, name, email) VALUES (7, 'Grace Patel', 'grace@example.com');
-INSERT INTO agent (id, name, email) VALUES (8, 'Henry Johansson', 'henry@example.com');
-INSERT INTO agent (id, name, email) VALUES (9, 'Iris Tanaka', 'iris@example.com');
-INSERT INTO agent (id, name, email) VALUES (10, 'Jorge Silva', 'jorge@example.com');
+INSERT INTO agent (id, name, email, notification_channel) VALUES (1, 'Alice Martin', 'alice@example.com', 'EMAIL');
+INSERT INTO agent (id, name, email, notification_channel) VALUES (2, 'Bob Chen', 'bob@example.com', 'SLACK');
+INSERT INTO agent (id, name, email, notification_channel) VALUES (3, 'Carol Davis', 'carol@example.com', 'EMAIL');
+INSERT INTO agent (id, name, email, notification_channel) VALUES (4, 'David Kim', 'david@example.com', 'SMS');
+INSERT INTO agent (id, name, email, notification_channel) VALUES (5, 'Eva Müller', 'eva@example.com', 'WEBHOOK');
+INSERT INTO agent (id, name, email, notification_channel) VALUES (6, 'Frank Nguyen', 'frank@example.com', 'SLACK');
+INSERT INTO agent (id, name, email, notification_channel) VALUES (7, 'Grace Patel', 'grace@example.com', 'EMAIL');
+INSERT INTO agent (id, name, email, notification_channel) VALUES (8, 'Henry Johansson', 'henry@example.com', 'SMS');
+INSERT INTO agent (id, name, email, notification_channel) VALUES (9, 'Iris Tanaka', 'iris@example.com', 'WEBHOOK');
+INSERT INTO agent (id, name, email, notification_channel) VALUES (10, 'Jorge Silva', 'jorge@example.com', 'SLACK');
 ALTER TABLE agent ALTER COLUMN id RESTART WITH 11;
 
 INSERT INTO ticket (id, title, description, status, priority, assigned_agent_id, created_at, updated_at)

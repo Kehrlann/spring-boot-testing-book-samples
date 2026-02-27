@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.ticket.test.listener;
+package wf.garnier.spring.boot.test.ch5.ticket.notification;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -7,8 +7,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch5.ticket.agent.Agent;
-import wf.garnier.spring.boot.test.ch5.ticket.notification.NotificationBroadcaster;
-import wf.garnier.spring.boot.test.ch5.ticket.test.slice.EventListenerTest;
+import wf.garnier.spring.boot.test.ch5.ticket.test.slice.PackageTest;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.Ticket;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketPriority;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketAssignedEvent;
@@ -19,7 +18,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EventListenerTest
+@PackageTest
 class NotificationListenerTests {
 
 	@Autowired

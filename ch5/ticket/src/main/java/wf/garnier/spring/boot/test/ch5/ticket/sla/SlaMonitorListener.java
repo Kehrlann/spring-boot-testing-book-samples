@@ -21,7 +21,7 @@ public class SlaMonitorListener {
 	public void onTicketResolved(TicketResolvedEvent event) {
 		var ticket = event.ticket();
 		var resolutionTime = Duration.between(ticket.getCreatedAt(), LocalDateTime.now()).toMinutes();
-		slaRecordRepository.save(new SlaRecord(ticket.getId(), resolutionTime, LocalDateTime.now()));
+		slaRecordRepository.save(new SlaRecord(ticket.getId(), resolutionTime, ticket.getPriority(), LocalDateTime.now()));
 	}
 
 }

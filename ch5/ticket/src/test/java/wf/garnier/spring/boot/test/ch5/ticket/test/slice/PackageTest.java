@@ -24,9 +24,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(SpringExtension.class)
 @BootstrapWith(SpringBootTestContextBootstrapper.class)
 @OverrideAutoConfiguration(enabled = false)
-@TypeExcludeFilters(EventListenerTypeExcludeFilter.class)
+@TypeExcludeFilters(PackageTypeExcludeFilter.class)
 @ImportAutoConfiguration
-public @interface EventListenerTest {
+public @interface PackageTest {
 
 	boolean useDefaultFilters() default true;
 

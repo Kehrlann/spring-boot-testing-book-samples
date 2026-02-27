@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.ticket.test.listener;
+package wf.garnier.spring.boot.test.ch5.ticket.audit;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -6,9 +6,8 @@ import wf.garnier.spring.boot.test.ch5.ticket.agent.Agent;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketAssignedEvent;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketCreatedEvent;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketResolvedEvent;
-import wf.garnier.spring.boot.test.ch5.ticket.audit.AuditLogRepository;
 import wf.garnier.spring.boot.test.ch5.ticket.notification.NotificationBroadcaster;
-import wf.garnier.spring.boot.test.ch5.ticket.test.slice.EventListenerTest;
+import wf.garnier.spring.boot.test.ch5.ticket.test.slice.PackageTest;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.Ticket;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketPriority;
 
@@ -18,7 +17,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EventListenerTest
+@PackageTest
 class AuditLogListenerTests {
 
 	@Autowired

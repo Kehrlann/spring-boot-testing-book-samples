@@ -1,11 +1,10 @@
-package wf.garnier.spring.boot.test.ch5.ticket.test.listener;
+package wf.garnier.spring.boot.test.ch5.ticket.sla;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketResolvedEvent;
 import wf.garnier.spring.boot.test.ch5.ticket.notification.NotificationBroadcaster;
-import wf.garnier.spring.boot.test.ch5.ticket.sla.SlaRecordRepository;
-import wf.garnier.spring.boot.test.ch5.ticket.test.slice.EventListenerTest;
+import wf.garnier.spring.boot.test.ch5.ticket.test.slice.PackageTest;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.Ticket;
 import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketPriority;
 
@@ -15,7 +14,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@EventListenerTest
+@PackageTest
 class SlaMonitorListenerTests {
 
 	@Autowired

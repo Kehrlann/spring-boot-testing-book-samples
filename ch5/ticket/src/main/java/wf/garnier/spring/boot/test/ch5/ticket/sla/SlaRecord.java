@@ -2,7 +2,11 @@ package wf.garnier.spring.boot.test.ch5.ticket.sla;
 
 import java.time.LocalDateTime;
 
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.TicketPriority;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,14 +22,18 @@ public class SlaRecord {
 
 	private long resolutionTimeMinutes;
 
+	@Enumerated(EnumType.STRING)
+	private TicketPriority priority;
+
 	private LocalDateTime resolvedAt;
 
 	protected SlaRecord() {
 	}
 
-	public SlaRecord(Long ticketId, long resolutionTimeMinutes, LocalDateTime resolvedAt) {
+	public SlaRecord(Long ticketId, long resolutionTimeMinutes, TicketPriority priority, LocalDateTime resolvedAt) {
 		this.ticketId = ticketId;
 		this.resolutionTimeMinutes = resolutionTimeMinutes;
+		this.priority = priority;
 		this.resolvedAt = resolvedAt;
 	}
 
@@ -39,6 +47,10 @@ public class SlaRecord {
 
 	public long getResolutionTimeMinutes() {
 		return resolutionTimeMinutes;
+	}
+
+	public TicketPriority getPriority() {
+		return priority;
 	}
 
 	public LocalDateTime getResolvedAt() {
