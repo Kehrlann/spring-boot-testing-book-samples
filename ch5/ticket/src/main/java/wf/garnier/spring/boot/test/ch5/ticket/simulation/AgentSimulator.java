@@ -53,9 +53,7 @@ public class AgentSimulator {
 	}
 
 	private void advanceRandomTicketStatus() {
-		var tickets = ticketService.findAll().stream()
-			.filter(t -> t.getStatus() != TicketStatus.CLOSED)
-			.toList();
+		var tickets = ticketService.findAll().stream().filter(t -> t.getStatus() != TicketStatus.CLOSED).toList();
 		if (tickets.isEmpty()) {
 			return;
 		}
@@ -72,7 +70,7 @@ public class AgentSimulator {
 			case OPEN -> TicketStatus.IN_PROGRESS;
 			case IN_PROGRESS -> TicketStatus.RESOLVED;
 			case RESOLVED, CLOSED -> TicketStatus.CLOSED;
-        };
+		};
 	}
 
 	private static <T> T pickRandom(List<T> list) {

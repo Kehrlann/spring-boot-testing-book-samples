@@ -6,7 +6,12 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import jakarta.annotation.PreDestroy;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketAssignedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketCreatedEvent;
+import wf.garnier.spring.boot.test.ch5.ticket.ticket.event.TicketStatusChangedEvent;
 
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -19,8 +24,7 @@ public class NotificationBroadcaster {
 
 	private final Deque<NotificationMessage> recentMessages = new ArrayDeque<>();
 
-	public SseEmitter register() {
-		var emitter = new SseEmitter(0L);
+	public void register(SseEmitter emitter) {
 		emitters.add(emitter);
 		emitter.onCompletion(() -> {
 			emitters.remove(emitter);
@@ -42,7 +46,6 @@ public class NotificationBroadcaster {
 				}
 			}
 		}
-		return emitter;
 	}
 
 	@PreDestroy
@@ -51,6 +54,33 @@ public class NotificationBroadcaster {
 			emitter.complete();
 		}
 		emitters.clear();
+	}
+
+	@Async
+	@EventListener
+	public void onTicketCreated(TicketCreatedEvent event) {
+		var ticket = event.ticket();
+		var message = new NotificationMessage(ticket.getId(), ticket.getTitle(), "CREATED",
+				"New %s-priority ticket: %s".formatted(ticket.getPriority(), ticket.getTitle()));
+		this.send(message);
+	}
+
+	@Async
+	@EventListener
+	public void onTicketAssigned(TicketAssignedEvent event) {
+		var ticket = event.ticket();
+		var message = new NotificationMessage(ticket.getId(), ticket.getTitle(), "ASSIGNED",
+				"Ticket '%s' assigned to %s".formatted(ticket.getTitle(), event.newAgent().getName()));
+		this.send(message);
+	}
+
+	@Async
+	@EventListener
+	public void onTicketStatusChanged(TicketStatusChangedEvent event) {
+		var ticket = event.ticket();
+		var message = new NotificationMessage(ticket.getId(), ticket.getTitle(), "STATUS",
+				"Ticket '%s' changed from %s to %s".formatted(ticket.getTitle(), event.oldStatus(), event.newStatus()));
+		this.send(message);
 	}
 
 	public void send(NotificationMessage message) {

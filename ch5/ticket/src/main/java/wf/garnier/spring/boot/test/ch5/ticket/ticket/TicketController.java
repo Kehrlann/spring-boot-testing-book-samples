@@ -120,7 +120,9 @@ public class TicketController {
 
 	@GetMapping(value = "/api/notifications/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public SseEmitter streamNotifications() {
-		return notificationBroadcaster.register();
+		var emitter = new SseEmitter(0L);
+		notificationBroadcaster.register(emitter);
+		return emitter;
 	}
 
 	public record CreateTicketRequest(@NotBlank String title, String description, @NotNull TicketPriority priority) {
