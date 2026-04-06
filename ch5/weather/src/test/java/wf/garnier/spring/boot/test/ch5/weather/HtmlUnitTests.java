@@ -13,10 +13,10 @@ import org.htmlunit.html.HtmlPage;
 import org.htmlunit.javascript.host.event.KeyboardEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import wf.garnier.spring.boot.test.ch5.weather.selection.City;
-import wf.garnier.spring.boot.test.ch5.weather.selection.CityRepository;
 import wf.garnier.spring.boot.test.ch5.weather.openmeteo.WeatherData;
 import wf.garnier.spring.boot.test.ch5.weather.openmeteo.WeatherService;
+import wf.garnier.spring.boot.test.ch5.weather.selection.City;
+import wf.garnier.spring.boot.test.ch5.weather.selection.CityRepository;
 import wf.garnier.spring.boot.test.ch5.weather.selection.Selection;
 import wf.garnier.spring.boot.test.ch5.weather.selection.SelectionRepository;
 
@@ -29,17 +29,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
-// tag::class[]
 @SpringBootTest
 @AutoConfigureMockMvc
 class HtmlUnitTests {
 
-	// end::class[]
-	// tag::webclient[]
 	@Autowired
-	private WebClient webClient; // <1>
-
-	// end::webclient[]
+	private WebClient webClient;
 
 	@Autowired
 	private CityRepository cityRepository;
@@ -57,29 +52,23 @@ class HtmlUnitTests {
 		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
-	// tag::simple-test[]
 	@Test
 	void mainPage() throws IOException {
 		selectCity("Paris");
 
-		HtmlPage page = webClient.getPage("/"); // <2>
+		HtmlPage page = webClient.getPage("/");
 
-		//@formatter:off
-		List<DomNode> cities = page.querySelectorAll(
-				".cities-grid > .card" // <3>
-		);
-		//@formatter:on
+		List<DomNode> cities = page.querySelectorAll(".cities-grid > .card");
 
-		assertThat(cities).hasSize(1) // <4>
+		assertThat(cities).hasSize(1)
 			.first()
-			.extracting(DomNode::getTextContent) // <5>
+			.extracting(DomNode::getTextContent)
 			.asString()
 			.contains("Paris (France)")
 			.contains("Temperature: 20.0°C")
 			.contains("Wind Speed: 0.0 km/h")
 			.contains("Weather: Clear sky");
 	}
-	// end::simple-test[]
 
 	@Test
 	void mainPageNoCities() throws IOException {
@@ -151,17 +140,16 @@ class HtmlUnitTests {
 		assertThat(cities).hasSize(1).first().extracting(DomNode::getTextContent).asString().contains("Paris (France)");
 	}
 
-	// tag::javascript[]
 	@Test
 	void addCityWithMouse() throws IOException {
 		HtmlPage page = webClient.getPage("/");
 
 		HtmlInput citySearchInput = page.querySelector("input#citySearch");
-		citySearchInput.type("bogot"); // <1>
-		webClient.waitForBackgroundJavaScript(1000); // <3>
+		citySearchInput.type("bogot");
+		webClient.waitForBackgroundJavaScript(1000);
 
-		page.<HtmlElement>querySelector(".autocomplete-item").click(); // <2>
-		webClient.waitForBackgroundJavaScript(1000); // <3>
+		page.<HtmlElement>querySelector(".autocomplete-item").click();
+		webClient.waitForBackgroundJavaScript(1000);
 
 		var cities = page.querySelectorAll(".cities-grid .card");
 
@@ -171,7 +159,6 @@ class HtmlUnitTests {
 			.asString()
 			.contains("Bogotá (Colombia)");
 	}
-	// end::javascript[]
 
 	@Test
 	void addCityWithKeyboardMultipleChoices() throws IOException {
@@ -209,7 +196,4 @@ class HtmlUnitTests {
 		return city;
 	}
 
-	// tag::class[]
-
 }
-// end::class[]
