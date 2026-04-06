@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: "Weather App"
+  sql:
+    init:
+      mode: always
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false

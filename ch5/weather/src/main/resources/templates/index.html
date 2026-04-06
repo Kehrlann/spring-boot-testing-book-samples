@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link href="/css/styles.css" rel="stylesheet">
+    <script src="/js/legacy.js" th:if="${!modern}" defer></script>
+    <script src="/js/modern.js" th:if="${modern}" defer></script>
+</head>
+<body>
+<div class="container">
+    <h1>Weather App</h1>
+
+    <!-- Add City Form -->
+    <div class="card">
+        <h5 class="card-title">Add a new city</h5>
+        <div class="autocomplete">
+            <input type="text" id="citySearch" placeholder="Type to search cities..." autocomplete="off">
+            <div id="cityResults" class="autocomplete-results"></div>
+        </div>
+    </div>
+
+    <!-- Cities List -->
+    <div class="cities-grid">
+        <div th:each="cityWeather : ${preferredCities}" class="card">
+            <h5 class="card-title" th:text="${cityWeather.cityName() + ' (' + cityWeather.country() + ')'}"></h5>
+            <p class="card-content">
+                Temperature: <span th:text="${cityWeather.temperature()}">20</span>°C<br>
+                Wind Speed: <span th:text="${cityWeather.windSpeed()}">5</span> km/h<br>
+                Weather: <span th:text="${cityWeather.weather()}">Sunny</span>
+            </p>
+            <form data-role="delete-city">
+                <input type="hidden" name="cityId" th:value="${cityWeather.cityId()}">
+                <button type="submit" class="button button-danger button-sm">Remove</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
