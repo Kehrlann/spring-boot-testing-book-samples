@@ -29,10 +29,9 @@ public class WeatherController {
 	}
 
 	@GetMapping(value = "/")
-	public String index(Model model, String mode) {
+	public String index(Model model) {
 		var citiesWithWeather = selectionService.getWeatherInSelectedCities();
 		model.addAttribute("preferredCities", citiesWithWeather);
-		model.addAttribute("modern", "modern".equals(mode));
 		return "index";
 	}
 

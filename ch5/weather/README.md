@@ -42,8 +42,7 @@ The following tests verify the API endpoints:
 ### Browser tests
 
 - **`HtmlUnitTests`** - Tests the full HTML pages and JavaScript interactions using HtmlUnit, an in-process headless
-  browser. Demonstrates DOM querying, form input, keyboard events, waiting for background JavaScript, and the
-  limitations of HtmlUnit's JavaScript engine with modern syntax.
+  browser. Demonstrates DOM querying, form input, keyboard events, and waiting for background JavaScript.
 - **`SeleniumTests`** - End-to-end browser tests using Selenium WebDriver with a headless Chrome instance. Demonstrates
   managing the browser lifecycle with `@BeforeAll`/`@AfterAll`, testing autocomplete, keyboard and mouse interactions,
   and waiting for dynamic DOM updates.

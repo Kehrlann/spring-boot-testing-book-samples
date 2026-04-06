@@ -183,13 +183,6 @@ class HtmlUnitTests {
 			.contains("Ankara (Turkey)");
 	}
 
-	@Test
-	void cannotLoadModernnJavascript() {
-		assertThatThrownBy(() -> webClient.getPage("/?mode=modern")).isInstanceOf(ScriptException.class)
-			.message()
-			.contains("missing ; before statement");
-	}
-
 	private City selectCity(String name) {
 		var city = cityRepository.findByNameIgnoreCase(name).get();
 		selectionRepository.save(new Selection(city));
