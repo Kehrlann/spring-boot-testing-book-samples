@@ -43,15 +43,13 @@ public class SelectionService {
 		return selectionRepository.findUnselectedFilteredByCityNameIgnoringCase(name);
 	}
 
-	public boolean addCityById(long cityId) {
-		var city = cityRepository.findById(cityId);
-		if (city.isPresent()) {
-			if (selectionRepository.findByCity(city.get()).isEmpty()) {
-				selectionRepository.save(new Selection(city.get()));
-				return true;
-			}
+	public void addCityById(long cityId) {
+		var city = cityRepository.findById(cityId)
+				.orElseThrow(() -> new CityNotFoundException(cityId));
+		if (selectionRepository.findByCity(city).isPresent()) {
+			throw new CityAlreadySelectedException(cityId);
 		}
-		return false;
+		selectionRepository.save(new Selection(city));
 	}
 
 	@Transactional

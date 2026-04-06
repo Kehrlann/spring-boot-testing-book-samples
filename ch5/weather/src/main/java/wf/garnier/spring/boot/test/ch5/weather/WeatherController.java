@@ -50,9 +50,9 @@ public class WeatherController {
 	}
 
 	@PostMapping(value = "/api/city")
-	public ResponseEntity<String> addCityApi(@RequestBody CityRequest req) {
-		return selectionService.addCityById(req.id()) ? ResponseEntity.status(HttpStatus.CREATED).build()
-				: ResponseEntity.status(HttpStatus.CONFLICT).body("City already selected");
+	@ResponseStatus(HttpStatus.CREATED)
+	public void addCityApi(@RequestBody CityRequest req) {
+		selectionService.addCityById(req.id());
 	}
 
 	@DeleteMapping(value = "/api/city/{id}")

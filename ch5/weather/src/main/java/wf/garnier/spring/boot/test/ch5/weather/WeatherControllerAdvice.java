@@ -1,0 +1,24 @@
+package wf.garnier.spring.boot.test.ch5.weather;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import wf.garnier.spring.boot.test.ch5.weather.selection.CityAlreadySelectedException;
+import wf.garnier.spring.boot.test.ch5.weather.selection.CityNotFoundException;
+
+@ControllerAdvice
+public class WeatherControllerAdvice {
+
+	@ExceptionHandler(CityNotFoundException.class)
+	public ResponseEntity<String> handleCityNotFound(CityNotFoundException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+	}
+
+	@ExceptionHandler(CityAlreadySelectedException.class)
+	public ResponseEntity<String> handleCityAlreadySelected(CityAlreadySelectedException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body("City already selected");
+	}
+
+}
