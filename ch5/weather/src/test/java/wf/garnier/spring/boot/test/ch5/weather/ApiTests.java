@@ -18,8 +18,8 @@ import org.skyscreamer.jsonassert.comparator.DefaultComparator;
 import org.skyscreamer.jsonassert.comparator.JSONComparator;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.dataformat.xml.XmlMapper;
-import wf.garnier.spring.boot.test.ch5.weather.selection.City;
-import wf.garnier.spring.boot.test.ch5.weather.selection.CityService;
+import wf.garnier.spring.boot.test.ch5.weather.city.City;
+import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherDataService;
 

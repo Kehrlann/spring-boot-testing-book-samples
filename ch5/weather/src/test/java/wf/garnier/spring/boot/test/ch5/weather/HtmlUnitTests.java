@@ -15,7 +15,7 @@ import org.htmlunit.html.HtmlPage;
 import org.htmlunit.javascript.host.event.KeyboardEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import wf.garnier.spring.boot.test.ch5.weather.selection.CityService;
+import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherDataService;
 

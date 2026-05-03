@@ -2,7 +2,7 @@ package wf.garnier.spring.boot.test.ch5.weather.weather;
 
 import java.util.List;
 
-import wf.garnier.spring.boot.test.ch5.weather.selection.CityService;
+import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
 
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.weather.selection;
+package wf.garnier.spring.boot.test.ch5.weather.city;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class CityService {
 
 	private final CityRepository cityRepository;
 
-	public CityService(SelectedCityRepository selectedCityRepository, CityRepository cityRepository) {
+	CityService(SelectedCityRepository selectedCityRepository, CityRepository cityRepository) {
 		this.selectedCityRepository = selectedCityRepository;
 		this.cityRepository = cityRepository;
 	}
