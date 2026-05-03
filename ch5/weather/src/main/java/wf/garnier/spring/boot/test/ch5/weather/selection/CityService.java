@@ -8,34 +8,34 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CityService {
 
-	private final SelectionRepository selectionRepository;
+	private final SelectedCityRepository selectedCityRepository;
 
 	private final CityRepository cityRepository;
 
-	public CityService(SelectionRepository selectionRepository, CityRepository cityRepository) {
-		this.selectionRepository = selectionRepository;
+	public CityService(SelectedCityRepository selectedCityRepository, CityRepository cityRepository) {
+		this.selectedCityRepository = selectedCityRepository;
 		this.cityRepository = cityRepository;
 	}
 
 	public List<City> searchUnselectedCities(String name) {
-		return selectionRepository.findUnselectedFilteredByCityNameIgnoringCase(name);
+		return selectedCityRepository.findUnselectedFilteredByCityNameIgnoringCase(name);
 	}
 
 	public void addCityById(long cityId) {
 		var city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException(cityId));
-		if (selectionRepository.findByCity(city).isPresent()) {
+		if (selectedCityRepository.findByCity(city).isPresent()) {
 			throw new CityAlreadySelectedException(cityId);
 		}
-		selectionRepository.save(new SelectedCity(city));
+		selectedCityRepository.save(new SelectedCity(city));
 	}
 
 	@Transactional
 	public void unselectCityById(long id) {
-		selectionRepository.deleteByCityId(id);
+		selectedCityRepository.deleteByCityId(id);
 	}
 
 	public List<City> getSelectedCities() {
-		return selectionRepository.findAllByOrderByCityNameAsc().stream().map(SelectedCity::getCity).toList();
+		return selectedCityRepository.findAllByOrderByCityNameAsc().stream().map(SelectedCity::getCity).toList();
 	}
 
 }

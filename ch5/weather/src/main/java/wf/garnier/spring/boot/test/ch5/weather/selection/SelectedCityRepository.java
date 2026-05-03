@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-interface SelectionRepository extends JpaRepository<SelectedCity, Long> {
+interface SelectedCityRepository extends JpaRepository<SelectedCity, Long> {
 
 	void deleteByCityId(long id);
 

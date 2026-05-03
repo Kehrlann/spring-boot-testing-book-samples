@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.weather.weather;
+package wf.garnier.spring.boot.test.ch5.weather;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,6 +20,8 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.dataformat.xml.XmlMapper;
 import wf.garnier.spring.boot.test.ch5.weather.selection.City;
 import wf.garnier.spring.boot.test.ch5.weather.selection.CityService;
+import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
+import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherDataService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
