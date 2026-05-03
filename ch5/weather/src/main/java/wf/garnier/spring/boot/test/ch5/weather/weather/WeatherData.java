@@ -2,11 +2,15 @@ package wf.garnier.spring.boot.test.ch5.weather.weather;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-public record WeatherData(double temperature, double windspeed, String weather) {
+public record WeatherData(Double temperature, Double windspeed, String weather) {
 
 	@JsonCreator
 	public WeatherData(double temperature, double windspeed, int weathercode) {
 		this(temperature, windspeed, weatherFromCode(weathercode));
+	}
+
+	public WeatherData() {
+		this(null, null, weatherFromCode(-1));
 	}
 
 	// Weather codes as per https://open-meteo.com/en/docs
