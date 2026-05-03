@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.weather.openmeteo;
+package wf.garnier.spring.boot.test.ch5.weather.weather;
 
 import java.util.Random;
 
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Profile("local")
-class RandomWeatherService implements WeatherService {
+class RandomWeatherDataService implements WeatherDataService {
 
 	private final Random random = new Random();
 

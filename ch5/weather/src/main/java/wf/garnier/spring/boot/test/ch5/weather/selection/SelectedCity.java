@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "preferred_city")
-public class Selection {
+class SelectedCity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +22,10 @@ public class Selection {
 	private City city;
 
 	// JPA requires default constructor
-	protected Selection() {
+	protected SelectedCity() {
 	}
 
-	public Selection(City city) {
+	public SelectedCity(City city) {
 		this.city = city;
 	}
 

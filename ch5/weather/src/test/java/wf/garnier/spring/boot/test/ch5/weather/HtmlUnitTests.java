@@ -1,9 +1,12 @@
 package wf.garnier.spring.boot.test.ch5.weather;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
+import org.htmlunit.HttpMethod;
 import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlElement;
@@ -12,12 +15,9 @@ import org.htmlunit.html.HtmlPage;
 import org.htmlunit.javascript.host.event.KeyboardEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import wf.garnier.spring.boot.test.ch5.weather.openmeteo.WeatherData;
-import wf.garnier.spring.boot.test.ch5.weather.openmeteo.WeatherService;
-import wf.garnier.spring.boot.test.ch5.weather.selection.City;
-import wf.garnier.spring.boot.test.ch5.weather.selection.CityRepository;
-import wf.garnier.spring.boot.test.ch5.weather.selection.Selection;
-import wf.garnier.spring.boot.test.ch5.weather.selection.SelectionRepository;
+import wf.garnier.spring.boot.test.ch5.weather.selection.CityService;
+import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
+import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherDataService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,19 +35,24 @@ class HtmlUnitTests {
 	private WebClient webClient;
 
 	@Autowired
-	private CityRepository cityRepository;
-
-	@Autowired
-	private SelectionRepository selectionRepository;
+	private CityService cityService;
 
 	@MockitoBean
-	private WeatherService weatherService;
+	private WeatherDataService weatherDataService;
 
 	@BeforeEach
-	void setUp() {
-		selectionRepository.deleteAll();
+	void setUp() throws IOException {
+		// Clear cities using WebClient or just let it be if it's not needed?
+		// Actually, we can just delete all cities by clicking delete buttons
 		webClient.getOptions().setFetchPolyfillEnabled(true);
-		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
+		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
+
+		HtmlPage page = webClient.getPage("/");
+		var deleteButtons = page.querySelectorAll("form[data-role=\"delete-city\"] > button");
+		for (var button : deleteButtons) {
+			((HtmlButton) button).click();
+			webClient.waitForBackgroundJavaScript(1000);
+		}
 	}
 
 	@Test
@@ -181,10 +186,16 @@ class HtmlUnitTests {
 			.contains("Ankara (Turkey)");
 	}
 
-	private City selectCity(String name) {
-		var city = cityRepository.findByNameIgnoreCase(name).get();
-		selectionRepository.save(new Selection(city));
-		return city;
+	private void selectCity(String name) throws IOException {
+		var city = cityService.searchUnselectedCities(name)
+			.stream()
+			.filter(c -> c.getName().equalsIgnoreCase(name))
+			.findFirst()
+			.get();
+		WebRequest request = new WebRequest(new URL("http://localhost/api/city"), HttpMethod.POST);
+		request.setAdditionalHeader("Content-Type", "application/json");
+		request.setRequestBody("{ \"id\": " + city.getId() + " }");
+		webClient.getPage(request);
 	}
 
 }

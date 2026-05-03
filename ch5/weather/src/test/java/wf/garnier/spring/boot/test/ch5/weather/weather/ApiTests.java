@@ -1,12 +1,10 @@
-package wf.garnier.spring.boot.test.ch5.weather;
+package wf.garnier.spring.boot.test.ch5.weather.weather;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import jakarta.servlet.http.Cookie;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.json.JSONException;
@@ -18,12 +16,10 @@ import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.skyscreamer.jsonassert.comparator.DefaultComparator;
 import org.skyscreamer.jsonassert.comparator.JSONComparator;
-import wf.garnier.spring.boot.test.ch5.weather.openmeteo.WeatherData;
-import wf.garnier.spring.boot.test.ch5.weather.openmeteo.WeatherService;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.dataformat.xml.XmlMapper;
 import wf.garnier.spring.boot.test.ch5.weather.selection.City;
-import wf.garnier.spring.boot.test.ch5.weather.selection.CityRepository;
-import wf.garnier.spring.boot.test.ch5.weather.selection.Selection;
-import wf.garnier.spring.boot.test.ch5.weather.selection.SelectionRepository;
+import wf.garnier.spring.boot.test.ch5.weather.selection.CityService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,25 +44,26 @@ class ApiTests {
 	MockMvcTester mvc;
 
 	@Autowired
-	SelectionRepository selectionRepository;
+	CityService cityService;
 
 	@MockitoBean
-	WeatherService weatherService;
-
-	@Autowired
-	CityRepository cityRepository;
+	WeatherDataService weatherDataService;
 
 	City paris;
 
 	@BeforeEach
 	void clearRepository() {
-		selectionRepository.deleteAll();
-		paris = cityRepository.findByNameIgnoreCase("paris").get();
+		// clean up existing selection
+		cityService.getSelectedCities().forEach(c -> cityService.unselectCityById(c.getId()));
+		paris = cityService.searchUnselectedCities("paris")
+			.stream()
+			.findFirst()
+			.get();
 	}
 
 	@BeforeEach
 	void configureMocks() {
-		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
+		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 	}
 
 	@Test
@@ -101,13 +98,9 @@ class ApiTests {
 			.exchange();
 
 		assertThat(response).hasStatus(HttpStatus.CREATED).body().isEmpty();
-		var cities = selectionRepository.findAll();
+		var cities = cityService.getSelectedCities();
 
-		assertThat(cities).hasSize(1)
-			.first()
-			.extracting(Selection::getCity)
-			.extracting(City::getName)
-			.isEqualTo("Paris");
+		assertThat(cities).hasSize(1).first().extracting(City::getName).isEqualTo("Paris");
 	}
 
 	@Test
@@ -122,13 +115,9 @@ class ApiTests {
 			.body()
 			.isEmpty();
 
-		var cities = selectionRepository.findAll();
+		var cities = cityService.getSelectedCities();
 
-		assertThat(cities).hasSize(1)
-			.first()
-			.extracting(Selection::getCity)
-			.extracting(City::getName)
-			.isEqualTo("Paris");
+		assertThat(cities).hasSize(1).first().extracting(City::getName).isEqualTo("Paris");
 	}
 
 	@Test
@@ -140,7 +129,7 @@ class ApiTests {
 				{ "id": %s }
 				""".formatted(paris.getId())).exchange().assertThat().hasStatus(HttpStatus.CONFLICT);
 
-		assertThat(selectionRepository.count()).isEqualTo(1);
+		assertThat(cityService.getSelectedCities()).hasSize(1);
 	}
 
 	@Test
@@ -150,7 +139,7 @@ class ApiTests {
 		var response = mvc.delete().uri("/api/city/{id}", paris.getId()).exchange();
 
 		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
-		assertThat(selectionRepository.count()).isEqualTo(0);
+		assertThat(cityService.getSelectedCities()).isEmpty();
 	}
 
 	@Test
@@ -158,7 +147,7 @@ class ApiTests {
 		var response = mvc.delete().uri("/api/city/{id}", paris.getId()).exchange();
 
 		assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
-		assertThat(selectionRepository.count()).isEqualTo(0);
+		assertThat(cityService.getSelectedCities()).isEmpty();
 	}
 
 	@Test
@@ -219,7 +208,7 @@ class ApiTests {
 	void getWeatherMultipleCities() {
 		var lagos = selectCity("Lagos");
 		var shenzhen = selectCity("Shenzhen");
-		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(25, 0, 0))
+		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(25, 0, 0))
 			.thenReturn(new WeatherData(17, 5, 1));
 
 		var response = mvc.get().uri("/api/weather").exchange();
@@ -255,7 +244,7 @@ class ApiTests {
 		selectCity("Lagos");
 		selectCity("Shenzhen");
 
-		when(weatherService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(25, 0, 0))
+		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(25, 0, 0))
 			.thenReturn(new WeatherData(17, 5, 1));
 
 		var response = mvc.get().uri("/api/weather").exchange();
@@ -365,8 +354,12 @@ class ApiTests {
 	}
 
 	private City selectCity(String name) {
-		var city = this.cityRepository.findByNameIgnoreCase(name).get();
-		selectionRepository.save(new Selection(city));
+		var city = cityService.searchUnselectedCities(name)
+			.stream()
+			.filter(c -> c.getName().equalsIgnoreCase(name))
+			.findFirst()
+			.get();
+		cityService.addCityById(city.getId());
 		return city;
 	}
 

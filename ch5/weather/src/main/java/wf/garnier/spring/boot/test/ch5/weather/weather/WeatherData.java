@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.weather.openmeteo;
+package wf.garnier.spring.boot.test.ch5.weather.weather;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

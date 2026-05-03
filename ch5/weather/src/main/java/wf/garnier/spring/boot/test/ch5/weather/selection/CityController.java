@@ -1,15 +1,9 @@
-package wf.garnier.spring.boot.test.ch5.weather;
+package wf.garnier.spring.boot.test.ch5.weather.selection;
 
 import java.util.List;
 
-import wf.garnier.spring.boot.test.ch5.weather.selection.City;
-import wf.garnier.spring.boot.test.ch5.weather.selection.CityWeather;
-import wf.garnier.spring.boot.test.ch5.weather.selection.SelectionService;
-
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,44 +14,30 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-public class WeatherController {
+class CityController {
 
-	private final SelectionService selectionService;
+	private final CityService cityService;
 
-	public WeatherController(SelectionService selectionService) {
-		this.selectionService = selectionService;
-	}
-
-	@GetMapping(value = "/")
-	public String index(Model model) {
-		var citiesWithWeather = selectionService.getWeatherInSelectedCities();
-		model.addAttribute("preferredCities", citiesWithWeather);
-		return "index";
+	public CityController(CityService cityService) {
+		this.cityService = cityService;
 	}
 
 	@GetMapping(value = "/api/city")
 	@ResponseBody
 	public List<City> searchCities(@RequestParam(name = "q", required = true) String name) {
-		// TODO: DTO
-		return selectionService.searchUnselectedCities(name);
-	}
-
-	@GetMapping(value = "/api/weather")
-	@ResponseBody
-	public List<CityWeather> weather() {
-		return selectionService.getWeatherInSelectedCities();
+		return cityService.searchUnselectedCities(name);
 	}
 
 	@PostMapping(value = "/api/city")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void addCityApi(@RequestBody CityRequest req) {
-		selectionService.addCityById(req.id());
+		cityService.addCityById(req.id());
 	}
 
 	@DeleteMapping(value = "/api/city/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteCity(@PathVariable Long id) {
-		selectionService.unselectCityById(id);
+		cityService.unselectCityById(id);
 	}
 
 	public record CityRequest(long id) {

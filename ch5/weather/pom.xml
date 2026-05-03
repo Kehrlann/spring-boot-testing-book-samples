@@ -15,8 +15,24 @@
     <description>Demo project for testing Spring Boot apps</description>
     <properties>
         <java.version>25</java.version>
+        <spring-modulith.version>2.0.6</spring-modulith.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.modulith</groupId>
+                <artifactId>spring-modulith-bom</artifactId>
+                <version>${spring-modulith.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-starter-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
@@ -29,9 +45,9 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <!--        JACKSON 3 -->
+        <!-- JACKSON 3 -->
         <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
 
@@ -55,39 +71,16 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- tag::webflux-test-dependency[] -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- end::webflux-test-dependency[] -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-restclient-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- tag::webtestclient-test-dependency[] -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webclient-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- end::webtestclient-test-dependency[] -->
-        <!-- tag::htmlunit[] -->
         <dependency>
             <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- end::htmlunit[] -->
-        <!-- tag::selenium[] -->
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- end::selenium[] -->
         <!-- Mockito config, track progress here: https://github.com/spring-io/initializr/issues/1590 -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -124,6 +117,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>-javaagent:${org.mockito:mockito-core:jar}</argLine>
+                    <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>
         </plugins>

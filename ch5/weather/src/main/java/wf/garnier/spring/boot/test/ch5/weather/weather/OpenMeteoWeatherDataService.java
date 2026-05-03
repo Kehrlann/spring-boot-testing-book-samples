@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.weather.openmeteo;
+package wf.garnier.spring.boot.test.ch5.weather.weather;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -8,13 +8,13 @@ import org.springframework.web.client.RestClient;
 
 @Service
 @Profile("!local")
-class OpenMeteoWeatherService implements WeatherService {
+class OpenMeteoWeatherDataService implements WeatherDataService {
 
 	private final RestClient restClient;
 
 	private static final String API_URL = "https://api.open-meteo.com/v1/forecast";
 
-	OpenMeteoWeatherService(RestClient.Builder restClientBuilder) {
+	OpenMeteoWeatherDataService(RestClient.Builder restClientBuilder) {
 		this.restClient = restClientBuilder.baseUrl(API_URL).build();
 	}
 
