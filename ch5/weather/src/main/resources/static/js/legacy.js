@@ -206,6 +206,30 @@ AutocompleteDropdown.prototype.reset = function () {
   this.hide();
 };
 
+function updatePreferences() {
+  const darkMode = document.getElementById("darkModeToggle").checked;
+  const units = document.getElementById("unitToggle").checked ? "IMPERIAL" : "METRIC";
+  const sortBy = document.getElementById("sortSelect").value;
+
+  fetch("/api/preferences", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      darkMode: darkMode,
+      units: units,
+      sortBy: sortBy,
+    }),
+  }).then((response) => {
+    if (response.ok) {
+      if (typeof refreshCities === "function") {
+        refreshCities();
+      }
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   var citySearch = document.getElementById("citySearch");
   var cityResults = document.getElementById("cityResults");
@@ -239,4 +263,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   });
+
+  // Preference change listeners
+  document.getElementById("darkModeToggle").addEventListener("change", updatePreferences);
+  document.getElementById("unitToggle").addEventListener("change", updatePreferences);
+  document.getElementById("sortSelect").addEventListener("change", updatePreferences);
 });

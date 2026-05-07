@@ -23,3 +23,11 @@ CREATE TABLE IF NOT EXISTS preferred_city
     date_added timestamp,
     FOREIGN KEY (city_id) REFERENCES city(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS preferences
+(
+    id        int PRIMARY KEY AUTO_INCREMENT,
+    dark_mode boolean NOT NULL,
+    units     varchar(255),
+    sort_by   varchar(255)
+);
