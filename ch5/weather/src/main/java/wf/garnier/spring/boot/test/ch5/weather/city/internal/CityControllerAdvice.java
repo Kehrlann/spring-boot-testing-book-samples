@@ -1,4 +1,7 @@
-package wf.garnier.spring.boot.test.ch5.weather.city;
+package wf.garnier.spring.boot.test.ch5.weather.city.internal;
+
+import wf.garnier.spring.boot.test.ch5.weather.city.CityAlreadySelectedException;
+import wf.garnier.spring.boot.test.ch5.weather.city.CityNotFoundException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

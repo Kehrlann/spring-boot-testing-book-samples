@@ -1,8 +1,9 @@
-package wf.garnier.spring.boot.test.ch5.weather.weather;
+package wf.garnier.spring.boot.test.ch5.weather.weather.internal;
 
 import wf.garnier.spring.boot.test.ch5.weather.city.City;
+import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 
-record CityWeather(String cityName, String country, Integer cityId, String weather, Double temperature,
+public record CityWeather(String cityName, String country, Integer cityId, String weather, Double temperature,
 		Double windSpeed) {
 
 	public CityWeather(City city, WeatherData weatherData) {

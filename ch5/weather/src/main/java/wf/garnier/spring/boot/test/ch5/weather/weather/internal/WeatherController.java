@@ -1,6 +1,8 @@
-package wf.garnier.spring.boot.test.ch5.weather.weather;
+package wf.garnier.spring.boot.test.ch5.weather.weather.internal;
 
 import java.util.List;
+
+import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherService;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

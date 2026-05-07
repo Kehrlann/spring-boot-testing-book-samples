@@ -20,5 +20,6 @@ CREATE TABLE IF NOT EXISTS preferred_city
 (
     id      int PRIMARY KEY AUTO_INCREMENT,
     city_id int UNIQUE NOT NULL,
+    date_added timestamp,
     FOREIGN KEY (city_id) REFERENCES city(id) ON DELETE CASCADE
 );

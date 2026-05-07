@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityAlreadySelectedException;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityNotFoundException;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.PreferencesService;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ class ControllerTests {
 
 	@MockitoBean
 	WeatherService weatherService;
+
+	@MockitoBean
+	PreferencesService preferencesService;
 
 	@BeforeEach
 	void setUp() {

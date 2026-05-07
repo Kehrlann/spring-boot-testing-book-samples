@@ -1,6 +1,8 @@
-package wf.garnier.spring.boot.test.ch5.weather.city;
+package wf.garnier.spring.boot.test.ch5.weather.city.internal;
 
 import java.util.List;
+
+import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -24,7 +26,7 @@ class CityController {
 
 	@GetMapping(value = "/api/city")
 	@ResponseBody
-	public List<City> searchCities(@RequestParam(name = "q", required = true) String name) {
+	public List<CityEntity> searchCities(@RequestParam(name = "q", required = true) String name) {
 		return cityService.searchUnselectedCities(name);
 	}
 

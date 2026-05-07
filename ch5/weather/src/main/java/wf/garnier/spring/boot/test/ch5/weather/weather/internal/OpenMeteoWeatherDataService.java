@@ -1,8 +1,9 @@
-package wf.garnier.spring.boot.test.ch5.weather.weather;
+package wf.garnier.spring.boot.test.ch5.weather.weather.internal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;

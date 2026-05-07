@@ -1,6 +1,7 @@
-package wf.garnier.spring.boot.test.ch5.weather.weather;
+package wf.garnier.spring.boot.test.ch5.weather.weather.internal;
 
 import org.junit.jupiter.api.Test;
+import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;

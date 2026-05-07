@@ -17,7 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
-import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherDataService;
+import wf.garnier.spring.boot.test.ch5.weather.weather.internal.WeatherDataService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -2,6 +2,11 @@ package wf.garnier.spring.boot.test.ch5.weather.city;
 
 import java.util.List;
 
+import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityEntity;
+import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityRepository;
+import wf.garnier.spring.boot.test.ch5.weather.city.internal.SelectedCity;
+import wf.garnier.spring.boot.test.ch5.weather.city.internal.SelectedCityRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +22,7 @@ public class CityService {
 		this.cityRepository = cityRepository;
 	}
 
-	public List<City> searchUnselectedCities(String name) {
+	public List<CityEntity> searchUnselectedCities(String name) {
 		return selectedCityRepository.findUnselectedFilteredByCityNameIgnoringCase(name);
 	}
 
@@ -34,7 +39,7 @@ public class CityService {
 		selectedCityRepository.deleteByCityId(id);
 	}
 
-	public List<City> getSelectedCities() {
+	public List<? extends City> getSelectedCities() {
 		return selectedCityRepository.findAllByOrderByCityNameAsc().stream().map(SelectedCity::getCity).toList();
 	}
 

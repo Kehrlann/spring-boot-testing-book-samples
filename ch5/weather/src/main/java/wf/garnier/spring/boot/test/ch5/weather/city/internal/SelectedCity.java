@@ -1,4 +1,6 @@
-package wf.garnier.spring.boot.test.ch5.weather.city;
+package wf.garnier.spring.boot.test.ch5.weather.city.internal;
+
+import java.time.Instant;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "preferred_city")
-class SelectedCity {
+public class SelectedCity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,22 +21,33 @@ class SelectedCity {
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "city_id", nullable = false)
-	private City city;
+	private CityEntity city;
+
+	private Instant dateAdded;
 
 	// JPA requires default constructor
 	protected SelectedCity() {
 	}
 
-	public SelectedCity(City city) {
+	public SelectedCity(CityEntity city) {
 		this.city = city;
+		this.dateAdded = Instant.now();
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public City getCity() {
+	public CityEntity getCity() {
 		return city;
+	}
+
+	public Instant getDateAdded() {
+		return dateAdded;
+	}
+
+	public void setDateAdded(Instant dateAdded) {
+		this.dateAdded = dateAdded;
 	}
 
 	@Override

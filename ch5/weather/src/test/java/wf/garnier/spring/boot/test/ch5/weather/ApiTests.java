@@ -20,8 +20,9 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.dataformat.xml.XmlMapper;
 import wf.garnier.spring.boot.test.ch5.weather.city.City;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
+import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityEntity;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
-import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherDataService;
+import wf.garnier.spring.boot.test.ch5.weather.weather.internal.WeatherDataService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,16 +52,13 @@ class ApiTests {
 	@MockitoBean
 	WeatherDataService weatherDataService;
 
-	City paris;
+	CityEntity paris;
 
 	@BeforeEach
 	void clearRepository() {
 		// clean up existing selection
 		cityService.getSelectedCities().forEach(c -> cityService.unselectCityById(c.getId()));
-		paris = cityService.searchUnselectedCities("paris")
-			.stream()
-			.findFirst()
-			.get();
+		paris = cityService.searchUnselectedCities("paris").stream().findFirst().get();
 	}
 
 	@BeforeEach
@@ -355,7 +353,7 @@ class ApiTests {
 		};
 	}
 
-	private City selectCity(String name) {
+	private CityEntity selectCity(String name) {
 		var city = cityService.searchUnselectedCities(name)
 			.stream()
 			.filter(c -> c.getName().equalsIgnoreCase(name))

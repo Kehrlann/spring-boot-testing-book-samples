@@ -1,6 +1,8 @@
-package wf.garnier.spring.boot.test.ch5.weather.weather;
+package wf.garnier.spring.boot.test.ch5.weather.weather.internal;
 
 import java.util.Random;
+
+import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
