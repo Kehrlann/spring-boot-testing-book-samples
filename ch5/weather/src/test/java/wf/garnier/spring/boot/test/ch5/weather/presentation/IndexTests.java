@@ -5,11 +5,14 @@ import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
 import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityRepository;
 import wf.garnier.spring.boot.test.ch5.weather.city.internal.SelectedCityRepository;
+import wf.garnier.spring.boot.test.ch5.weather.weather.internal.RandomWeatherDataService;
+import wf.garnier.spring.boot.test.ch5.weather.weather.internal.WeatherDataService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,6 +31,13 @@ class IndexTests {
 
 	@Autowired
 	CityRepository cityRepository;
+
+	@TestBean
+	WeatherDataService weatherDataService;
+
+	static WeatherDataService weatherDataService() {
+		return new RandomWeatherDataService();
+	}
 
 	@BeforeEach
 	void clearRepository() {

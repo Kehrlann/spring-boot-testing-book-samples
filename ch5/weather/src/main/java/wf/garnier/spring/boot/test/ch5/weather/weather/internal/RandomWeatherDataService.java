@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Profile("local")
-class RandomWeatherDataService implements WeatherDataService {
+public class RandomWeatherDataService implements WeatherDataService {
 
 	private final Random random = new Random();
 
