@@ -1,11 +1,9 @@
 package wf.garnier.spring.boot.test.ch5.weather;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.servlet.http.Cookie;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +18,8 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.dataformat.xml.XmlMapper;
 import wf.garnier.spring.boot.test.ch5.weather.city.City;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
-import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityEntity;
+import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityRepository;
+import wf.garnier.spring.boot.test.ch5.weather.city.internal.SelectedCityRepository;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 import wf.garnier.spring.boot.test.ch5.weather.weather.internal.WeatherDataService;
 
@@ -29,11 +28,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.json.JsonAssert;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Percentage.withPercentage;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -49,16 +46,21 @@ class ApiTests {
 	@Autowired
 	CityService cityService;
 
+	@Autowired
+	SelectedCityRepository selectedCityRepository;
+
+	@Autowired
+	CityRepository cityRepository;
+
 	@MockitoBean
 	WeatherDataService weatherDataService;
 
-	CityEntity paris;
+	City paris;
 
 	@BeforeEach
 	void clearRepository() {
-		// clean up existing selection
-		cityService.getSelectedCities().forEach(c -> cityService.unselectCityById(c.getId()));
-		paris = cityService.searchUnselectedCities("paris").stream().findFirst().get();
+		selectedCityRepository.deleteAll();
+		paris = cityRepository.findByNameIgnoreCase("paris").get();
 	}
 
 	@BeforeEach
@@ -186,7 +188,7 @@ class ApiTests {
 	 * read any other format, including XML, you must deserialize it yourself.
 	 */
 	@Test
-	void getWeatherXml() throws IOException {
+	void getWeatherXml() {
 		selectCity("Paris");
 
 		var response = mvc.get().uri("/api/weather").accept(MediaType.APPLICATION_XML).exchange();
@@ -344,21 +346,8 @@ class ApiTests {
 		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().extractingPath("$.length()").isEqualTo(0);
 	}
 
-	private static RequestPostProcessor apiUser(String username) {
-		return (MockHttpServletRequest request) -> {
-			request.addHeader("accept", "application/vnd.api+json");
-			request.addHeader("x-answer ", "42");
-			request.setCookies(new Cookie("user", username));
-			return request;
-		};
-	}
-
-	private CityEntity selectCity(String name) {
-		var city = cityService.searchUnselectedCities(name)
-			.stream()
-			.filter(c -> c.getName().equalsIgnoreCase(name))
-			.findFirst()
-			.get();
+	private City selectCity(String name) {
+		var city = cityRepository.findByNameIgnoreCase(name).get();
 		cityService.addCityById(city.getId());
 		return city;
 	}

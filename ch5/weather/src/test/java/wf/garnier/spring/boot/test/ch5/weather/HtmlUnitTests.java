@@ -1,12 +1,9 @@
 package wf.garnier.spring.boot.test.ch5.weather;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
-import org.htmlunit.HttpMethod;
 import org.htmlunit.WebClient;
-import org.htmlunit.WebRequest;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlElement;
@@ -16,6 +13,8 @@ import org.htmlunit.javascript.host.event.KeyboardEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
+import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityRepository;
+import wf.garnier.spring.boot.test.ch5.weather.city.internal.SelectedCityRepository;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 import wf.garnier.spring.boot.test.ch5.weather.weather.internal.WeatherDataService;
 
@@ -40,6 +39,12 @@ class HtmlUnitTests {
 	@MockitoBean
 	private WeatherDataService weatherDataService;
 
+	@Autowired
+	private SelectedCityRepository selectedCityRepository;
+
+	@Autowired
+	private CityRepository cityRepository;
+
 	@BeforeEach
 	void setUp() throws IOException {
 		// Clear cities using WebClient or just let it be if it's not needed?
@@ -47,12 +52,7 @@ class HtmlUnitTests {
 		webClient.getOptions().setFetchPolyfillEnabled(true);
 		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 
-		HtmlPage page = webClient.getPage("/");
-		var deleteButtons = page.querySelectorAll("form[data-role=\"delete-city\"] > button");
-		for (var button : deleteButtons) {
-			((HtmlButton) button).click();
-			webClient.waitForBackgroundJavaScript(1000);
-		}
+		selectedCityRepository.deleteAll();
 	}
 
 	@Test
@@ -187,15 +187,8 @@ class HtmlUnitTests {
 	}
 
 	private void selectCity(String name) throws IOException {
-		var city = cityService.searchUnselectedCities(name)
-			.stream()
-			.filter(c -> c.getName().equalsIgnoreCase(name))
-			.findFirst()
-			.get();
-		WebRequest request = new WebRequest(new URL("http://localhost/api/city"), HttpMethod.POST);
-		request.setAdditionalHeader("Content-Type", "application/json");
-		request.setRequestBody("{ \"id\": " + city.getId() + " }");
-		webClient.getPage(request);
+		var city = cityRepository.findByNameIgnoreCase(name).get();
+		cityService.addCityById(city.getId());
 	}
 
 }
