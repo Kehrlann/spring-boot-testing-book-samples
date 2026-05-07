@@ -1,4 +1,9 @@
-package wf.garnier.spring.boot.test.ch5.weather.preferences;
+package wf.garnier.spring.boot.test.ch5.weather.preferences.internal;
+
+import wf.garnier.spring.boot.test.ch5.weather.preferences.Preferences;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.PreferencesService;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.SortOrder;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.UnitSystem;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;

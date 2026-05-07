@@ -1,6 +1,8 @@
 package wf.garnier.spring.boot.test.ch5.weather.preferences;
 
 import org.jspecify.annotations.Nullable;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.internal.PreferencesEntity;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.internal.PreferencesRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +17,12 @@ public class PreferencesService {
 	}
 
 	public Preferences getPreferences() {
+		return getPreferencesEntity();
+	}
+
+	private PreferencesEntity getPreferencesEntity() {
 		return preferencesRepository.findAll().stream().findFirst().orElseGet(() -> {
-			Preferences defaultPrefs = new Preferences(false, UnitSystem.METRIC, SortOrder.ALPHABETICAL);
+			var defaultPrefs = new PreferencesEntity(false, UnitSystem.METRIC, SortOrder.ALPHABETICAL);
 			return preferencesRepository.save(defaultPrefs);
 		});
 	}
@@ -24,7 +30,7 @@ public class PreferencesService {
 	@Transactional
 	public Preferences updatePreferences(@Nullable Boolean darkMode, @Nullable UnitSystem units,
 			@Nullable SortOrder sortBy) {
-		Preferences prefs = getPreferences();
+		PreferencesEntity prefs = getPreferencesEntity();
 		if (darkMode != null) {
 			prefs.setDarkMode(darkMode);
 		}
