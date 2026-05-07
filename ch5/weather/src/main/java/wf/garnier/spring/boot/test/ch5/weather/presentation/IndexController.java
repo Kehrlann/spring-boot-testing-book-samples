@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch5.weather;
+package wf.garnier.spring.boot.test.ch5.weather.presentation;
 
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherService;
 import wf.garnier.spring.boot.test.ch5.weather.preferences.PreferencesService;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class IndexController {
 
 	private final WeatherService weatherService;
+
 	private final PreferencesService preferencesService;
 
 	public IndexController(WeatherService weatherService, PreferencesService preferencesService) {

@@ -8,24 +8,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/preferences")
-public class PreferencesController {
+class PreferencesController {
 
-    private final PreferencesService preferencesService;
+	private final PreferencesService preferencesService;
 
-    public PreferencesController(PreferencesService preferencesService) {
-        this.preferencesService = preferencesService;
-    }
+	public PreferencesController(PreferencesService preferencesService) {
+		this.preferencesService = preferencesService;
+	}
 
-    @GetMapping
-    public Preferences getPreferences() {
-        return preferencesService.getPreferences();
-    }
+	@GetMapping
+	public Preferences getPreferences() {
+		return preferencesService.getPreferences();
+	}
 
-    @PutMapping
-    public Preferences updatePreferences(@RequestBody PreferencesUpdateRequest request) {
-        return preferencesService.updatePreferences(request.darkMode(), request.units(), request.sortBy());
-    }
+	@PutMapping
+	public Preferences updatePreferences(@RequestBody PreferencesUpdateRequest request) {
+		return preferencesService.updatePreferences(request.darkMode(), request.units(), request.sortBy());
+	}
 
-    public record PreferencesUpdateRequest(Boolean darkMode, UnitSystem units, SortOrder sortBy) {
-    }
+	public record PreferencesUpdateRequest(Boolean darkMode, UnitSystem units, SortOrder sortBy) {
+	}
+
 }
