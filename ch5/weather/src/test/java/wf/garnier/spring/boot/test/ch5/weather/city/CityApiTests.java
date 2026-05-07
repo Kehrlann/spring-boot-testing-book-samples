@@ -6,14 +6,14 @@ import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityRepository;
 import wf.garnier.spring.boot.test.ch5.weather.city.internal.SelectedCityRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.modulith.test.ApplicationModuleTest;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@ApplicationModuleTest
 @AutoConfigureMockMvc
 class CityApiTests {
 
@@ -35,29 +35,6 @@ class CityApiTests {
 	void clearRepository() {
 		selectedCityRepository.deleteAll();
 		paris = cityRepository.findByNameIgnoreCase("paris").get();
-	}
-
-	@Test
-	void indexPageLoads() {
-		var response = mvc.get().uri("/").exchange();
-
-		assertThat(response).hasStatus(HttpStatus.OK).bodyText().contains("<h1>Weather App</h1>");
-	}
-
-	@Test
-	void indexPageHasSelectedCity() {
-		selectCity("Paris");
-
-		var response = mvc.get().uri("/").exchange();
-
-		assertThat(response).hasStatus(HttpStatus.OK).bodyText().contains("Paris (France)");
-	}
-
-	@Test
-	void indexPageHasSelectedCityFluent() {
-		selectCity("Paris");
-
-		mvc.get().uri("/").exchange().assertThat().hasStatus(HttpStatus.OK).bodyText().contains("Paris (France)");
 	}
 
 	@Test

@@ -1,73 +1,48 @@
 package wf.garnier.spring.boot.test.ch5.weather.weather;
 
 import java.util.List;
+import java.util.Random;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.junit.jupiter.api.BeforeEach;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.dataformat.xml.XmlMapper;
 import wf.garnier.spring.boot.test.ch5.weather.city.City;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
-import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityRepository;
-import wf.garnier.spring.boot.test.ch5.weather.city.internal.SelectedCityRepository;
 import wf.garnier.spring.boot.test.ch5.weather.weather.internal.WeatherDataService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.modulith.test.ApplicationModuleTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Percentage.withPercentage;
-import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ApplicationModuleTest
 @AutoConfigureMockMvc
 class WeatherApiTests {
 
 	@Autowired
 	MockMvcTester mvc;
 
-	@Autowired
+	@MockitoBean
 	CityService cityService;
-
-	@Autowired
-	SelectedCityRepository selectedCityRepository;
-
-	@Autowired
-	CityRepository cityRepository;
 
 	@MockitoBean
 	WeatherDataService weatherDataService;
 
-	City paris;
-
-	@BeforeEach
-	void clearRepository() {
-		selectedCityRepository.deleteAll();
-		paris = cityRepository.findByNameIgnoreCase("paris").get();
-	}
-
-	@BeforeEach
-	void configureMocks() {
-		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
-	}
-
-	@Test
-	void indexPageLoads() {
-		var response = mvc.get().uri("/").exchange();
-
-		assertThat(response).hasStatus(HttpStatus.OK).bodyText().contains("<h1>Weather App</h1>");
-	}
-
 	@Test
 	void getWeather() {
-		var paris = selectCity("Paris");
+		var paris = makeCity("Paris", "France");
+		doReturn(List.of(paris)).when(cityService).getSelectedCities();
+		configureMockWeather(paris, new WeatherData(20, 0, 0));
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
@@ -96,13 +71,19 @@ class WeatherApiTests {
 		});
 	}
 
+	private void configureMockWeather(City paris, WeatherData value) {
+		when(weatherDataService.getCurrentWeather(paris.getLatitude(), paris.getLongitude())).thenReturn(value);
+	}
+
 	/**
 	 * {@link MockMvcTester} only understands bytes, strings or JSON as a response. To
 	 * read any other format, including XML, you must deserialize it yourself.
 	 */
 	@Test
 	void getWeatherXml() {
-		selectCity("Paris");
+		var paris = makeCity("Paris", "France");
+		doReturn(List.of(paris)).when(cityService).getSelectedCities();
+		configureMockWeather(paris, new WeatherData(20, 0, 0));
 
 		var response = mvc.get().uri("/api/weather").accept(MediaType.APPLICATION_XML).exchange();
 
@@ -121,10 +102,11 @@ class WeatherApiTests {
 
 	@Test
 	void getWeatherMultipleCities() {
-		var lagos = selectCity("Lagos");
-		var shenzhen = selectCity("Shenzhen");
-		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(25, 0, 0))
-			.thenReturn(new WeatherData(17, 5, 1));
+		var lagos = makeCity("Lagos", "Nigeria");
+		var shenzhen = makeCity("Shenzhen", "China");
+		configureMockWeather(lagos, new WeatherData(25, 0, 0));
+		configureMockWeather(shenzhen, new WeatherData(17, 5, 1));
+		doReturn(List.of(lagos, shenzhen)).when(cityService).getSelectedCities();
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
@@ -157,14 +139,42 @@ class WeatherApiTests {
 		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isEqualTo("[]");
 	}
 
-	private City selectCity(String name) {
-		var city = cityRepository.findByNameIgnoreCase(name).get();
-		cityService.addCityById(city.getId());
-		return city;
-	}
-
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	record WeatherResponse(String cityName, String country, Double temperature) {
+	}
+
+	private static @NonNull City makeCity(final String name, final String country) {
+		// this is a way to "mock" a city without using Mockito
+		var id = new Random().nextInt();
+		var lat = new Random().nextDouble();
+		var lon = new Random().nextDouble();
+		return new City() {
+
+			@Override
+			public Integer getId() {
+				return id;
+			}
+
+			@Override
+			public String getName() {
+				return name;
+			}
+
+			@Override
+			public String getCountry() {
+				return country;
+			}
+
+			@Override
+			public double getLatitude() {
+				return lat;
+			}
+
+			@Override
+			public double getLongitude() {
+				return lon;
+			}
+		};
 	}
 
 }
