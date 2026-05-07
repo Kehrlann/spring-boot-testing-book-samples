@@ -46,7 +46,7 @@ class HtmlUnitTests {
 	private CityRepository cityRepository;
 
 	@BeforeEach
-	void setUp() throws IOException {
+	void setUp() {
 		// Clear cities using WebClient or just let it be if it's not needed?
 		// Actually, we can just delete all cities by clicking delete buttons
 		webClient.getOptions().setFetchPolyfillEnabled(true);
@@ -186,7 +186,7 @@ class HtmlUnitTests {
 			.contains("Ankara (Turkey)");
 	}
 
-	private void selectCity(String name) throws IOException {
+	private void selectCity(String name) {
 		var city = cityRepository.findByNameIgnoreCase(name).get();
 		cityService.addCityById(city.getId());
 	}
