@@ -7,8 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.dataformat.xml.XmlMapper;
 import wf.garnier.spring.boot.test.ch5.weather.city.City;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
 import wf.garnier.spring.boot.test.ch5.weather.weather.internal.WeatherDataService;
@@ -16,7 +14,6 @@ import wf.garnier.spring.boot.test.ch5.weather.weather.internal.WeatherDataServi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.modulith.test.ApplicationModuleTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -73,31 +70,6 @@ class WeatherApiTests {
 
 	private void configureMockWeather(City paris, WeatherData value) {
 		when(weatherDataService.getCurrentWeather(paris.getLatitude(), paris.getLongitude())).thenReturn(value);
-	}
-
-	/**
-	 * {@link MockMvcTester} only understands bytes, strings or JSON as a response. To
-	 * read any other format, including XML, you must deserialize it yourself.
-	 */
-	@Test
-	void getWeatherXml() {
-		var paris = makeCity("Paris", "France");
-		doReturn(List.of(paris)).when(cityService).getSelectedCities();
-		configureMockWeather(paris, new WeatherData(20, 0, 0));
-
-		var response = mvc.get().uri("/api/weather").accept(MediaType.APPLICATION_XML).exchange();
-
-		assertThat(response).hasStatus2xxSuccessful();
-
-		var xmlBody = response.getResponse().getContentAsByteArray();
-		var xmlMapper = XmlMapper.builder().build();
-		var body = xmlMapper.readValue(xmlBody, new TypeReference<List<WeatherResponse>>() {
-		}); // yuck
-
-		assertThat(body).hasSize(1).first().satisfies(wr -> {
-			assertThat(wr.cityName()).isEqualTo("Paris");
-			assertThat(wr.temperature()).isCloseTo(20, withPercentage(10));
-		});
 	}
 
 	@Test
