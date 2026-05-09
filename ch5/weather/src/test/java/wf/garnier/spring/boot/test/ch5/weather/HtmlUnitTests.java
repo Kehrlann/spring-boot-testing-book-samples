@@ -1,6 +1,7 @@
 package wf.garnier.spring.boot.test.ch5.weather;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 
 import org.htmlunit.WebClient;
@@ -9,6 +10,7 @@ import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.javascript.host.event.KeyboardEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,8 @@ import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
 import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityRepository;
 import wf.garnier.spring.boot.test.ch5.weather.city.internal.SelectedCityRepository;
 import wf.garnier.spring.boot.test.ch5.weather.preferences.PreferencesService;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.SortOrder;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.UnitSystem;
 import wf.garnier.spring.boot.test.ch5.weather.preferences.internal.PreferencesRepository;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 import wf.garnier.spring.boot.test.ch5.weather.weather.internal.WeatherDataService;
@@ -24,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import wf.garnier.spring.boot.test.ch5.weather.preferences.UnitSystem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
@@ -47,10 +50,12 @@ class HtmlUnitTests {
 
 	@Autowired
 	private CityRepository cityRepository;
+
 	@Autowired
-    private PreferencesRepository preferencesRepository;
+	private PreferencesRepository preferencesRepository;
+
 	@Autowired
-    private PreferencesService preferencesService;
+	private PreferencesService preferencesService;
 
 	@BeforeEach
 	void setUp() {
@@ -247,6 +252,43 @@ class HtmlUnitTests {
 			.asString()
 			.contains("Temperature: 68°F")
 			.contains("Wind Speed: 0 mph");
+	}
+
+	@Test
+	void sortToggle() throws IOException {
+		selectCity("Paris");
+		selectCity("Delhi");
+		var page = getIndex();
+
+		var sortSelect = page.<HtmlSelect>querySelector("select#sortSelect");
+		sortSelect.getOptionByValue("DATE_ADDED").setSelected(true);
+		webClient.waitForBackgroundJavaScript(1000);
+
+		var cities = page.querySelectorAll(".cities-grid .card-title").stream().map(DomNode::getTextContent);
+		assertThat(cities).containsExactly("Paris (France)", "Delhi (India)");
+	}
+
+	@Test
+	void sortSelected() throws IOException {
+		preferencesService.updatePreferences(false, UnitSystem.METRIC, SortOrder.DATE_ADDED);
+		selectCity("Paris");
+		selectCity("Delhi");
+		var page = getIndex();
+
+		var cities = page.querySelectorAll(".cities-grid .card-title").stream().map(DomNode::getTextContent);
+		assertThat(cities).containsExactly("Paris (France)", "Delhi (India)");
+	}
+
+	@Test
+	void sortAlphabetical() throws IOException, InterruptedException {
+		preferencesService.updatePreferences(false, UnitSystem.METRIC, SortOrder.ALPHABETICAL);
+		selectCity("Paris");
+		Thread.sleep(Duration.ofMillis(10));
+		selectCity("Delhi");
+		var page = getIndex();
+
+		var cities = page.querySelectorAll(".cities-grid .card-title").stream().map(DomNode::getTextContent);
+		assertThat(cities).containsExactly("Delhi (India)", "Paris (France)");
 	}
 
 	private void selectCity(String name) {

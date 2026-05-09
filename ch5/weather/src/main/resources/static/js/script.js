@@ -47,6 +47,15 @@ function renderCity(cityWeather) {
 function refreshCities() {
   return loadWeather().then((cities) => {
     currentCities = cities;
+    
+    // Sort cities based on preference
+    const sortBy = document.getElementById("sortSelect").value;
+    if (sortBy === "ALPHABETICAL") {
+      currentCities.sort((a, b) => a.cityName.localeCompare(b.cityName));
+    }
+    // Note: for DATE_ADDED we assume the server already returns them in that order,
+    // or we leave them in the order they were fetched if no other data is available.
+
     var citiesGrid = document.querySelector(".cities-grid");
     citiesGrid.innerHTML = currentCities
       .map((city) => renderCity(city))

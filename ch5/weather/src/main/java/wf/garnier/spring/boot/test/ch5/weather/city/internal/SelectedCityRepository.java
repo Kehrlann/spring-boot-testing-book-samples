@@ -33,6 +33,6 @@ public interface SelectedCityRepository extends JpaRepository<SelectedCity, Long
 			""")
 	List<CityEntity> findUnselectedFilteredByCityNameIgnoringCase(String name);
 
-	List<SelectedCity> findAllByOrderByCityNameAsc();
+	List<SelectedCity> findAllByOrderByDateAddedAsc();
 
 }

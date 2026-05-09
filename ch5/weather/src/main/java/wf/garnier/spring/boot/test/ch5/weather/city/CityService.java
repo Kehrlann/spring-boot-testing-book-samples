@@ -40,7 +40,7 @@ public class CityService {
 	}
 
 	public List<? extends City> getSelectedCities() {
-		return selectedCityRepository.findAllByOrderByCityNameAsc().stream().map(SelectedCity::getCity).toList();
+		return selectedCityRepository.findAllByOrderByDateAddedAsc().stream().map(SelectedCity::getCity).toList();
 	}
 
 }
