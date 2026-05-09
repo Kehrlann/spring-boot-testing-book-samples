@@ -206,10 +206,20 @@ AutocompleteDropdown.prototype.reset = function () {
   this.hide();
 };
 
+function applyDarkMode(isDark) {
+  if (isDark) {
+    document.body.classList.add("dark-mode");
+  } else {
+    document.body.classList.remove("dark-mode");
+  }
+}
+
 function updatePreferences() {
   const darkMode = document.getElementById("darkModeToggle").checked;
   const units = document.getElementById("unitToggle").checked ? "IMPERIAL" : "METRIC";
   const sortBy = document.getElementById("sortSelect").value;
+
+  applyDarkMode(darkMode);
 
   fetch("/api/preferences", {
     method: "PUT",
@@ -239,6 +249,7 @@ function loadPreferences() {
       if (preferences.sortBy) {
         document.getElementById("sortSelect").value = preferences.sortBy;
       }
+      applyDarkMode(preferences.darkMode);
     });
 }
 

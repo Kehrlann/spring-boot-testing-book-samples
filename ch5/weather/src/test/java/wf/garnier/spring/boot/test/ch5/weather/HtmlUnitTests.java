@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch5.weather.city.CityService;
 import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityRepository;
 import wf.garnier.spring.boot.test.ch5.weather.city.internal.SelectedCityRepository;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.PreferencesService;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.internal.PreferencesRepository;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 import wf.garnier.spring.boot.test.ch5.weather.weather.internal.WeatherDataService;
 
@@ -44,6 +46,10 @@ class HtmlUnitTests {
 
 	@Autowired
 	private CityRepository cityRepository;
+	@Autowired
+    private PreferencesRepository preferencesRepository;
+	@Autowired
+    private PreferencesService preferencesService;
 
 	@BeforeEach
 	void setUp() {
@@ -53,6 +59,7 @@ class HtmlUnitTests {
 		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
 
 		selectedCityRepository.deleteAll();
+		preferencesRepository.deleteAll();
 	}
 
 	@Test
@@ -183,6 +190,29 @@ class HtmlUnitTests {
 			.extracting(DomNode::getTextContent)
 			.asString()
 			.contains("Ankara (Turkey)");
+	}
+
+	@Test
+	void darkModeToggle() throws IOException {
+		var page = getIndex();
+
+		var body = page.<HtmlElement>querySelector("body");
+		assertThat(body.getAttribute("class")).doesNotContain("dark-mode");
+
+		var darkModeToggle = page.<HtmlInput>querySelector("input#darkModeToggle");
+		darkModeToggle.click();
+		webClient.waitForBackgroundJavaScript(1000);
+
+		assertThat(body.getAttribute("class")).contains("dark-mode");
+	}
+
+	@Test
+	void darkModeSelected() throws IOException {
+		preferencesService.updatePreferences(true, null, null);
+		var page = getIndex();
+		var body = page.<HtmlElement>querySelector("body");
+
+		assertThat(body.getAttribute("class")).contains("dark-mode");
 	}
 
 	private void selectCity(String name) {
