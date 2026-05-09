@@ -58,8 +58,7 @@ class HtmlUnitTests {
 	@Test
 	void mainPage() throws IOException {
 		selectCity("Paris");
-
-		HtmlPage page = webClient.getPage("/");
+		var page = getIndex();
 
 		List<DomNode> cities = page.querySelectorAll(".cities-grid > .card");
 
@@ -68,14 +67,14 @@ class HtmlUnitTests {
 			.extracting(DomNode::getTextContent)
 			.asString()
 			.contains("Paris (France)")
-			.contains("Temperature: 20.0°C")
-			.contains("Wind Speed: 0.0 km/h")
+			.contains("Temperature: 20°C")
+			.contains("Wind Speed: 0 km/h")
 			.contains("Weather: Clear sky");
 	}
 
 	@Test
 	void mainPageNoCities() throws IOException {
-		HtmlPage page = webClient.getPage("/");
+		var page = getIndex();
 
 		var cities = page.querySelectorAll(".cities-grid > .card");
 
@@ -87,7 +86,7 @@ class HtmlUnitTests {
 		selectCity("Paris");
 		selectCity("Delhi");
 
-		HtmlPage page = webClient.getPage("/");
+		var page = getIndex();
 
 		var cities = page.querySelectorAll(".cities-grid .card-title").stream().map(DomNode::getTextContent);
 
@@ -98,7 +97,7 @@ class HtmlUnitTests {
 	void deleteCity() throws IOException {
 		selectCity("Paris");
 
-		HtmlPage page = webClient.getPage("/");
+		var page = getIndex();
 
 		page.<HtmlButton>querySelector("form[data-role=\"delete-city\"] > button").click();
 		webClient.waitForBackgroundJavaScript(1000);
@@ -110,7 +109,7 @@ class HtmlUnitTests {
 
 	@Test
 	void autocomplete() throws IOException {
-		HtmlPage page = webClient.getPage("/");
+		var page = getIndex();
 
 		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
 		citySearchInput.type("jak");
@@ -128,7 +127,7 @@ class HtmlUnitTests {
 
 	@Test
 	void addCityWithKeyboard() throws IOException {
-		HtmlPage page = webClient.getPage("/");
+		var page = getIndex();
 
 		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
 		citySearchInput.type("Paris");
@@ -145,7 +144,7 @@ class HtmlUnitTests {
 
 	@Test
 	void addCityWithMouse() throws IOException {
-		HtmlPage page = webClient.getPage("/");
+		var page = getIndex();
 
 		HtmlInput citySearchInput = page.querySelector("input#citySearch");
 		citySearchInput.type("bogot");
@@ -165,7 +164,7 @@ class HtmlUnitTests {
 
 	@Test
 	void addCityWithKeyboardMultipleChoices() throws IOException {
-		HtmlPage page = webClient.getPage("/");
+		var page = getIndex();
 
 		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
 		citySearchInput.type("Ank");
@@ -189,6 +188,12 @@ class HtmlUnitTests {
 	private void selectCity(String name) {
 		var city = cityRepository.findByNameIgnoreCase(name).get();
 		cityService.addCityById(city.getId());
+	}
+
+	private HtmlPage getIndex() throws IOException {
+		HtmlPage page = webClient.getPage("/index.html");
+		webClient.waitForBackgroundJavaScript(1000);
+		return page;
 	}
 
 }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link href="/css/styles.css" rel="stylesheet">
+    <script src="/js/script.js" defer></script>
+</head>
+<body>
+<div class="container">
+    <h1>Weather App</h1>
+
+    <!-- Preferences -->
+    <div class="card preferences">
+        <h5 class="card-title">Preferences</h5>
+        <div class="preferences-controls">
+            <label class="preference-label toggle-label">
+                <input type="checkbox" id="darkModeToggle"> Dark Mode
+            </label>
+            <label class="preference-label toggle-label">
+                <input type="checkbox" id="unitToggle"> Imperial Units
+            </label>
+            <label class="preference-label">
+                Sort by:
+                <select id="sortSelect">
+                    <option value="ALPHABETICAL">Alphabetical</option>
+                    <option value="DATE_ADDED">Date Added</option>
+                </select>
+            </label>
+        </div>
+    </div>
+
+    <!-- Add City Form -->
+    <div class="card">
+        <h5 class="card-title">Add a new city</h5>
+        <div class="autocomplete">
+            <input type="text" id="citySearch" placeholder="Type to search cities..." autocomplete="off">
+            <div id="cityResults" class="autocomplete-results"></div>
+        </div>
+    </div>
+
+    <!-- Cities List -->
+    <div class="cities-grid">
+    </div>
+</div>
+</body>
+</html>

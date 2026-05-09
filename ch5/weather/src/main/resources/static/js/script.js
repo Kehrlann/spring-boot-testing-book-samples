@@ -230,6 +230,18 @@ function updatePreferences() {
   });
 }
 
+function loadPreferences() {
+  return fetch("/api/preferences")
+    .then((response) => response.json())
+    .then((preferences) => {
+      document.getElementById("darkModeToggle").checked = preferences.darkMode;
+      document.getElementById("unitToggle").checked = preferences.units === "IMPERIAL";
+      if (preferences.sortBy) {
+        document.getElementById("sortSelect").value = preferences.sortBy;
+      }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   var citySearch = document.getElementById("citySearch");
   var cityResults = document.getElementById("cityResults");
@@ -268,4 +280,8 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("darkModeToggle").addEventListener("change", updatePreferences);
   document.getElementById("unitToggle").addEventListener("change", updatePreferences);
   document.getElementById("sortSelect").addEventListener("change", updatePreferences);
+
+  // Load weather data and preferences on page load
+  loadPreferences();
+  refreshCities();
 });
