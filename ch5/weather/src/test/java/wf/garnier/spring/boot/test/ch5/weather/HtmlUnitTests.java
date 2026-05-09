@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import wf.garnier.spring.boot.test.ch5.weather.preferences.UnitSystem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
@@ -213,6 +214,39 @@ class HtmlUnitTests {
 		var body = page.<HtmlElement>querySelector("body");
 
 		assertThat(body.getAttribute("class")).contains("dark-mode");
+	}
+
+	@Test
+	void unitToggle() throws IOException {
+		selectCity("Paris");
+		var page = getIndex();
+
+		var unitToggle = page.<HtmlInput>querySelector("input#unitToggle");
+		unitToggle.click();
+		webClient.waitForBackgroundJavaScript(1000);
+
+		var cities = page.querySelectorAll(".cities-grid > .card");
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(DomNode::getTextContent)
+			.asString()
+			.contains("Temperature: 68°F")
+			.contains("Wind Speed: 0 mph");
+	}
+
+	@Test
+	void unitSelected() throws IOException {
+		preferencesService.updatePreferences(false, UnitSystem.IMPERIAL, null);
+		selectCity("Paris");
+		var page = getIndex();
+
+		var cities = page.querySelectorAll(".cities-grid > .card");
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(DomNode::getTextContent)
+			.asString()
+			.contains("Temperature: 68°F")
+			.contains("Wind Speed: 0 mph");
 	}
 
 	private void selectCity(String name) {

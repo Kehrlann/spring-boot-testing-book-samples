@@ -15,12 +15,25 @@ function loadWeather() {
 }
 
 function renderCity(cityWeather) {
+  const isImperial = document.getElementById("unitToggle").checked;
+  let tempDisplay = cityWeather.temperature;
+  let tempUnit = "°C";
+  let windSpeedDisplay = cityWeather.windSpeed;
+  let windSpeedUnit = "km/h";
+
+  if (isImperial) {
+    tempDisplay = Math.round(cityWeather.temperature * 9 / 5 + 32);
+    tempUnit = "°F";
+    windSpeedDisplay = Math.round(cityWeather.windSpeed / 1.609344);
+    windSpeedUnit = "mph";
+  }
+
   return `
         <div class="card">
           <h5 class="card-title">${cityWeather.cityName} (${cityWeather.country})</h5>
           <p class="card-content">
-              Temperature: <span>${cityWeather.temperature}</span>°C<br>
-              Wind Speed: <span>${cityWeather.windSpeed}</span> km/h<br>
+              Temperature: <span>${tempDisplay}</span>${tempUnit}<br>
+              Wind Speed: <span>${windSpeedDisplay}</span> ${windSpeedUnit}<br>
               Weather: <span>${cityWeather.weather}</span>
           </p>
           <form data-role="delete-city">
@@ -293,6 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("sortSelect").addEventListener("change", updatePreferences);
 
   // Load weather data and preferences on page load
-  loadPreferences();
-  refreshCities();
+  loadPreferences().then(() => {
+    refreshCities();
+  });
 });
