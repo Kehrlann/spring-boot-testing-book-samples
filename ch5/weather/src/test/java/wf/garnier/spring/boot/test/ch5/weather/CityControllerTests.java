@@ -21,7 +21,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
 @WebMvcTest
-class ControllerTests {
+class CityControllerTests {
 
 	@Autowired
 	private MockMvcTester mvc;
