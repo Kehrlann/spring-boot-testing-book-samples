@@ -5,11 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wf.garnier.spring.boot.test.ch5.weather.weather.WeatherData;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClient;
+import static wf.garnier.spring.boot.test.ch5.weather.weather.internal.CacheConfiguration.WEATHER_CACHE_NAME;
 
 @Service
 @Profile("!local")
@@ -26,6 +28,7 @@ class OpenMeteoWeatherDataService implements WeatherDataService {
 	}
 
 	@Override
+	@Cacheable(WEATHER_CACHE_NAME)
 	public WeatherData getCurrentWeather(double latitude, double longitude) {
 		try {
 			ApiResponse response = restClient.get()
