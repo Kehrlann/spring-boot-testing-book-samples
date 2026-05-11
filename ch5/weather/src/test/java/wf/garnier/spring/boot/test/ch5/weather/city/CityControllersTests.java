@@ -1,6 +1,5 @@
 package wf.garnier.spring.boot.test.ch5.weather.city;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch5.weather.city.internal.CityController;
 
@@ -13,23 +12,21 @@ import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 
-@WebMvcTest(controllers = { CityController.class })
+// tag::class[]
+@WebMvcTest(controllers = { CityController.class }) // <1>
 class CityControllersTests {
 
-	@Autowired
-	private MockMvcTester mvc;
-
+	// end::class[]
+	// tag::fields[]
 	@MockitoBean
-	CityService cityService;
+	CityService cityService; // <2>
 
-	@BeforeEach
-	void setUp() {
-		reset(cityService);
-	}
+	@Autowired
+	MockMvcTester mvc; // <3>
 
+	// end::fields[]
 	@Test
 	void selectCity() {
 		var response = mvc.post()
@@ -45,6 +42,7 @@ class CityControllersTests {
 	@Test
 	void cityDoesNotExist() {
 		doThrow(new CityNotFoundException(42)).when(cityService).addCityById(anyLong());
+
 		var response = mvc.post()
 			.uri("/api/city")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -54,9 +52,13 @@ class CityControllersTests {
 		assertThat(response).hasStatus(HttpStatus.NOT_FOUND);
 	}
 
+	// tag::test[]
 	@Test
 	void cityAlreadySelected() {
-		doThrow(new CityAlreadySelectedException(42)).when(cityService).addCityById(anyLong());
+		doThrow(new CityAlreadySelectedException(42)) // <4>
+			.when(cityService) // <4>
+			.addCityById(anyLong()); // <4>
+
 		var response = mvc.post()
 			.uri("/api/city")
 			.contentType(MediaType.APPLICATION_JSON)
@@ -65,5 +67,9 @@ class CityControllersTests {
 
 		assertThat(response).hasStatus(HttpStatus.CONFLICT);
 	}
+	// end::test[]
+
+	// tag::class[]
 
 }
+// end::class[]

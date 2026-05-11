@@ -8,17 +8,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * Controller advice for handling city-related exceptions. In such a small example, exception handlers could live
+ * inside the {@link CityController}
+ */
+//@formatter:off
+// tag::content[]
 @ControllerAdvice
 class CityControllerAdvice {
 
+	@ExceptionHandler(CityAlreadySelectedException.class)
+	ResponseEntity<String> handleCityAlreadySelected(
+			CityAlreadySelectedException ex) {
+		return ResponseEntity.status(HttpStatus.CONFLICT)
+				.body("City already selected");
+	}
+	// end::content[]
+
 	@ExceptionHandler(CityNotFoundException.class)
-	public ResponseEntity<String> handleCityNotFound(CityNotFoundException ex) {
+	ResponseEntity<String> handleCityNotFound(CityNotFoundException ex) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 	}
 
-	@ExceptionHandler(CityAlreadySelectedException.class)
-	public ResponseEntity<String> handleCityAlreadySelected(CityAlreadySelectedException ex) {
-		return ResponseEntity.status(HttpStatus.CONFLICT).body("City already selected");
-	}
+	// tag::content[]
 
 }
+// end::content[]
+//@formatter:on
