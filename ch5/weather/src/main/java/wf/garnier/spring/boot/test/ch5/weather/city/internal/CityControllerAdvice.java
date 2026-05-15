@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * Controller advice for handling city-related exceptions. In such a small example, exception handlers could live
- * inside the {@link CityController}
+ * Controller advice for handling city-related exceptions. In such a small example,
+ * exception handlers could live inside the {@link CityController}
  */
 //@formatter:off
 // tag::content[]

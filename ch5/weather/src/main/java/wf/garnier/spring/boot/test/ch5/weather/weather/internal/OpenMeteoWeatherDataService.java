@@ -9,23 +9,29 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 import static wf.garnier.spring.boot.test.ch5.weather.weather.internal.CacheConfiguration.WEATHER_CACHE_NAME;
 
-@Service
 @Profile("!local")
+// tag::class[]
+@Service
 class OpenMeteoWeatherDataService implements WeatherDataService {
 
+	// end::class[]
 	private static final Logger log = LoggerFactory.getLogger(OpenMeteoWeatherDataService.class);
 
+	// tag::fields[]
 	private final RestClient restClient;
 
 	static final String API_URL = "https://api.open-meteo.com/v1/forecast";
 
+	// end::fields[]
+	// tag::constructor[]
 	OpenMeteoWeatherDataService(RestClient.Builder restClientBuilder) {
 		this.restClient = restClientBuilder.baseUrl(API_URL).build();
 	}
+	// end::constructor[]
 
 	@Override
 	@Cacheable(WEATHER_CACHE_NAME)
@@ -48,7 +54,7 @@ class OpenMeteoWeatherDataService implements WeatherDataService {
 			throw new IllegalStateException("Could not fetch data for lat=%s, lon=%s".formatted(latitude, longitude),
 					e);
 		}
-		catch (HttpStatusCodeException e) {
+		catch (HttpServerErrorException e) {
 			log.error("Got error fetching weather data", e);
 			return new WeatherData();
 		}
@@ -61,4 +67,7 @@ class OpenMeteoWeatherDataService implements WeatherDataService {
 			@JsonProperty("windspeed_10m") double windspeed, int weathercode) {
 	}
 
+	// tag::class[]
+
 }
+// end::class[]
