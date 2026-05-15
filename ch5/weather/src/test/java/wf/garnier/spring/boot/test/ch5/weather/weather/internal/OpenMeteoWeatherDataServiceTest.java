@@ -115,25 +115,26 @@ class OpenMeteoWeatherDataServiceTest {
 	// tag::verifications[]
 	@Test
 	void verifications() {
-		var cannedResponse = """
-				{ "current": {
-					"temperature_2m": 0,
-					"windspeed_10m": 0.0,
-					"weathercode": 0
-				} }""";
-		mockServer.expect(ExpectedCount.between(1, 2), queryParam("latitude", "32.99"))
-			.andRespond(withSuccess(cannedResponse, MediaType.APPLICATION_JSON));
-		mockServer.expect(ExpectedCount.once(), queryParam("latitude", "40.18"))
-			.andRespond(withSuccess(cannedResponse, MediaType.APPLICATION_JSON));
+		mockServer.expect(ExpectedCount.between(1, 2), // <1>
+				queryParam("latitude", "32.99")) // <1>
+			.andRespond(withSuccess("""
+					{
+						"current": {
+							"temperature_2m": 0,
+							"windspeed_10m": 0.0,
+							"weathercode": 0
+						}
+					}""", MediaType.APPLICATION_JSON));
+
+		assertThatThrownBy(mockServer::verify) // <2>
+			.isInstanceOf(AssertionError.class); // <2>
 
 		service.getCurrentWeather(32.99, -97.68);
-		assertThatThrownBy(mockServer::verify) // <1>
-			.isInstanceOf(AssertionError.class); // <1>
-		service.getCurrentWeather(40.18, -75.55);
-		mockServer.verify(); // <2>
+		mockServer.verify(); // <3>
+
 		service.getCurrentWeather(32.99, -97.68);
-		assertThatThrownBy(() -> service.getCurrentWeather(32.99, -97.68)) // <3>
-			.isInstanceOf(AssertionError.class); // <3>
+		assertThatThrownBy(() -> service.getCurrentWeather(32.99, -97.68)) // <4>
+			.isInstanceOf(AssertionError.class); // <4>
 	}
 	// end::verifications[]
 
