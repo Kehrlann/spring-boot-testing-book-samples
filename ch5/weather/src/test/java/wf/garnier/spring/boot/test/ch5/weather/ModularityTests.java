@@ -4,18 +4,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.modulith.core.ApplicationModules;
 import org.springframework.modulith.docs.Documenter;
 
+// tag::class[]
 class ModularityTests {
+
+	// end::class[]
+	// tag::test[]
+	@Test
+	void verifyStructure() {
+		var modules = ApplicationModules.of(WeatherApplication.class);
+		System.out.println(modules); // <1>
+		modules.verify(); // <2>
+	}
+	// end::test[]
 
 	@Test
 	void writeDocumentation() {
 		var modules = ApplicationModules.of(WeatherApplication.class);
-		System.out.println(modules);
 		new Documenter(modules).writeDocumentation().writeModulesAsPlantUml();
 	}
-
-	@Test
-	void verifiesModularStructure() {
-		ApplicationModules.of(WeatherApplication.class).verify();
-	}
+	// tag::class[]
 
 }
+// end::class[]

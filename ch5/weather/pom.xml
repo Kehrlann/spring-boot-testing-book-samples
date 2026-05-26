@@ -17,6 +17,7 @@
         <java.version>25</java.version>
         <spring-modulith.version>2.1.0-RC1</spring-modulith.version>
     </properties>
+    <!-- tag::modulith-bom[] -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -28,11 +29,16 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <!-- end::modulith-bom[] -->
+    <!-- tag::dependencies[] -->
     <dependencies>
+        <!-- end::dependencies[] -->
+        <!-- tag::modulith[] -->
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-starter-core</artifactId>
         </dependency>
+        <!-- end::modulith[] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc</artifactId>
@@ -46,6 +52,10 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
@@ -56,28 +66,36 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+        <!-- tag::webmvc-test[] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- end::webmvc-test[] -->
         <dependency>
             <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- tag::restclient-test[] -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- end::restclient-test[] -->
+        <!-- tag::modulith-test[] -->
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- end::modulith-test[] -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-restclient-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
+            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+            <scope>test</scope>
         </dependency>
         <!-- Mockito config, track progress here: https://github.com/spring-io/initializr/issues/1590 -->
         <dependency>
@@ -85,7 +103,9 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- tag::dependencies[] -->
     </dependencies>
+    <!-- end::dependencies[] -->
 
     <build>
         <plugins>
