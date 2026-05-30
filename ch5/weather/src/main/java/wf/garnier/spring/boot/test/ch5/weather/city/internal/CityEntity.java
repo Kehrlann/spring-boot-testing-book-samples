@@ -1,6 +1,8 @@
 package wf.garnier.spring.boot.test.ch5.weather.city.internal;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import wf.garnier.spring.boot.test.ch5.weather.city.City;
@@ -12,6 +14,7 @@ import java.util.Objects;
 public class CityEntity implements City {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	private String name;

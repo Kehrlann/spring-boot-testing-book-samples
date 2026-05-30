@@ -5,9 +5,15 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.test.annotation.Commit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -101,6 +107,47 @@ class SelectedCityRepositoryTest {
 		List<SelectedCity> results = selectedCityRepository.findAllByOrderByDateAddedAsc();
 
 		assertThat(results).hasSize(2).map(SelectedCity::getCity).containsExactly(tokyo, jakarta);
+	}
+
+	/**
+	 * Demonstrates the default transactional rollback behavior of {@link DataJpaTest} and
+	 * how to override it using the {@link Commit} annotation. By default, tests are
+	 * wrapped in a transaction that is rolled back after execution. The {@code @Commit}
+	 * annotation forces the transaction to commit instead.
+	 */
+	@Nested
+	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+	class TransactionTests {
+
+		@Test
+		@Order(1)
+		void notCommitted() {
+			cityRepository.save(new CityEntity("Test City", "Test Country", 0, 0));
+
+			assertThat(cityRepository.findByNameIgnoreCase("test city")).isPresent();
+		}
+
+		@Test
+		@Order(2)
+		void noTestCity() {
+			assertThat(cityRepository.findByNameIgnoreCase("test city")).isEmpty();
+		}
+
+		@Test
+		@Commit
+		@Order(3)
+		void committed() {
+			cityRepository.save(new CityEntity("Test City", "Test Country", 0, 0));
+
+			assertThat(cityRepository.findByNameIgnoreCase("test city")).isPresent();
+		}
+
+		@Test
+		@Order(4)
+		void hasTestCity() {
+			assertThat(cityRepository.findByNameIgnoreCase("test city")).isPresent();
+		}
+
 	}
 
 }
