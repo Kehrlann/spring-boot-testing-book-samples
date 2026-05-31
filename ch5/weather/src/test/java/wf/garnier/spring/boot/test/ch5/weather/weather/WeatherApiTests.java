@@ -1,5 +1,5 @@
 // tag::package[]
-package wf.garnier.spring.boot.test.ch5.weather.weather; // <1>
+package wf.garnier.spring.boot.test.ch5.weather.weather; <1>
 
 // end::package[]
 
@@ -27,7 +27,7 @@ import static org.assertj.core.data.Percentage.withPercentage;
 import static org.mockito.Mockito.doReturn;
 
 // tag::class[]
-@ApplicationModuleTest // <1>
+@ApplicationModuleTest <1>
 @AutoConfigureMockMvc
 class WeatherApiTests {
 
@@ -37,17 +37,17 @@ class WeatherApiTests {
 	MockMvcTester mvc;
 
 	@MockitoBean
-	CityService cityService; // <2>
+	CityService cityService; <2>
 
 	@TestBean
-	WeatherDataService weatherDataService; // <3>
+	WeatherDataService weatherDataService; <3>
 
 	// end::dependencies[]
 	// tag::test[]
 	@Test
 	void getWeather() {
-		var paris = new TestCity("Paris", "France"); // <4>
-		doReturn(List.of(paris)).when(cityService).getSelectedCities(); // <4>
+		var paris = new TestCity("Paris", "France"); <4>
+		doReturn(List.of(paris)).when(cityService).getSelectedCities(); <4>
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
@@ -198,7 +198,6 @@ class WeatherApiTests {
 
 		@Override
 		public WeatherData getCurrentWeather(double latitude, double longitude) {
-			//@formatter:off
 			return preRecordedWeather.entrySet().stream()
 					.filter(e -> {
 						var city = e.getKey();
@@ -207,7 +206,6 @@ class WeatherApiTests {
 					.findFirst()
 					.map(Map.Entry::getValue)
 					.orElse(new WeatherData(20, 0, 0));
-			//@formatter:on
 		}
 
 		void setWeatherFor(City city, WeatherData weatherData) {
