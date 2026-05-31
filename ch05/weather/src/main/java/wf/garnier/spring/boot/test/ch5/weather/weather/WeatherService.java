@@ -21,14 +21,12 @@ public class WeatherService {
 	}
 
 	public List<CityWeather> getWeatherInSelectedCities() {
-		//@formatter:off
         return cityService.getSelectedCities()
                 .stream()
                 .map(city -> {
                     var weatherData = weatherDataService.getCurrentWeather(city.getLatitude(), city.getLongitude());
                     return new CityWeather(city, weatherData);
                 }).toList();
-        //@formatter:on
 	}
 
 }
