@@ -15,16 +15,16 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 // tag::class[]
-@WebMvcTest(controllers = { CityController.class }) // <1>
+@WebMvcTest(controllers = { CityController.class }) <1>
 class CityControllersTests {
 
 	// end::class[]
 	// tag::fields[]
 	@MockitoBean
-	CityService cityService; // <2>
+	CityService cityService; <2>
 
 	@Autowired
-	MockMvcTester mvc; // <3>
+	MockMvcTester mvc; <3>
 
 	// end::fields[]
 	@Test
@@ -55,9 +55,9 @@ class CityControllersTests {
 	// tag::test[]
 	@Test
 	void cityAlreadySelected() {
-		doThrow(new CityAlreadySelectedException(42)) // <4>
-			.when(cityService) // <4>
-			.addCityById(anyLong()); // <4>
+		doThrow(new CityAlreadySelectedException(42)) <4>
+			.when(cityService) <4>
+			.addCityById(anyLong()); <4>
 
 		var response = mvc.post()
 			.uri("/api/city")

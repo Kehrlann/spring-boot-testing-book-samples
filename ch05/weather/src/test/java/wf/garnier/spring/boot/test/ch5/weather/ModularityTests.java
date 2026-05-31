@@ -12,8 +12,8 @@ class ModularityTests {
 	@Test
 	void verifyStructure() {
 		var modules = ApplicationModules.of(WeatherApplication.class);
-		System.out.println(modules); // <1>
-		modules.verify(); // <2>
+		System.out.println(modules); <1>
+		modules.verify(); <2>
 	}
 	// end::test[]
 
