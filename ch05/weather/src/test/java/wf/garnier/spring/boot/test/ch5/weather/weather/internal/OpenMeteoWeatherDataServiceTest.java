@@ -25,24 +25,24 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withTooManyRequests;
 
 // tag::class[]
-@RestClientTest(components = { OpenMeteoWeatherDataService.class }) // <1>
+@RestClientTest(components = { OpenMeteoWeatherDataService.class }) <1>
 class OpenMeteoWeatherDataServiceTest {
 
 	// end::class[]
 	// tag::fields[]
 	@Autowired
-	private OpenMeteoWeatherDataService service; // <2>
+	private OpenMeteoWeatherDataService service; <2>
 
 	@Autowired
-	private MockRestServiceServer mockServer; // <3>
+	private MockRestServiceServer mockServer; <3>
 
 	// ... tests ...
 	// end::fields[]
 	// tag::test[]
 	@Test
 	void getWeatherData() {
-		mockServer.expect(queryParam("latitude", "32.99")) // <1>
-			.andExpect(queryParam("longitude", "-97.68")) // <1>
+		mockServer.expect(queryParam("latitude", "32.99")) <1>
+			.andExpect(queryParam("longitude", "-97.68")) <1>
 			.andRespond(withSuccess("""
 					{
 						"current": {
@@ -51,9 +51,9 @@ class OpenMeteoWeatherDataServiceTest {
 							"weathercode": 95
 						}
 					}
-					""", MediaType.APPLICATION_JSON)); // <2>
+					""", MediaType.APPLICATION_JSON)); <2>
 
-		var response = service.getCurrentWeather(32.99, -97.68); // <3>
+		var response = service.getCurrentWeather(32.99, -97.68); <3>
 
 		assertThat(response.temperature()).isEqualTo(3.1);
 		assertThat(response.windspeed()).isEqualTo(52.0);
@@ -73,37 +73,31 @@ class OpenMeteoWeatherDataServiceTest {
 	// tag::error-test[]
 	@Test
 	void http400Throw() {
-		//@formatter:off
-		mockServer.expect(anything()) // <1>
-				.andRespond(withBadRequest()); // <2>
+		mockServer.expect(anything()) <1>
+				.andRespond(withBadRequest()); <2>
 
 		assertThatThrownBy(() -> service.getCurrentWeather(32.99, -97.68))
 				.isInstanceOf(IllegalArgumentException.class);
-		//@formatter:on
 	}
 	// end::error-test[]
 
 	@Test
 	void customSetup() {
 		// tag::complex-setup[]
-		mockServer.expect(request -> { // <1>
-			//@formatter:off
+		mockServer.expect(request -> { <1>
 			var queryParams = UriComponentsBuilder
 					.fromUri(request.getURI())
 					.build()
 					.getQueryParams();
-			//@formatter:on
 			var hasLatitude = queryParams.containsKey("latitude");
 			var hasLongitude = queryParams.containsKey("longitude");
 			if (!hasLatitude || !hasLongitude) {
-				throw new AssertionError("missing lat/lon"); // <2>
+				throw new AssertionError("missing lat/lon"); <2>
 			}
 		}).andRespond(
-		//@formatter:off
-			withStatus(HttpStatus.I_AM_A_TEAPOT) // <3>
-					.header("X-Custom-Error", "Teapot!") // <3>
-					.body("There was no coffee left") // <3>
-			//@formatter:on
+			withStatus(HttpStatus.I_AM_A_TEAPOT) <3>
+					.header("X-Custom-Error", "Teapot!") <3>
+					.body("There was no coffee left") <3>
 		);
 		// end::complex-setup[]
 
@@ -115,8 +109,8 @@ class OpenMeteoWeatherDataServiceTest {
 	// tag::verifications[]
 	@Test
 	void verifications() {
-		mockServer.expect(ExpectedCount.between(1, 2), // <1>
-				queryParam("latitude", "32.99")) // <1>
+		mockServer.expect(ExpectedCount.between(1, 2), <1>
+				queryParam("latitude", "32.99")) <1>
 			.andRespond(withSuccess("""
 					{
 						"current": {
@@ -126,15 +120,15 @@ class OpenMeteoWeatherDataServiceTest {
 						}
 					}""", MediaType.APPLICATION_JSON));
 
-		assertThatThrownBy(mockServer::verify) // <2>
-			.isInstanceOf(AssertionError.class); // <2>
+		assertThatThrownBy(mockServer::verify) <2>
+			.isInstanceOf(AssertionError.class); <2>
 
 		service.getCurrentWeather(32.99, -97.68);
-		mockServer.verify(); // <3>
+		mockServer.verify(); <3>
 
 		service.getCurrentWeather(32.99, -97.68);
-		assertThatThrownBy(() -> service.getCurrentWeather(32.99, -97.68)) // <4>
-			.isInstanceOf(AssertionError.class); // <4>
+		assertThatThrownBy(() -> service.getCurrentWeather(32.99, -97.68)) <4>
+			.isInstanceOf(AssertionError.class); <4>
 	}
 	// end::verifications[]
 
