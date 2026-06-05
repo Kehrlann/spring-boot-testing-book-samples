@@ -21,11 +21,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.springframework.modulith</groupId> <!-- 1 -->
-                <artifactId>spring-modulith-bom</artifactId> <!-- 1 -->
-                <version>${spring-modulith.version}</version> <!-- 1 -->
-                <type>pom</type> <!-- 1 -->
-                <scope>import</scope> <!-- 1 -->
+                <groupId>org.springframework.modulith</groupId> <!--1-->
+                <artifactId>spring-modulith-bom</artifactId> <!--1-->
+                <version>${spring-modulith.version}</version> <!--1-->
+                <type>pom</type> <!--1-->
+                <scope>import</scope> <!--1-->
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -35,8 +35,8 @@
         <!-- end::dependencies[] -->
         <!-- tag::modulith[] -->
         <dependency>
-            <groupId>org.springframework.modulith</groupId> <!-- 2 -->
-            <artifactId>spring-modulith-starter-core</artifactId> <!-- 2 -->
+            <groupId>org.springframework.modulith</groupId> <!--2-->
+            <artifactId>spring-modulith-starter-core</artifactId> <!--2-->
         </dependency>
         <!-- end::modulith[] -->
         <dependency>
@@ -87,9 +87,9 @@
         <!-- end::restclient-test[] -->
         <!-- tag::modulith-test[] -->
         <dependency>
-            <groupId>org.springframework.modulith</groupId> <!-- 3 -->
-            <artifactId>spring-modulith-starter-test</artifactId> <!-- 3 -->
-            <scope>test</scope> <!-- 3 -->
+            <groupId>org.springframework.modulith</groupId> <!--3-->
+            <artifactId>spring-modulith-starter-test</artifactId> <!--3-->
+            <scope>test</scope> <!--3-->
         </dependency>
         <!-- end::modulith-test[] -->
         <dependency>
