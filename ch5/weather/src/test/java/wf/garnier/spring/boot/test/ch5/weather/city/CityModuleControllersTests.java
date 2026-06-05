@@ -32,6 +32,7 @@ class CityModuleControllersTests {
 	@Autowired
 	MockMvcTester mvc;
 
+	// ... tests ...
 	// end::fields[]
 	@Test
 	void selectCity() {
