@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * This configuration will be loaded in all {@link WebMvcTest}-based tests, because it is
  * referenced in the
- * {@code wf.garnier.spring.boot.test.ch5.weather.WebMvcTestUserAutoConfiguration} file in
+ * {@code org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest.imports} file in
  * {@code META-INF/spring}.
  */
 class WebMvcTestUserAutoConfiguration {

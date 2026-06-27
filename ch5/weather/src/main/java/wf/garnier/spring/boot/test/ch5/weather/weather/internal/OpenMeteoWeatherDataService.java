@@ -50,8 +50,8 @@ class OpenMeteoWeatherDataService implements WeatherDataService {
 		catch (HttpClientErrorException.BadRequest e) {
 			// From Open Meteo docs:
 			// In case an error occurs, for example a URL parameter is not correctly
-			// specified, a JSON error object is returned with a HTTP 400 status code.
-			throw new IllegalStateException("Could not fetch data for lat=%s, lon=%s".formatted(latitude, longitude),
+			// specified, a JSON error object is returned with an HTTP 400 status code.
+			throw new IllegalArgumentException("Could not fetch data for lat=%s, lon=%s".formatted(latitude, longitude),
 					e);
 		}
 		catch (HttpServerErrorException e) {
