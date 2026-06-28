@@ -176,7 +176,7 @@ class ManualSpringBootTests {
 
 		// When
 		var restTemplate = app.getBean(RestTemplateBuilder.class)
-			.rootUri("http://localhost:" + localServerPort)
+			.baseUri("http://localhost:" + localServerPort)
 			.build();
 
 		// tag::resttemplate[]

@@ -51,9 +51,7 @@ class WeatherApiTests {
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
-		assertThat(response)
-				.hasStatus(HttpStatus.OK)
-				.bodyJson().isLenientlyEqualTo("""
+		assertThat(response).hasStatus(HttpStatus.OK).bodyJson().isLenientlyEqualTo("""
 				[
 				  {
 				    "cityName": "Paris",
@@ -63,8 +61,7 @@ class WeatherApiTests {
 				    "windSpeed": 0.0
 				  }
 				]
-				""")
-				.extractingPath("$.[0].cityId").isEqualTo(paris.getId());
+				""").extractingPath("$.[0].cityId").isEqualTo(paris.getId());
 	}
 	// end::test[]
 
