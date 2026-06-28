@@ -78,7 +78,7 @@ class OpenMeteoWeatherDataServiceTest {
 				.andRespond(withBadRequest()); // <2>
 
 		assertThatThrownBy(() -> service.getCurrentWeather(32.99, -97.68))
-				.isInstanceOf(IllegalStateException.class);
+				.isInstanceOf(IllegalArgumentException.class);
 		//@formatter:on
 	}
 	// end::error-test[]
