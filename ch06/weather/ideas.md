@@ -1,13 +1,6 @@
-- Interactive weather cards with expand/collapse details, icons, and color-coded temperatures
-- Search/autocomplete for adding cities (great for testing dynamic UI interactions)
-- Drag-and-drop reordering of selected cities
-- User preferences (temperature units, refresh intervals) stored in browser storage
-- Favorite cities list
-- Error handling UI for failed API calls (perfect for MockRestServiceServer scenarios)
-- Rate limiting indicators when API limits are hit
+- profile based, check which beans are in context with ApplicationContextRUnner /
+  SpringApplicationBuilder
+- confiugration: URL, correctly formatted
+- Configuration: url vs fake ; exclusive
+- weather: min-max, with < min in blue and > max in red, verify min < max
 
-
-HtmlUnit limitations:
-- WebSockets
-- Complex mouse/touch events (drag, swipe, gestures)
-- Local/Session Storage (limited support)
