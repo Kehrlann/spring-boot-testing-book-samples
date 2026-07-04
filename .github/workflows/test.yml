@@ -20,17 +20,21 @@ jobs:
           cd ch1/maven
           mvn --batch-mode test
 
-          cd "${root}/ch1/widget"
+          cd "${root}/ch01/widget"
           mvn --batch-mode test
       - name: Chapter 2
         run: |
-          cd ch2/weather
+          cd "${root}/ch02/weather"
           mvn --batch-mode test
       - name: Chapter 3
         run: |
-          cd ch3/configuration
+          cd "${root}/ch03/configuration/"
           mvn --batch-mode test
       - name: Chapter 4
         run: |
-          cd ch4/weather
+          cd "${root}/ch04/weather"
+          mvn --batch-mode test
+      - name: Chapter 5
+        run: |
+          cd "${root}/ch05/weather"
           mvn --batch-mode test
