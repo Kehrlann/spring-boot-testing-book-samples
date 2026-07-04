@@ -15,7 +15,7 @@
     <description>Demo project for testing Spring Boot apps</description>
     <properties>
         <java.version>25</java.version>
-        <spring-modulith.version>2.1.0-RC1</spring-modulith.version>
+        <spring-modulith.version>2.1.0</spring-modulith.version>
     </properties>
     <!-- tag::modulith-bom[] -->
     <dependencyManagement>
