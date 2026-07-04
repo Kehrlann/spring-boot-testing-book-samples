@@ -1,0 +1,305 @@
+package wf.garnier.spring.boot.test.ch6.weather;
+
+import java.io.IOException;
+import java.time.Duration;
+import java.util.List;
+
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.javascript.host.event.KeyboardEvent;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import wf.garnier.spring.boot.test.ch6.weather.city.CityService;
+import wf.garnier.spring.boot.test.ch6.weather.city.internal.CityRepository;
+import wf.garnier.spring.boot.test.ch6.weather.city.internal.SelectedCityRepository;
+import wf.garnier.spring.boot.test.ch6.weather.preferences.PreferencesService;
+import wf.garnier.spring.boot.test.ch6.weather.preferences.SortOrder;
+import wf.garnier.spring.boot.test.ch6.weather.preferences.UnitSystem;
+import wf.garnier.spring.boot.test.ch6.weather.preferences.internal.PreferencesRepository;
+import wf.garnier.spring.boot.test.ch6.weather.weather.WeatherData;
+import wf.garnier.spring.boot.test.ch6.weather.weather.internal.WeatherDataService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.when;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+class HtmlUnitTests {
+
+	@Autowired
+	private WebClient webClient;
+
+	@Autowired
+	private CityService cityService;
+
+	@MockitoBean
+	private WeatherDataService weatherDataService;
+
+	@Autowired
+	private SelectedCityRepository selectedCityRepository;
+
+	@Autowired
+	private CityRepository cityRepository;
+
+	@Autowired
+	private PreferencesRepository preferencesRepository;
+
+	@Autowired
+	private PreferencesService preferencesService;
+
+	@BeforeEach
+	void setUp() {
+		// Clear cities using WebClient or just let it be if it's not needed?
+		// Actually, we can just delete all cities by clicking delete buttons
+		webClient.getOptions().setFetchPolyfillEnabled(true);
+		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
+
+		selectedCityRepository.deleteAll();
+		preferencesRepository.deleteAll();
+	}
+
+	@Test
+	void mainPage() throws IOException {
+		selectCity("Paris");
+		var page = getIndex();
+
+		List<DomNode> cities = page.querySelectorAll(".cities-grid > .card");
+
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(DomNode::getTextContent)
+			.asString()
+			.contains("Paris (France)")
+			.contains("Temperature: 20°C")
+			.contains("Wind Speed: 0 km/h")
+			.contains("Weather: Clear sky");
+	}
+
+	@Test
+	void mainPageNoCities() throws IOException {
+		var page = getIndex();
+
+		var cities = page.querySelectorAll(".cities-grid > .card");
+
+		assertThat(cities).isEmpty();
+	}
+
+	@Test
+	void mainPageMultipleCities() throws IOException {
+		selectCity("Paris");
+		selectCity("Delhi");
+
+		var page = getIndex();
+
+		var cities = page.querySelectorAll(".cities-grid .card-title").stream().map(DomNode::getTextContent);
+
+		assertThat(cities).containsExactly("Delhi (India)", "Paris (France)");
+	}
+
+	@Test
+	void deleteCity() throws IOException {
+		selectCity("Paris");
+
+		var page = getIndex();
+
+		page.<HtmlButton>querySelector("form[data-role=\"delete-city\"] > button").click();
+		webClient.waitForBackgroundJavaScript(1000);
+
+		var cities = page.querySelectorAll(".cities-grid .card");
+
+		assertThat(cities).isEmpty();
+	}
+
+	@Test
+	void autocomplete() throws IOException {
+		var page = getIndex();
+
+		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
+		citySearchInput.type("jak");
+		webClient.waitForBackgroundJavaScript(1000); // wait for autocomplete results
+
+		var autocompleteResults = page.querySelector("#cityResults")
+			.getChildNodes()
+			.stream()
+			.map(DomNode::getTextContent)
+			.map(String::trim);
+
+		assertThat(autocompleteResults).containsExactlyInAnyOrder("Djakotomé (Benin)", "Jakarta (Indonesia)",
+				"Kamirenjaku (Japan)");
+	}
+
+	@Test
+	void addCityWithKeyboard() throws IOException {
+		var page = getIndex();
+
+		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
+		citySearchInput.type("Paris");
+		webClient.waitForBackgroundJavaScript(1000); // wait for autocomplete results
+
+		citySearchInput.type(KeyboardEvent.DOM_VK_RETURN); // "Enter"
+
+		webClient.waitForBackgroundJavaScript(1000); // wait for new cities data
+
+		var cities = page.querySelectorAll(".cities-grid .card");
+
+		assertThat(cities).hasSize(1).first().extracting(DomNode::getTextContent).asString().contains("Paris (France)");
+	}
+
+	@Test
+	void addCityWithMouse() throws IOException {
+		var page = getIndex();
+
+		HtmlInput citySearchInput = page.querySelector("input#citySearch");
+		citySearchInput.type("bogot");
+		webClient.waitForBackgroundJavaScript(1000);
+
+		page.<HtmlElement>querySelector(".autocomplete-item").click();
+		webClient.waitForBackgroundJavaScript(1000);
+
+		var cities = page.querySelectorAll(".cities-grid .card");
+
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(DomNode::getTextContent)
+			.asString()
+			.contains("Bogotá (Colombia)");
+	}
+
+	@Test
+	void addCityWithKeyboardMultipleChoices() throws IOException {
+		var page = getIndex();
+
+		var citySearchInput = page.<HtmlInput>querySelector("input#citySearch");
+		citySearchInput.type("Ank");
+		webClient.waitForBackgroundJavaScript(1000); // wait for autocomplete results
+
+		citySearchInput.type(KeyboardEvent.DOM_VK_DOWN); // "Down arrow"
+		citySearchInput.type(KeyboardEvent.DOM_VK_DOWN); // "Down arrow"
+		citySearchInput.type(KeyboardEvent.DOM_VK_RETURN); // "Enter"
+
+		webClient.waitForBackgroundJavaScript(1000); // wait for weather data
+
+		var cities = page.querySelectorAll(".cities-grid .card");
+
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(DomNode::getTextContent)
+			.asString()
+			.contains("Ankara (Turkey)");
+	}
+
+	@Test
+	void darkModeToggle() throws IOException {
+		var page = getIndex();
+
+		var body = page.<HtmlElement>querySelector("body");
+		assertThat(body.getAttribute("class")).doesNotContain("dark-mode");
+
+		var darkModeToggle = page.<HtmlInput>querySelector("input#darkModeToggle");
+		darkModeToggle.click();
+		webClient.waitForBackgroundJavaScript(1000);
+
+		assertThat(body.getAttribute("class")).contains("dark-mode");
+	}
+
+	@Test
+	void darkModeSelected() throws IOException {
+		preferencesService.updatePreferences(true, null, null);
+		var page = getIndex();
+		var body = page.<HtmlElement>querySelector("body");
+
+		assertThat(body.getAttribute("class")).contains("dark-mode");
+	}
+
+	@Test
+	void unitToggle() throws IOException {
+		selectCity("Paris");
+		var page = getIndex();
+
+		var unitToggle = page.<HtmlInput>querySelector("input#unitToggle");
+		unitToggle.click();
+		webClient.waitForBackgroundJavaScript(1000);
+
+		var cities = page.querySelectorAll(".cities-grid > .card");
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(DomNode::getTextContent)
+			.asString()
+			.contains("Temperature: 68°F")
+			.contains("Wind Speed: 0 mph");
+	}
+
+	@Test
+	void unitSelected() throws IOException {
+		preferencesService.updatePreferences(false, UnitSystem.IMPERIAL, null);
+		selectCity("Paris");
+		var page = getIndex();
+
+		var cities = page.querySelectorAll(".cities-grid > .card");
+		assertThat(cities).hasSize(1)
+			.first()
+			.extracting(DomNode::getTextContent)
+			.asString()
+			.contains("Temperature: 68°F")
+			.contains("Wind Speed: 0 mph");
+	}
+
+	@Test
+	void sortToggle() throws IOException {
+		selectCity("Paris");
+		selectCity("Delhi");
+		var page = getIndex();
+
+		var sortSelect = page.<HtmlSelect>querySelector("select#sortSelect");
+		sortSelect.getOptionByValue("DATE_ADDED").setSelected(true);
+		webClient.waitForBackgroundJavaScript(1000);
+
+		var cities = page.querySelectorAll(".cities-grid .card-title").stream().map(DomNode::getTextContent);
+		assertThat(cities).containsExactly("Paris (France)", "Delhi (India)");
+	}
+
+	@Test
+	void sortSelected() throws IOException {
+		preferencesService.updatePreferences(false, UnitSystem.METRIC, SortOrder.DATE_ADDED);
+		selectCity("Paris");
+		selectCity("Delhi");
+		var page = getIndex();
+
+		var cities = page.querySelectorAll(".cities-grid .card-title").stream().map(DomNode::getTextContent);
+		assertThat(cities).containsExactly("Paris (France)", "Delhi (India)");
+	}
+
+	@Test
+	void sortAlphabetical() throws IOException, InterruptedException {
+		preferencesService.updatePreferences(false, UnitSystem.METRIC, SortOrder.ALPHABETICAL);
+		selectCity("Paris");
+		Thread.sleep(Duration.ofMillis(10));
+		selectCity("Delhi");
+		var page = getIndex();
+
+		var cities = page.querySelectorAll(".cities-grid .card-title").stream().map(DomNode::getTextContent);
+		assertThat(cities).containsExactly("Delhi (India)", "Paris (France)");
+	}
+
+	private void selectCity(String name) {
+		var city = cityRepository.findByNameIgnoreCase(name).get();
+		cityService.addCityById(city.getId());
+	}
+
+	private HtmlPage getIndex() throws IOException {
+		HtmlPage page = webClient.getPage("/index.html");
+		webClient.waitForBackgroundJavaScript(1000);
+		return page;
+	}
+
+}

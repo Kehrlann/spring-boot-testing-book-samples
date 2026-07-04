@@ -1,0 +1,38 @@
+package wf.garnier.spring.boot.test.ch6.weather.city.internal;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+public interface SelectedCityRepository extends JpaRepository<SelectedCity, Long> {
+
+	void deleteByCityId(long id);
+
+	void deleteByCityName(String cityName);
+
+	Optional<SelectedCity> findByCity(CityEntity city);
+
+	@Query("""
+			SELECT c FROM CityEntity c
+			    WHERE NOT EXISTS (
+			        SELECT 1 FROM SelectedCity s WHERE s.city.id = c.id
+			    )
+			ORDER BY c.name ASC
+			""")
+	List<CityEntity> findUnselectedCities();
+
+	@Query("""
+			SELECT c FROM CityEntity c
+			    WHERE NOT EXISTS (
+			        SELECT 1 FROM SelectedCity s WHERE s.city.id = c.id
+			    )
+			AND c.name ILIKE %:name%
+			ORDER BY c.name ASC
+			""")
+	List<CityEntity> findUnselectedFilteredByCityNameIgnoringCase(String name);
+
+	List<SelectedCity> findAllByOrderByDateAddedAsc();
+
+}
