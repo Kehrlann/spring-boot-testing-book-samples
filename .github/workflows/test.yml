@@ -17,7 +17,7 @@ jobs:
       - name: Chapter 1
         run: |
           root=$PWD
-          cd ch1/maven
+          cd ch01/maven
           mvn --batch-mode test
 
           cd "${root}/ch01/widget"
