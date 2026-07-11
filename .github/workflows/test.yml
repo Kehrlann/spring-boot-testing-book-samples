@@ -14,31 +14,32 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
           cache: maven
-      - name: Chapter 1
-        run: |
-          root=$PWD
-          cd ch01/maven
-          mvn --batch-mode test
+      - parallel:
+          - name: Chapter 1
+            run: |
+              root=$PWD
+              cd ch01/maven
+              mvn --batch-mode test
 
-          cd "${root}/ch01/widget"
-          mvn --batch-mode test
-      - name: Chapter 2
-        run: |
-          cd ch02/weather
-          mvn --batch-mode test
-      - name: Chapter 3
-        run: |
-          cd ch03/configuration
-          mvn --batch-mode test
-      - name: Chapter 4
-        run: |
-          cd ch04/weather
-          mvn --batch-mode test
-      - name: Chapter 5
-        run: |
-          cd ch05/weather
-          mvn --batch-mode test
-      - name: Chapter 6
-        run: |
-          cd ch06/weather
-          mvn --batch-mode test
+              cd "${root}/ch01/widget"
+              mvn --batch-mode test
+          - name: Chapter 2
+            run: |
+              cd ch02/weather
+              mvn --batch-mode test
+          - name: Chapter 3
+            run: |
+              cd ch03/configuration
+              mvn --batch-mode test
+          - name: Chapter 4
+            run: |
+              cd ch04/weather
+              mvn --batch-mode test
+          - name: Chapter 5
+            run: |
+              cd ch05/weather
+              mvn --batch-mode test
+          - name: Chapter 6
+            run: |
+              cd ch06/weather
+              mvn --batch-mode test
