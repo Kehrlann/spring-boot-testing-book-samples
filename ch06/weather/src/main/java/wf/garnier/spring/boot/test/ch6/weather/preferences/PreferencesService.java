@@ -2,6 +2,7 @@ package wf.garnier.spring.boot.test.ch6.weather.preferences;
 
 import org.jspecify.annotations.Nullable;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.internal.PreferencesEntity;
+import wf.garnier.spring.boot.test.ch6.weather.preferences.internal.PreferencesProperties;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.internal.PreferencesRepository;
 
 import org.springframework.stereotype.Service;
@@ -12,8 +13,12 @@ public class PreferencesService {
 
 	private final PreferencesRepository preferencesRepository;
 
-	public PreferencesService(PreferencesRepository preferencesRepository) {
+	private final PreferencesProperties preferencesProperties;
+
+	public PreferencesService(PreferencesRepository preferencesRepository,
+			PreferencesProperties preferencesProperties) {
 		this.preferencesRepository = preferencesRepository;
+		this.preferencesProperties = preferencesProperties;
 	}
 
 	public Preferences getPreferences() {
@@ -22,7 +27,8 @@ public class PreferencesService {
 
 	private PreferencesEntity getPreferencesEntity() {
 		return preferencesRepository.findAll().stream().findFirst().orElseGet(() -> {
-			var defaultPrefs = new PreferencesEntity(false, UnitSystem.METRIC, SortOrder.ALPHABETICAL);
+			var defaultPrefs = new PreferencesEntity(preferencesProperties.isDarkMode(),
+					preferencesProperties.getUnits(), preferencesProperties.getSortBy());
 			return preferencesRepository.save(defaultPrefs);
 		});
 	}

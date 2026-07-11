@@ -22,16 +22,23 @@ class PreferencesController {
 	}
 
 	@GetMapping
-	public Preferences getPreferences() {
-		return preferencesService.getPreferences();
+	public PresentationPreferences getPreferences() {
+		return new PresentationPreferences(preferencesService.getPreferences());
 	}
 
 	@PutMapping
-	public Preferences updatePreferences(@RequestBody PreferencesUpdateRequest request) {
-		return preferencesService.updatePreferences(request.darkMode(), request.units(), request.sortBy());
+	public PresentationPreferences updatePreferences(@RequestBody PreferencesUpdateRequest request) {
+		return new PresentationPreferences(
+				preferencesService.updatePreferences(request.darkMode(), request.units(), request.sortBy()));
 	}
 
 	public record PreferencesUpdateRequest(Boolean darkMode, UnitSystem units, SortOrder sortBy) {
+	}
+
+	public record PresentationPreferences(long id, boolean darkMode, UnitSystem units, SortOrder sortBy) {
+		public PresentationPreferences(Preferences preferences) {
+			this(preferences.getId(), preferences.isDarkMode(), preferences.getUnits(), preferences.getSortBy());
+		}
 	}
 
 }

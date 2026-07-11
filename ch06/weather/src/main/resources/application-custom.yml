@@ -1,0 +1,8 @@
+# Custom properties
+weather-service:
+  url: https://weather.example.com
+preferences:
+  defaults:
+    dark-mode: true
+    units: imperial
+    sort-by: date_added

@@ -21,10 +21,8 @@ class OpenMeteoWeatherDataService implements WeatherDataService {
 
 	private final RestClient restClient;
 
-	static final String API_URL = "https://api.open-meteo.com/v1/forecast";
-
-	OpenMeteoWeatherDataService(RestClient.Builder restClientBuilder) {
-		this.restClient = restClientBuilder.baseUrl(API_URL).build();
+	OpenMeteoWeatherDataService(RestClient.Builder restClientBuilder, WeatherServiceProperties properties) {
+		this.restClient = restClientBuilder.baseUrl(properties.getUrl()).build();
 	}
 
 	@Override
@@ -48,7 +46,7 @@ class OpenMeteoWeatherDataService implements WeatherDataService {
 			throw new IllegalArgumentException("Could not fetch data for lat=%s, lon=%s".formatted(latitude, longitude),
 					e);
 		}
-		catch (HttpServerErrorException e) {
+		catch (HttpClientErrorException | HttpServerErrorException e) {
 			log.error("Got error fetching weather data", e);
 			return new WeatherData();
 		}
