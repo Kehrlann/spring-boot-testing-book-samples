@@ -5,32 +5,31 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.UnitSystem;
 
-@ConfigurationProperties(prefix = "preferences.defaults")
+@ConfigurationProperties(prefix = "preferences")
 public class PreferencesProperties {
 
-	private final boolean darkMode;
+	private final Defaults defaults;
 
-	private final UnitSystem units;
+	private final Threshold threshold;
 
-	private final SortOrder sortBy;
+	public PreferencesProperties(@DefaultValue Defaults defaults, @DefaultValue Threshold threshold) {
+		this.defaults = defaults;
+		this.threshold = threshold;
+	}
 
-	public PreferencesProperties(@DefaultValue("false") boolean darkMode, @DefaultValue("metric") UnitSystem units,
+	public Defaults getDefaults() {
+		return defaults;
+	}
+
+	public Threshold getThreshold() {
+		return threshold;
+	}
+
+	public record Defaults(@DefaultValue("false") boolean darkMode, @DefaultValue("metric") UnitSystem units,
 			@DefaultValue("alphabetical") SortOrder sortBy) {
-		this.darkMode = darkMode;
-		this.units = units;
-		this.sortBy = sortBy;
 	}
 
-	public boolean isDarkMode() {
-		return darkMode;
-	}
-
-	public UnitSystem getUnits() {
-		return units;
-	}
-
-	public SortOrder getSortBy() {
-		return sortBy;
+	public record Threshold(@DefaultValue("5") double cold, @DefaultValue("30") double hot) {
 	}
 
 }

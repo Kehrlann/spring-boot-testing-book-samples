@@ -27,8 +27,8 @@ public class PreferencesService {
 
 	private PreferencesEntity getPreferencesEntity() {
 		return preferencesRepository.findAll().stream().findFirst().orElseGet(() -> {
-			var defaultPrefs = new PreferencesEntity(preferencesProperties.isDarkMode(),
-					preferencesProperties.getUnits(), preferencesProperties.getSortBy());
+			var defaultPrefs = new PreferencesEntity(preferencesProperties.getDefaults().darkMode(),
+					preferencesProperties.getDefaults().units(), preferencesProperties.getDefaults().sortBy());
 			return preferencesRepository.save(defaultPrefs);
 		});
 	}
