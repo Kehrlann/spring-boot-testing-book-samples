@@ -7,7 +7,10 @@ import wf.garnier.spring.boot.test.ch6.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.UnitSystem;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PreferencesConfigurationTests {
@@ -69,6 +72,20 @@ class PreferencesConfigurationTests {
 		void hasDefaults() {
 			assertThat(props.getThreshold().cold()).isEqualTo(30);
 			assertThat(props.getThreshold().hot()).isEqualTo(5);
+		}
+
+	}
+
+	@Nested
+	class ManualSpringAppConstruction {
+
+		@Test
+		void invalidThresholds() {
+			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class).web(WebApplicationType.NONE);
+            try (var applicationContext = builder.run()) {
+				var props = applicationContext.getBean(PreferencesProperties.class);
+				assertThat(props).isNotNull();
+			}
 		}
 
 	}
