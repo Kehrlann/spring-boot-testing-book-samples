@@ -9,6 +9,7 @@
  */
 
 var currentCities = null;
+var currentPreferences = null;
 
 function loadWeather() {
   return fetch("/api/weather").then((response) => response.json());
@@ -28,11 +29,20 @@ function renderCity(cityWeather) {
     windSpeedUnit = "mph";
   }
 
+  let tempClass = "";
+  if (currentPreferences) {
+    if (cityWeather.temperature < currentPreferences.coldThreshold) {
+      tempClass = "temperature-cold";
+    } else if (cityWeather.temperature > currentPreferences.hotThreshold) {
+      tempClass = "temperature-hot";
+    }
+  }
+
   return `
         <div class="card">
           <h5 class="card-title">${cityWeather.cityName} (${cityWeather.country})</h5>
           <p class="card-content">
-              Temperature: <span>${tempDisplay}</span>${tempUnit}<br>
+              Temperature: <span class="${tempClass}">${tempDisplay}</span>${tempUnit}<br>
               Wind Speed: <span>${windSpeedDisplay}</span> ${windSpeedUnit}<br>
               Weather: <span>${cityWeather.weather}</span>
           </p>
@@ -253,19 +263,21 @@ function updatePreferences() {
       units: units,
       sortBy: sortBy,
     }),
-  }).then((response) => {
-    if (response.ok) {
-      if (typeof refreshCities === "function") {
+  })
+    .then((response) => (response.ok ? response.json() : null))
+    .then((preferences) => {
+      if (preferences) {
+        currentPreferences = preferences;
         refreshCities();
       }
-    }
-  });
+    });
 }
 
 function loadPreferences() {
   return fetch("/api/preferences")
     .then((response) => response.json())
     .then((preferences) => {
+      currentPreferences = preferences;
       document.getElementById("darkModeToggle").checked = preferences.darkMode;
       document.getElementById("unitToggle").checked = preferences.units === "IMPERIAL";
       if (preferences.sortBy) {

@@ -6,6 +6,7 @@ import wf.garnier.spring.boot.test.ch6.weather.city.CityAlreadySelectedException
 import wf.garnier.spring.boot.test.ch6.weather.city.CityNotFoundException;
 import wf.garnier.spring.boot.test.ch6.weather.city.CityService;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.PreferencesService;
+import wf.garnier.spring.boot.test.ch6.weather.preferences.internal.PreferencesProperties;
 import wf.garnier.spring.boot.test.ch6.weather.weather.WeatherService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ class CityControllerTests {
 
 	@MockitoBean
 	PreferencesService preferencesService;
+
+	@MockitoBean
+	PreferencesProperties preferencesProperties;
 
 	@BeforeEach
 	void setUp() {

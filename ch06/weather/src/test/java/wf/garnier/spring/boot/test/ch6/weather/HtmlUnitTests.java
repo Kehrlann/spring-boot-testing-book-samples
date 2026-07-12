@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(properties = { "preferences.threshold.cold=10", "preferences.threshold.hot=25" })
 @AutoConfigureMockMvc
 class HtmlUnitTests {
 
@@ -252,6 +252,39 @@ class HtmlUnitTests {
 			.asString()
 			.contains("Temperature: 68°F")
 			.contains("Wind Speed: 0 mph");
+	}
+
+	@Test
+	void temperatureBelowColdThresholdIsBlue() throws IOException {
+		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(5, 0, 0));
+		selectCity("Paris");
+
+		var page = getIndex();
+
+		var temperature = page.<HtmlElement>querySelector(".cities-grid .card-content span");
+		assertThat(temperature.getAttribute("class")).isEqualTo("temperature-cold");
+	}
+
+	@Test
+	void temperatureAboveHotThresholdIsRed() throws IOException {
+		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(30, 0, 0));
+		selectCity("Paris");
+
+		var page = getIndex();
+
+		var temperature = page.<HtmlElement>querySelector(".cities-grid .card-content span");
+		assertThat(temperature.getAttribute("class")).isEqualTo("temperature-hot");
+	}
+
+	@Test
+	void temperatureBetweenThresholdsHasNoColor() throws IOException {
+		when(weatherDataService.getCurrentWeather(anyDouble(), anyDouble())).thenReturn(new WeatherData(20, 0, 0));
+		selectCity("Paris");
+
+		var page = getIndex();
+
+		var temperature = page.<HtmlElement>querySelector(".cities-grid .card-content span");
+		assertThat(temperature.getAttribute("class")).isEmpty();
 	}
 
 	@Test

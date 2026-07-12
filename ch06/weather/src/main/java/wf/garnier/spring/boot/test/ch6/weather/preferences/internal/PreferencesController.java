@@ -17,27 +17,33 @@ class PreferencesController {
 
 	private final PreferencesService preferencesService;
 
-	public PreferencesController(PreferencesService preferencesService) {
+	private final PreferencesProperties preferencesProperties;
+
+	public PreferencesController(PreferencesService preferencesService, PreferencesProperties preferencesProperties) {
 		this.preferencesService = preferencesService;
+		this.preferencesProperties = preferencesProperties;
 	}
 
 	@GetMapping
 	public PresentationPreferences getPreferences() {
-		return new PresentationPreferences(preferencesService.getPreferences());
+		return new PresentationPreferences(preferencesService.getPreferences(), preferencesProperties.getThreshold());
 	}
 
 	@PutMapping
 	public PresentationPreferences updatePreferences(@RequestBody PreferencesUpdateRequest request) {
 		return new PresentationPreferences(
-				preferencesService.updatePreferences(request.darkMode(), request.units(), request.sortBy()));
+				preferencesService.updatePreferences(request.darkMode(), request.units(), request.sortBy()),
+				preferencesProperties.getThreshold());
 	}
 
 	public record PreferencesUpdateRequest(Boolean darkMode, UnitSystem units, SortOrder sortBy) {
 	}
 
-	public record PresentationPreferences(long id, boolean darkMode, UnitSystem units, SortOrder sortBy) {
-		public PresentationPreferences(Preferences preferences) {
-			this(preferences.getId(), preferences.isDarkMode(), preferences.getUnits(), preferences.getSortBy());
+	public static record PresentationPreferences(boolean darkMode, UnitSystem units, SortOrder sortBy,
+			double coldThreshold, double hotThreshold) {
+		public PresentationPreferences(Preferences preferences, PreferencesProperties.Threshold threshold) {
+			this(preferences.isDarkMode(), preferences.getUnits(), preferences.getSortBy(), threshold.cold(),
+					threshold.hot());
 		}
 	}
 

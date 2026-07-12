@@ -1,9 +1,10 @@
 package wf.garnier.spring.boot.test.ch6.weather.preferences.internal;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.UnitSystem;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "preferences")
 public class PreferencesProperties {
@@ -29,7 +30,7 @@ public class PreferencesProperties {
 			@DefaultValue("alphabetical") SortOrder sortBy) {
 	}
 
-	public record Threshold(@DefaultValue("5") double cold, @DefaultValue("30") double hot) {
+	public record Threshold(@DefaultValue("10") double cold, @DefaultValue("25") double hot) {
 	}
 
 }

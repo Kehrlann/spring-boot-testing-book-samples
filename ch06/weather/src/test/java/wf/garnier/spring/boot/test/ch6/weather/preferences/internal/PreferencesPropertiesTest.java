@@ -19,8 +19,8 @@ class PreferencesPropertiesTest {
 		assertThat(props.getDefaults().darkMode()).isFalse();
 		assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.METRIC);
 		assertThat(props.getDefaults().sortBy()).isEqualTo(SortOrder.ALPHABETICAL);
-		assertThat(props.getThreshold().cold()).isEqualTo(5);
-		assertThat(props.getThreshold().hot()).isEqualTo(30);
+		assertThat(props.getThreshold().cold()).isEqualTo(10);
+		assertThat(props.getThreshold().hot()).isEqualTo(25);
 	}
 
 }
