@@ -3,11 +3,12 @@ package wf.garnier.spring.boot.test.ch6.weather.preferences.internal;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.UnitSystem;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "preferences")
-public class PreferencesProperties {
+public class PreferencesProperties implements InitializingBean {
 
 	private final Defaults defaults;
 
@@ -31,6 +32,15 @@ public class PreferencesProperties {
 	}
 
 	public record Threshold(@DefaultValue("10") double cold, @DefaultValue("25") double hot) {
+	}
+
+	@Override
+	public void afterPropertiesSet() {
+		if (threshold.cold() >= threshold.hot()) {
+			throw new IllegalArgumentException(
+					"preferences.threshold.hot (%s) must be higher than preferences.threshold.cold (%s)"
+						.formatted(threshold.hot(), threshold.cold()));
+		}
 	}
 
 }
