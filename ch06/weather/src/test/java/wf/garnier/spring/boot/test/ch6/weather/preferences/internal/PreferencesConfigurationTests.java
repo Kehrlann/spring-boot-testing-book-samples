@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ConfigurableApplicationContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PreferencesConfigurationTests {
@@ -82,7 +81,7 @@ class PreferencesConfigurationTests {
 		@Test
 		void invalidThresholds() {
 			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class).web(WebApplicationType.NONE);
-            try (var applicationContext = builder.run()) {
+			try (var applicationContext = builder.run()) {
 				var props = applicationContext.getBean(PreferencesProperties.class);
 				assertThat(props).isNotNull();
 			}
