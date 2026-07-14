@@ -6,11 +6,13 @@ import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.UnitSystem;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PreferencesConfigurationTests {
 
@@ -79,12 +81,29 @@ class PreferencesConfigurationTests {
 	class ManualSpringAppConstruction {
 
 		@Test
-		void invalidThresholds() {
+		void defaults() {
 			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class).web(WebApplicationType.NONE);
 			try (var applicationContext = builder.run()) {
 				var props = applicationContext.getBean(PreferencesProperties.class);
 				assertThat(props).isNotNull();
+				assertThat(props.getDefaults().darkMode()).isFalse();
+				assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.METRIC);
+				assertThat(props.getDefaults().sortBy()).isEqualTo(SortOrder.ALPHABETICAL);
+				assertThat(props.getThreshold().cold()).isEqualTo(10);
+				assertThat(props.getThreshold().hot()).isEqualTo(25);
 			}
+		}
+
+		@Test
+		void invalidThresholds() {
+			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class)
+				.properties("preferences.threshold.hot=10", "preferences.threshold.cold=20")
+				.web(WebApplicationType.NONE);
+
+			assertThatThrownBy(builder::run).isInstanceOf(BeanCreationException.class)
+				.rootCause()
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("preferences.threshold.hot (10.0) must be higher than preferences.threshold.cold (20.0)");
 		}
 
 	}
