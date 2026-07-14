@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class WeatherConfigurationTest {
+class WeatherServicePropertiesTests {
 
 	private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 

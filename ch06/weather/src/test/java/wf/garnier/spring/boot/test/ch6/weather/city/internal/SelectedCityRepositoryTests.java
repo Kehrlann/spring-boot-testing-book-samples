@@ -18,7 +18,7 @@ import org.springframework.test.annotation.Commit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class SelectedCityRepositoryTest {
+class SelectedCityRepositoryTests {
 
 	@Autowired
 	private SelectedCityRepository selectedCityRepository;

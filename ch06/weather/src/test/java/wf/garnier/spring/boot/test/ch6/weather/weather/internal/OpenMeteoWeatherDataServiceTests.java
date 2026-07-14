@@ -19,7 +19,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(components = { OpenMeteoWeatherDataService.class })
-class OpenMeteoWeatherDataServiceTest {
+class OpenMeteoWeatherDataServiceTests {
 
 	@Autowired
 	private OpenMeteoWeatherDataService service;
