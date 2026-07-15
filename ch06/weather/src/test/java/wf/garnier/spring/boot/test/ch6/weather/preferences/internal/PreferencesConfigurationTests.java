@@ -1,5 +1,8 @@
 package wf.garnier.spring.boot.test.ch6.weather.preferences.internal;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,7 +13,10 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.io.ByteArrayResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -105,6 +111,33 @@ class PreferencesConfigurationTests {
 				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage("preferences.temperature-threshold.hot (10.0) " + "must be higher than "
 						+ "preferences.temperature-threshold.cold (20.0)");
+		}
+
+		@Test
+		void environment() throws IOException {
+			var env = envFromYaml("""
+					preferences:
+					  temperature-threshold:
+					    hot: 10
+					    cold: 20
+					""");
+			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class).web(WebApplicationType.NONE)
+				.environment(env);
+
+			assertThatThrownBy(builder::run).isInstanceOf(BeanCreationException.class)
+				.rootCause()
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("preferences.temperature-threshold.hot (10.0) " + "must be higher than "
+						+ "preferences.temperature-threshold.cold (20.0)");
+		}
+
+		private static StandardEnvironment envFromYaml(String yamlProperties) throws IOException {
+			var config = new ByteArrayResource(yamlProperties.getBytes(StandardCharsets.UTF_8));
+
+			var propertySources = new YamlPropertySourceLoader().load("env-from-inline-test", config);
+			var env = new StandardEnvironment();
+			env.getPropertySources().addFirst(propertySources.getFirst());
+			return env;
 		}
 
 	}
