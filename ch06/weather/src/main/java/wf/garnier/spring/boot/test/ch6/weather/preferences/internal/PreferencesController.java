@@ -26,14 +26,15 @@ class PreferencesController {
 
 	@GetMapping
 	public PresentationPreferences getPreferences() {
-		return new PresentationPreferences(preferencesService.getPreferences(), preferencesProperties.getThreshold());
+		return new PresentationPreferences(preferencesService.getPreferences(),
+				preferencesProperties.getTemperatureThreshold());
 	}
 
 	@PutMapping
 	public PresentationPreferences updatePreferences(@RequestBody PreferencesUpdateRequest request) {
 		return new PresentationPreferences(
 				preferencesService.updatePreferences(request.darkMode(), request.units(), request.sortBy()),
-				preferencesProperties.getThreshold());
+				preferencesProperties.getTemperatureThreshold());
 	}
 
 	public record PreferencesUpdateRequest(Boolean darkMode, UnitSystem units, SortOrder sortBy) {
@@ -41,9 +42,10 @@ class PreferencesController {
 
 	public static record PresentationPreferences(boolean darkMode, UnitSystem units, SortOrder sortBy,
 			double coldThreshold, double hotThreshold) {
-		public PresentationPreferences(Preferences preferences, PreferencesProperties.Threshold threshold) {
-			this(preferences.isDarkMode(), preferences.getUnits(), preferences.getSortBy(), threshold.cold(),
-					threshold.hot());
+		public PresentationPreferences(Preferences preferences,
+				PreferencesProperties.TemperatureThreshold temperatureThreshold) {
+			this(preferences.isDarkMode(), preferences.getUnits(), preferences.getSortBy(), temperatureThreshold.cold(),
+					temperatureThreshold.hot());
 		}
 	}
 

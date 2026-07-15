@@ -32,7 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(properties = { "preferences.threshold.cold=10", "preferences.threshold.hot=25" })
+@SpringBootTest(
+		properties = { "preferences.temperature-threshold.cold=10", "preferences.temperature-threshold.hot=25" })
 @AutoConfigureMockMvc
 class HtmlUnitTests {
 

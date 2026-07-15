@@ -28,8 +28,8 @@ class PreferencesConfigurationTests {
 			assertThat(props.getDefaults().darkMode()).isFalse();
 			assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.METRIC);
 			assertThat(props.getDefaults().sortBy()).isEqualTo(SortOrder.ALPHABETICAL);
-			assertThat(props.getThreshold().cold()).isEqualTo(10);
-			assertThat(props.getThreshold().hot()).isEqualTo(25);
+			assertThat(props.getTemperatureThreshold().cold()).isEqualTo(10);
+			assertThat(props.getTemperatureThreshold().hot()).isEqualTo(25);
 		}
 
 	}
@@ -39,8 +39,8 @@ class PreferencesConfigurationTests {
 			preferences.defaults.dark-mode=true
 			preferences.defaults.sort-by=date_added
 			preferences.defaults.units=imperial
-			preferences.threshold.cold=5
-			preferences.threshold.hot=30
+			preferences.temperature-threshold.cold=5
+			preferences.temperature-threshold.hot=30
 			""" }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 	class CustomValues {
 
@@ -52,8 +52,8 @@ class PreferencesConfigurationTests {
 			assertThat(props.getDefaults().darkMode()).isTrue();
 			assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.IMPERIAL);
 			assertThat(props.getDefaults().sortBy()).isEqualTo(SortOrder.DATE_ADDED);
-			assertThat(props.getThreshold().cold()).isEqualTo(5);
-			assertThat(props.getThreshold().hot()).isEqualTo(30);
+			assertThat(props.getTemperatureThreshold().cold()).isEqualTo(5);
+			assertThat(props.getTemperatureThreshold().hot()).isEqualTo(30);
 		}
 
 	}
@@ -61,8 +61,8 @@ class PreferencesConfigurationTests {
 	@Nested
 	@Disabled // this would fail, the validation is wrong!
 	@SpringBootTest(classes = { PreferencesConfiguration.class }, properties = { """
-			preferences.threshold.cold=30
-			preferences.threshold.hot=5
+			preferences.temperature-threshold.cold=30
+			preferences.temperature-threshold.hot=5
 			""" }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 	class InvalidValues {
 
@@ -71,8 +71,8 @@ class PreferencesConfigurationTests {
 
 		@Test
 		void hasDefaults() {
-			assertThat(props.getThreshold().cold()).isEqualTo(30);
-			assertThat(props.getThreshold().hot()).isEqualTo(5);
+			assertThat(props.getTemperatureThreshold().cold()).isEqualTo(30);
+			assertThat(props.getTemperatureThreshold().hot()).isEqualTo(5);
 		}
 
 	}
@@ -89,21 +89,22 @@ class PreferencesConfigurationTests {
 				assertThat(props.getDefaults().darkMode()).isFalse();
 				assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.METRIC);
 				assertThat(props.getDefaults().sortBy()).isEqualTo(SortOrder.ALPHABETICAL);
-				assertThat(props.getThreshold().cold()).isEqualTo(10);
-				assertThat(props.getThreshold().hot()).isEqualTo(25);
+				assertThat(props.getTemperatureThreshold().cold()).isEqualTo(10);
+				assertThat(props.getTemperatureThreshold().hot()).isEqualTo(25);
 			}
 		}
 
 		@Test
 		void invalidThresholds() {
 			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class)
-				.properties("preferences.threshold.hot=10", "preferences.threshold.cold=20")
+				.properties("preferences.temperature-threshold.hot=10", "preferences.temperature-threshold.cold=20")
 				.web(WebApplicationType.NONE);
 
 			assertThatThrownBy(builder::run).isInstanceOf(BeanCreationException.class)
 				.rootCause()
 				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("preferences.threshold.hot (10.0) must be higher than preferences.threshold.cold (20.0)");
+				.hasMessage("preferences.temperature-threshold.hot (10.0) " + "must be higher than "
+						+ "preferences.temperature-threshold.cold (20.0)");
 		}
 
 	}
