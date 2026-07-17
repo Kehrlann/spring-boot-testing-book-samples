@@ -17,6 +17,9 @@ import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.TestPropertySources;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -43,6 +46,86 @@ class PreferencesConfigurationTests {
 	@Nested
 	@SpringBootTest(classes = { PreferencesConfiguration.class }, properties = { """
 			preferences.defaults.dark-mode=true
+			""" }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+	class CustomPropertiesValue {
+
+		@Autowired
+		PreferencesProperties props;
+
+		@Test
+		void hasCustomValues() {
+			assertThat(props.getDefaults().darkMode()).isTrue();
+		}
+
+	}
+
+	@Nested
+	@SpringBootTest(classes = { PreferencesConfiguration.class }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+	@ActiveProfiles("dark-mode")
+	class ProfileBasedValues {
+
+		@Autowired
+		PreferencesProperties props;
+
+		@Test
+		void hasCustomValues() {
+			assertThat(props.getDefaults().darkMode()).isTrue();
+		}
+
+	}
+
+	@Nested
+	@SpringBootTest(classes = { PreferencesConfiguration.class }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+	@TestPropertySource
+	class FromTestPropertySource {
+
+		@Autowired
+		PreferencesProperties props;
+
+		// properties are loaded from <test-package>/TestClass.properties
+		// wf/garnier/spring/boot/test/ch6/weather/preferences/internal/PreferencesConfigurationTests$FromTestPropertySources.properties
+		@Test
+		void hasCustomValues() {
+			assertThat(props.getDefaults().sortBy()).isEqualTo(SortOrder.DATE_ADDED);
+		}
+
+	}
+
+	@Nested
+	@SpringBootTest(classes = { PreferencesConfiguration.class }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+	@TestPropertySource(value = "classpath:units-imperial.properties")
+	class FromTestPropertySourceExplicit {
+
+		@Autowired
+		PreferencesProperties props;
+
+		@Test
+		void hasCustomValues() {
+			assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.IMPERIAL);
+		}
+
+	}
+
+	@Nested
+	@SpringBootTest(classes = { PreferencesConfiguration.class }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+	@TestPropertySources({ @TestPropertySource(value = "classpath:units-imperial.properties"),
+			@TestPropertySource(value = "classpath:application-dark-mode.properties") })
+	class FromMultipleTestPropertySourceExplicit {
+
+		@Autowired
+		PreferencesProperties props;
+
+		@Test
+		void hasCustomValues() {
+			assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.IMPERIAL);
+			assertThat(props.getDefaults().darkMode()).isTrue();
+		}
+
+	}
+
+	@Nested
+	@SpringBootTest(classes = { PreferencesConfiguration.class }, properties = { """
+			preferences.defaults.dark-mode=true
 			preferences.defaults.sort-by=date_added
 			preferences.defaults.units=imperial
 			preferences.temperature-threshold.cold=5
@@ -54,7 +137,7 @@ class PreferencesConfigurationTests {
 		PreferencesProperties props;
 
 		@Test
-		void hasDefaults() {
+		void hasCustomValues() {
 			assertThat(props.getDefaults().darkMode()).isTrue();
 			assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.IMPERIAL);
 			assertThat(props.getDefaults().sortBy()).isEqualTo(SortOrder.DATE_ADDED);
@@ -76,7 +159,7 @@ class PreferencesConfigurationTests {
 		PreferencesProperties props;
 
 		@Test
-		void hasDefaults() {
+		void hasInvalidValues() {
 			assertThat(props.getTemperatureThreshold().cold()).isEqualTo(30);
 			assertThat(props.getTemperatureThreshold().hot()).isEqualTo(5);
 		}
