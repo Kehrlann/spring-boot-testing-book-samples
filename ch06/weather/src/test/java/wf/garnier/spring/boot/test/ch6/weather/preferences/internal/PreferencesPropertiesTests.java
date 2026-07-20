@@ -1,20 +1,25 @@
 package wf.garnier.spring.boot.test.ch6.weather.preferences.internal;
 
 import jakarta.validation.Valid;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PreferencesPropertiesTests {
 
-	Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-
 	YAMLMapper mapper = YAMLMapper.builder().propertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE).build();
+
+	LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+
+	@BeforeEach
+	void setUp() {
+		validator.afterPropertiesSet();
+	}
 
 	@Test
 	void yamlPrefs() {

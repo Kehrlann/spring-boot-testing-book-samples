@@ -1,16 +1,21 @@
 package wf.garnier.spring.boot.test.ch6.weather.weather.internal;
 
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class WeatherServicePropertiesTests {
 
-	private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+	LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+
+	@BeforeEach
+	void setUp() {
+		validator.afterPropertiesSet();
+	}
 
 	@ParameterizedTest
 	@ValueSource(strings = { "http://example.com", "HTTP://example.com", "httpS://example.com", "https://example.com" })
