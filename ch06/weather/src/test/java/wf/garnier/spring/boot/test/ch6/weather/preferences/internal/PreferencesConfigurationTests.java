@@ -2,6 +2,7 @@ package wf.garnier.spring.boot.test.ch6.weather.preferences.internal;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
@@ -11,12 +12,16 @@ import wf.garnier.spring.boot.test.ch6.weather.preferences.UnitSystem;
 
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.TestPropertySources;
@@ -214,6 +219,37 @@ class PreferencesConfigurationTests {
 						+ "preferences.temperature-threshold.cold (20.0)");
 		}
 
+		@Test
+		void invalidThresholdRangeFromProperties() throws IOException {
+			var properties = propertiesFromYaml("""
+					preferences:
+					  temperature-threshold:
+					    hot: 10
+					    cold: 20
+					""");
+			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class).web(WebApplicationType.NONE)
+				.properties(properties);
+
+			assertThatThrownBy(builder::run).isInstanceOf(BeanCreationException.class)
+				.rootCause()
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("preferences.temperature-threshold.hot (10.0) " + "must be higher than "
+						+ "preferences.temperature-threshold.cold (20.0)");
+		}
+
+		@Test
+		void invalidThresholdRangeFromPropertiesFile() {
+			var properties = propertiesFromYamlFile("thresholds.yaml");
+			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class).web(WebApplicationType.NONE)
+				.properties(properties);
+
+			assertThatThrownBy(builder::run).isInstanceOf(BeanCreationException.class)
+				.rootCause()
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("preferences.temperature-threshold.hot (10.0) " + "must be higher than "
+						+ "preferences.temperature-threshold.cold (20.0)");
+		}
+
 		private static StandardEnvironment envFromYaml(String yamlProperties) throws IOException {
 			var config = new ByteArrayResource(yamlProperties.getBytes(StandardCharsets.UTF_8));
 
@@ -221,6 +257,20 @@ class PreferencesConfigurationTests {
 			var env = new StandardEnvironment();
 			env.getPropertySources().addFirst(propertySources.getFirst());
 			return env;
+		}
+
+		private Properties propertiesFromYaml(String yamlProperties) {
+			var yamlPropertiesFactory = new YamlPropertiesFactoryBean();
+			var resource = new ByteArrayResource(yamlProperties.getBytes(StandardCharsets.UTF_8));
+			yamlPropertiesFactory.setResources(resource);
+			return yamlPropertiesFactory.getObject();
+		}
+
+		private Properties propertiesFromYamlFile(String fileName) {
+			var yamlPropertiesFactory = new YamlPropertiesFactoryBean();
+			var resource = new ClassPathResource("/" + fileName);
+			yamlPropertiesFactory.setResources(resource);
+			return yamlPropertiesFactory.getObject();
 		}
 
 	}
