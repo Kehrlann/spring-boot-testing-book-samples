@@ -184,7 +184,7 @@ class PreferencesConfigurationTests {
 		}
 
 		@Test
-		void invalidThresholds() {
+		void invalidThresholdRange() {
 			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class)
 				.properties("preferences.temperature-threshold.hot=10", "preferences.temperature-threshold.cold=20")
 				.web(WebApplicationType.NONE);
@@ -197,7 +197,7 @@ class PreferencesConfigurationTests {
 		}
 
 		@Test
-		void environment() throws IOException {
+		void invalidThresholdRangeFromEnvironment() throws IOException {
 			var env = envFromYaml("""
 					preferences:
 					  temperature-threshold:
