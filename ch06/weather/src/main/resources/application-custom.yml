@@ -3,6 +3,9 @@ weather-service:
   url: https://weather.example.com
 preferences:
   defaults:
-    dark-mode: true
-    units: imperial
-    sort-by: date_added
+    dark-mode: false
+    units: metric
+    sort-by: alphabetical
+  temperature-threshold:
+    cold: 10
+    hot: 25

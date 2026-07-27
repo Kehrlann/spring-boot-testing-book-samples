@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import wf.garnier.spring.boot.test.ch6.weather.preferences.PreferencesService;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.UnitSystem;
 
@@ -20,16 +21,44 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.modulith.test.ModuleSlicing;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.TestPropertySources;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 class PreferencesConfigurationTests {
 
+	/**
+	 * This is a "real"-ish test, where we exercise the public API of the module. The rest
+	 * of the tests in this file are more lightweight to showcase the testing
+	 */
 	@Nested
-	@SpringBootTest(classes = { PreferencesConfiguration.class }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+	// tag::spring-boot-test-properties[]
+	@SpringBootTest(properties = """
+			preferences.defaults.dark-mode=false
+			preferences.defaults.units=imperial
+			""") // <1>
+	@ModuleSlicing(module = "preferences") // <2>
+	class CustomPropertiesValue {
+
+		@Autowired
+		PreferencesService service;
+
+		@Test
+		void usesCustomDefaults() {
+			var prefs = service.getPreferences();
+			assertThat(prefs.isDarkMode()).isFalse();
+			assertThat(prefs.getUnits()).isEqualTo(UnitSystem.IMPERIAL);
+		}
+
+	}
+	// end::spring-boot-test-properties[]
+
+	@Nested
+	@SpringBootTest(classes = PreferencesConfiguration.class, webEnvironment = WebEnvironment.NONE)
 	class DefaultValues {
 
 		@Autowired
@@ -47,24 +76,39 @@ class PreferencesConfigurationTests {
 	}
 
 	@Nested
-	@SpringBootTest(classes = { PreferencesConfiguration.class }, properties = { """
-			preferences.defaults.dark-mode=true
-			""" }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-	class CustomPropertiesValue {
+	// tag::test-property-source[]
+	//@formatter:off
+	@SpringBootTest(
+			classes = PreferencesConfiguration.class,
+			webEnvironment = WebEnvironment.NONE
+	)
+	//@formatter:on
+	@TestPropertySource({ "classpath:units-imperial.properties" })
+	class FromTestPropertySource {
 
+		// ... tests ...
+		// tag::ignored[]
 		@Autowired
 		PreferencesProperties props;
 
 		@Test
 		void hasCustomValues() {
-			assertThat(props.getDefaults().darkMode()).isTrue();
+			assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.IMPERIAL);
 		}
+		// end::ignored[]
 
 	}
+	// end::test-property-source[]
 
 	@Nested
-	@SpringBootTest(classes = { PreferencesConfiguration.class }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-	@ActiveProfiles("dark-mode")
+	// tag::profiles[]
+	//@formatter:off
+	@SpringBootTest(
+			classes = PreferencesConfiguration.class,
+			webEnvironment = WebEnvironment.NONE
+	)
+	//@formatter:on
+	@ActiveProfiles({ "dark-mode", "date-added" })
 	class ProfileBasedValues {
 
 		@Autowired
@@ -72,15 +116,20 @@ class PreferencesConfigurationTests {
 
 		@Test
 		void hasCustomValues() {
+			//@formatter:off
 			assertThat(props.getDefaults().darkMode()).isTrue();
+			assertThat(props.getDefaults().sortBy())
+					.isEqualTo(SortOrder.DATE_ADDED);
+			//@formatter:on
 		}
 
 	}
+	// end::profiles[]
 
 	@Nested
-	@SpringBootTest(classes = { PreferencesConfiguration.class }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+	@SpringBootTest(classes = PreferencesConfiguration.class, webEnvironment = WebEnvironment.NONE)
 	@TestPropertySource
-	class FromTestPropertySource {
+	class FromTestPropertySourceImplicit {
 
 		@Autowired
 		PreferencesProperties props;
@@ -95,22 +144,7 @@ class PreferencesConfigurationTests {
 	}
 
 	@Nested
-	@SpringBootTest(classes = { PreferencesConfiguration.class }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-	@TestPropertySource(value = "classpath:units-imperial.properties")
-	class FromTestPropertySourceExplicit {
-
-		@Autowired
-		PreferencesProperties props;
-
-		@Test
-		void hasCustomValues() {
-			assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.IMPERIAL);
-		}
-
-	}
-
-	@Nested
-	@SpringBootTest(classes = { PreferencesConfiguration.class }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+	@SpringBootTest(classes = PreferencesConfiguration.class, webEnvironment = WebEnvironment.NONE)
 	@TestPropertySources({ @TestPropertySource(value = "classpath:units-imperial.properties"),
 			@TestPropertySource(value = "classpath:application-dark-mode.properties") })
 	class FromMultipleTestPropertySourceExplicit {
@@ -127,13 +161,13 @@ class PreferencesConfigurationTests {
 	}
 
 	@Nested
-	@SpringBootTest(classes = { PreferencesConfiguration.class }, properties = { """
+	@SpringBootTest(classes = PreferencesConfiguration.class, properties = { """
 			preferences.defaults.dark-mode=true
 			preferences.defaults.sort-by=date_added
 			preferences.defaults.units=imperial
 			preferences.temperature-threshold.cold=5
 			preferences.temperature-threshold.hot=30
-			""" }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+			""" }, webEnvironment = WebEnvironment.NONE)
 	class CustomValues {
 
 		@Autowired
@@ -152,10 +186,10 @@ class PreferencesConfigurationTests {
 
 	@Nested
 	@Disabled // this would fail, the validation is wrong!
-	@SpringBootTest(classes = { PreferencesConfiguration.class }, properties = { """
+	@SpringBootTest(classes = PreferencesConfiguration.class, properties = { """
 			preferences.temperature-threshold.cold=30
 			preferences.temperature-threshold.hot=5
-			""" }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+			""" }, webEnvironment = WebEnvironment.NONE)
 	class InvalidValues {
 
 		@Autowired
@@ -218,7 +252,7 @@ class PreferencesConfigurationTests {
 		}
 
 		@Test
-		void invalidThresholdRangeFromProperties() throws IOException {
+		void invalidThresholdRangeFromYamlProperties() throws IOException {
 			var properties = propertiesFromYaml("""
 					preferences:
 					  temperature-threshold:
@@ -236,7 +270,7 @@ class PreferencesConfigurationTests {
 		}
 
 		@Test
-		void invalidThresholdRangeFromPropertiesFile() {
+		void invalidThresholdRangeFromYamlPropertiesFile() {
 			var properties = propertiesFromYamlFile("thresholds.yaml");
 			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class).web(WebApplicationType.NONE)
 				.properties(properties);
