@@ -135,7 +135,7 @@ class PreferencesConfigurationTests {
 		PreferencesProperties props;
 
 		// properties are loaded from <test-package>/TestClass.properties
-		// wf/garnier/spring/boot/test/ch6/weather/preferences/internal/PreferencesConfigurationTests$FromTestPropertySources.properties
+		// wf/garnier/spring/boot/test/ch6/weather/preferences/internal/PreferencesConfigurationTests$FromTestPropertySourceImplicit.properties
 		@Test
 		void hasCustomValues() {
 			assertThat(props.getDefaults().sortBy()).isEqualTo(SortOrder.DATE_ADDED);
