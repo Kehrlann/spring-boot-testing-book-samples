@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.PreferencesService;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch6.weather.preferences.UnitSystem;
+import wf.garnier.spring.boot.test.ch6.weather.utils.YamlPropertySourceFactory;
 
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +116,8 @@ class PreferencesConfigurationTests {
 	@ActiveProfiles({ "dark-mode", "date-added" })
 	class ProfileBasedValues {
 
+		// ... tests ...
+		// tag::ignored[]
 		@Autowired
 		PreferencesProperties props;
 
@@ -126,6 +129,7 @@ class PreferencesConfigurationTests {
 					.isEqualTo(SortOrder.DATE_ADDED);
 			//@formatter:on
 		}
+		// end::ignored[]
 
 	}
 	// end::profiles[]
@@ -149,8 +153,8 @@ class PreferencesConfigurationTests {
 
 	@Nested
 	@SpringBootTest(classes = PreferencesConfiguration.class, webEnvironment = WebEnvironment.NONE)
-	@TestPropertySources({ @TestPropertySource(value = "classpath:units-imperial.properties"),
-			@TestPropertySource(value = "classpath:dark-mode.properties") })
+	@TestPropertySources({ @TestPropertySource(locations = "classpath:units-imperial.properties"),
+			@TestPropertySource(locations = "classpath:dark-mode.properties") })
 	class FromMultipleTestPropertySourceExplicit {
 
 		@Autowired
@@ -160,6 +164,21 @@ class PreferencesConfigurationTests {
 		void hasCustomValues() {
 			assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.IMPERIAL);
 			assertThat(props.getDefaults().darkMode()).isTrue();
+		}
+
+	}
+
+	@Nested
+	@SpringBootTest(classes = PreferencesConfiguration.class, webEnvironment = WebEnvironment.NONE)
+	@TestPropertySource(locations = "classpath:application-date-added.yaml", factory = YamlPropertySourceFactory.class)
+	class FromTestPropertySourceYaml {
+
+		@Autowired
+		PreferencesProperties props;
+
+		@Test
+		void hasCustomValues() {
+			assertThat(props.getDefaults().sortBy()).isEqualTo(SortOrder.DATE_ADDED);
 		}
 
 	}
