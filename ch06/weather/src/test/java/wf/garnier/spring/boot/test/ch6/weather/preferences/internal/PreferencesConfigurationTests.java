@@ -79,23 +79,27 @@ class PreferencesConfigurationTests {
 	// tag::test-property-source[]
 	//@formatter:off
 	@SpringBootTest(
-			classes = PreferencesConfiguration.class,
-			webEnvironment = WebEnvironment.NONE
+			classes = PreferencesConfiguration.class, // <1>
+			webEnvironment = WebEnvironment.NONE // <2>
 	)
+	@TestPropertySource(locations = {
+			"classpath:units-imperial.properties", // <3>
+			"classpath:dark-mode.properties" // <3>
+	})
 	//@formatter:on
-	@TestPropertySource({ "classpath:units-imperial.properties" })
 	class FromTestPropertySource {
 
-		// ... tests ...
-		// tag::ignored[]
 		@Autowired
-		PreferencesProperties props;
+		PreferencesProperties props; // <4>
 
 		@Test
 		void hasCustomValues() {
-			assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.IMPERIAL);
+			//@formatter:off
+			assertThat(props.getDefaults().darkMode()).isTrue();
+			assertThat(props.getDefaults().units())
+					.isEqualTo(UnitSystem.IMPERIAL);
+			//@formatter:on
 		}
-		// end::ignored[]
 
 	}
 	// end::test-property-source[]
@@ -146,7 +150,7 @@ class PreferencesConfigurationTests {
 	@Nested
 	@SpringBootTest(classes = PreferencesConfiguration.class, webEnvironment = WebEnvironment.NONE)
 	@TestPropertySources({ @TestPropertySource(value = "classpath:units-imperial.properties"),
-			@TestPropertySource(value = "classpath:application-dark-mode.properties") })
+			@TestPropertySource(value = "classpath:dark-mode.properties") })
 	class FromMultipleTestPropertySourceExplicit {
 
 		@Autowired
