@@ -1,25 +1,42 @@
 package wf.garnier.spring.boot.test.ch6.weather.preferences.internal;
 
+import java.util.Set;
+
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.dataformat.yaml.YAMLMapper;
+import wf.garnier.spring.boot.test.ch6.weather.preferences.internal.PreferencesProperties.TemperatureThreshold;
 
+import org.springframework.context.MessageSource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import static org.assertj.core.api.Assertions.assertThat;
 
+// tag::class[]
 class PreferencesPropertiesTests {
 
-	YAMLMapper mapper = YAMLMapper.builder().propertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE).build();
+	// end::class[]
+	// tag::mapper[]
+	//@formatter:off
+	YAMLMapper mapper = YAMLMapper.builder()
+			.propertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE)
+			.build();
+	//@formatter:on
+	// end::mapper[]
 
+	// tag::validator[]
 	LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
 
 	@BeforeEach
 	void setUp() {
 		validator.afterPropertiesSet();
 	}
+	// end::validator[]
 
 	@Test
 	void yamlPrefs() {
@@ -30,16 +47,49 @@ class PreferencesPropertiesTests {
 				""";
 		var props = mapper.readValue(propString, PreferencesProperties.class);
 
+		assertThat(validator.validate(props)).isEmpty();
+		// tag::ignored[]
 		assertThat(props.getTemperatureThreshold().cold()).isEqualTo(10);
 		assertThat(props.getTemperatureThreshold().hot()).isEqualTo(30);
-		assertThat(validator.validate(props)).isEmpty();
+		// end::ignored[]
 	}
 
 	@Test
-	void objectPrefs() {
-		var props = new PreferencesProperties.TemperatureThreshold(-5, 40);
+	void objectBasedTest() {
+		var valid = new PreferencesProperties.TemperatureThreshold(-5, 40);
+		assertThat(validator.validate(valid)).isEmpty();
 
-		assertThat(validator.validate(props)).isEmpty();
+		var invalid = new PreferencesProperties.TemperatureThreshold(-100, 40);
+		Set<ConstraintViolation<TemperatureThreshold>> violations = validator.validate(invalid);
+
+		//@formatter:off
+		assertThat(violations).hasSize(1)
+				.first()
+				.satisfies(violation -> {
+					assertThat(violation.getPropertyPath())
+							.hasToString("cold");
+					assertThat(violation.getMessage())
+							.isEqualTo("must be greater than or equal to -90");
+				});
+		//@formatter:on
+	}
+
+	/**
+	 * Same as {@link #objectBasedTest()} but using the raw Jakarta validator. It does not
+	 * validate {@link Validated} annotations, and does not support i18n with
+	 * {@link MessageSource} like the Spring {@link LocalValidatorFactoryBean} does.
+	 *
+	 * <p>
+	 * The wiring is much simpler, as it is a single call to static method.
+	 */
+	@Test
+	void alternativeValidation() {
+		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+		var invalid = new PreferencesProperties.TemperatureThreshold(-100, 40);
+		var violations = validator.validate(invalid);
+
+		assertThat(violations).hasSize(1);
 	}
 
 	/**
@@ -57,13 +107,22 @@ class PreferencesPropertiesTests {
 
 		assertThat(props.getTemperatureThreshold().cold()).isEqualTo(-100);
 		assertThat(props.getTemperatureThreshold().hot()).isEqualTo(100);
-		assertThat(validator.validate(props)).hasSize(2).satisfiesOnlyOnce(violation -> {
-			assertThat(violation.getPropertyPath()).hasToString("temperatureThreshold.cold");
-			assertThat(violation.getMessage()).isEqualTo("must be greater than or equal to -90");
-		}).satisfiesOnlyOnce(violation -> {
-			assertThat(violation.getPropertyPath()).hasToString("temperatureThreshold.hot");
-			assertThat(violation.getMessage()).isEqualTo("must be less than or equal to 57");
-		});
+		//@formatter:off
+		assertThat(validator.validate(props))
+			.hasSize(2)
+			.satisfiesOnlyOnce(violation -> {
+				assertThat(violation.getPropertyPath())
+						.hasToString("temperatureThreshold.cold");
+				assertThat(violation.getMessage())
+						.isEqualTo("must be greater than or equal to -90");
+			})
+			.satisfiesOnlyOnce(violation -> {
+				assertThat(violation.getPropertyPath())
+						.hasToString("temperatureThreshold.hot");
+				assertThat(violation.getMessage())
+						.isEqualTo("must be less than or equal to 57");
+			});
+		//@formatter:on
 	}
 
 }
