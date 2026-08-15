@@ -30,13 +30,36 @@ class PreferencesPropertiesTests {
 	// end::mapper[]
 
 	// tag::validator[]
-	LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
+	LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean(); // <1>
 
 	@BeforeEach
 	void setUp() {
-		validator.afterPropertiesSet();
+		validator.afterPropertiesSet(); // <1>
 	}
+
 	// end::validator[]
+	//@formatter:off
+	// tag::constraint-validation[]
+	@Test
+	void constraintValidation() {
+		var valid = new TemperatureThreshold(-5, 40); // <2>
+		assertThat(validator.validate(valid)).isEmpty(); // <2>
+
+		var invalid = new TemperatureThreshold(-100, 40); // <3>
+		Set<ConstraintViolation<TemperatureThreshold>> violations = // <3>
+				validator.validate(invalid); // <3>
+
+		assertThat(violations).hasSize(1)
+				.first()
+				.satisfies(violation -> {
+					assertThat(violation.getPropertyPath()) // <4>
+							.hasToString("cold");
+					assertThat(violation.getMessage()) // <4>
+							.isEqualTo("must be greater than or equal to -90");
+				});
+	}
+	// end::constraint-validation[]
+	//@formatter:on
 
 	@Test
 	void yamlPrefs() {
@@ -54,29 +77,9 @@ class PreferencesPropertiesTests {
 		// end::ignored[]
 	}
 
-	@Test
-	void objectBasedTest() {
-		var valid = new PreferencesProperties.TemperatureThreshold(-5, 40);
-		assertThat(validator.validate(valid)).isEmpty();
-
-		var invalid = new PreferencesProperties.TemperatureThreshold(-100, 40);
-		Set<ConstraintViolation<TemperatureThreshold>> violations = validator.validate(invalid);
-
-		//@formatter:off
-		assertThat(violations).hasSize(1)
-				.first()
-				.satisfies(violation -> {
-					assertThat(violation.getPropertyPath())
-							.hasToString("cold");
-					assertThat(violation.getMessage())
-							.isEqualTo("must be greater than or equal to -90");
-				});
-		//@formatter:on
-	}
-
 	/**
-	 * Same as {@link #objectBasedTest()} but using the raw Jakarta validator. It does not
-	 * validate {@link Validated} annotations, and does not support i18n with
+	 * Same as {@link #constraintValidation()} but using the raw Jakarta validator. It
+	 * does not validate {@link Validated} annotations, and does not support i18n with
 	 * {@link MessageSource} like the Spring {@link LocalValidatorFactoryBean} does.
 	 *
 	 * <p>
@@ -124,5 +127,7 @@ class PreferencesPropertiesTests {
 			});
 		//@formatter:on
 	}
+	// tag::class[]
 
 }
+// end::class[]

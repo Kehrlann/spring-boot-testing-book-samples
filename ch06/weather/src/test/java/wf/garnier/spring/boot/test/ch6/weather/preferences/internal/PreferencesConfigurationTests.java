@@ -17,8 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.bind.validation.BindValidationException;
+import org.springframework.boot.context.properties.bind.validation.ValidationErrors;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
@@ -26,8 +29,11 @@ import org.springframework.modulith.test.ModuleSlicing;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.TestPropertySources;
+import org.springframework.validation.ObjectError;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.InstanceOfAssertFactories.list;
+import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 class PreferencesConfigurationTests {
@@ -241,6 +247,41 @@ class PreferencesConfigurationTests {
 				assertThat(props.getTemperatureThreshold().cold()).isEqualTo(10);
 				assertThat(props.getTemperatureThreshold().hot()).isEqualTo(25);
 			}
+		}
+
+		@Test
+		void invalidColdThreshold() {
+			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class)
+				.properties("preferences.temperature-threshold.cold=-100")
+				.web(WebApplicationType.NONE);
+
+			//@formatter:off
+			assertThatThrownBy(builder::run)
+					.rootCause()
+					.hasMessageContaining("must be greater than or equal to -90");
+			//@formatter:on
+		}
+
+		/**
+		 * A more complete test than {@link #invalidColdThreshold()}, with details about
+		 * the nested exception.
+		 */
+		@Test
+		void invalidColdThresholdFullTest() {
+			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class)
+				.properties("preferences.temperature-threshold.cold=-100")
+				.web(WebApplicationType.NONE);
+
+			assertThatThrownBy(builder::run).isInstanceOf(BeanCreationException.class)
+				.rootCause()
+				.isInstanceOf(BindValidationException.class)
+				.asInstanceOf(type(BindValidationException.class))
+				.extracting(BindValidationException::getValidationErrors)
+				.extracting(ValidationErrors::getAllErrors)
+				.asInstanceOf(list(ObjectError.class))
+				.first()
+				.extracting(DefaultMessageSourceResolvable::getDefaultMessage)
+				.isEqualTo("must be greater than or equal to -90");
 		}
 
 		@Test
