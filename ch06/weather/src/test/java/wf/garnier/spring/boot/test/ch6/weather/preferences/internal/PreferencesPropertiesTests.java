@@ -21,14 +21,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PreferencesPropertiesTests {
 
 	// end::class[]
-	// tag::mapper[]
 	//@formatter:off
+	// tag::mapper[]
 	YAMLMapper mapper = YAMLMapper.builder()
 			.propertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE)
 			.build();
-	//@formatter:on
-	// end::mapper[]
 
+	// end::mapper[]
+	//@formatter:on
 	// tag::validator[]
 	LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean(); // <1>
 
@@ -62,7 +62,27 @@ class PreferencesPropertiesTests {
 	//@formatter:on
 
 	@Test
-	void yamlPrefs() {
+	void fullPropertiesObject() {
+		//@formatter:off
+		// tag::full-properties-object[]
+		var invalid = new PreferencesProperties(
+				null,
+				new TemperatureThreshold(-100, 40)
+		);
+		// end::full-properties-object[]
+		assertThat(validator.validate(invalid)).hasSize(1)
+				.first()
+				.satisfies(violation -> {
+					assertThat(violation.getPropertyPath())
+							.hasToString("temperatureThreshold.cold");
+					assertThat(violation.getMessage())
+							.isEqualTo("must be greater than or equal to -90");
+				});
+	}
+
+	//tag::yaml-preferences[]
+	@Test
+	void yamlPreferences() {
 		var propString = """
 				temperature-threshold:
 				  cold: 10
@@ -76,6 +96,7 @@ class PreferencesPropertiesTests {
 		assertThat(props.getTemperatureThreshold().hot()).isEqualTo(30);
 		// end::ignored[]
 	}
+	//end::yaml-preferences[]
 
 	/**
 	 * Same as {@link #constraintValidation()} but using the raw Jakarta validator. It
