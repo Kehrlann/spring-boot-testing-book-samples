@@ -235,19 +235,30 @@ class PreferencesConfigurationTests {
 	@Nested
 	class ManualSpringAppConstruction {
 
+		// tag::manual-app[]
 		@Test
-		void defaults() {
-			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class).web(WebApplicationType.NONE);
-			try (var applicationContext = builder.run()) {
-				var props = applicationContext.getBean(PreferencesProperties.class);
+		void manualAppConstruction() {
+			var builder = new SpringApplicationBuilder( // <1>
+					PreferencesConfiguration.class // <1>
+			).properties("preferences.temperature-threshold.cold=5") // <2>
+				.web(WebApplicationType.NONE); // <3>
+			try (var applicationContext = builder.run()) { // <4>
+				var props = applicationContext // <5>
+					.getBean(PreferencesProperties.class); // <5>
 				assertThat(props).isNotNull();
+				//@formatter:off
+				assertThat(props.getTemperatureThreshold().cold())
+						.isEqualTo(5);
+				//@formatter:on
+				// tag::ignored[]
 				assertThat(props.getDefaults().darkMode()).isFalse();
 				assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.METRIC);
 				assertThat(props.getDefaults().sortBy()).isEqualTo(SortOrder.ALPHABETICAL);
-				assertThat(props.getTemperatureThreshold().cold()).isEqualTo(10);
 				assertThat(props.getTemperatureThreshold().hot()).isEqualTo(25);
+				// end::ignored[]
 			}
 		}
+		// end::manual-app[]
 
 		@Test
 		void invalidColdThreshold() {
@@ -284,18 +295,29 @@ class PreferencesConfigurationTests {
 				.isEqualTo("must be greater than or equal to -90");
 		}
 
+		//@formatter:off
+		// tag::manual-app-failure[]
 		@Test
-		void invalidThresholdRange() {
-			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class)
-				.properties("preferences.temperature-threshold.hot=10", "preferences.temperature-threshold.cold=20")
+		void invalidTemperatureRange() {
+			var builder = new SpringApplicationBuilder(
+					PreferencesConfiguration.class
+				).properties(
+						"preferences.temperature-threshold.hot=10", // <1>
+						"preferences.temperature-threshold.cold=20" // <1>
+				)
 				.web(WebApplicationType.NONE);
 
-			assertThatThrownBy(builder::run).isInstanceOf(BeanCreationException.class)
+			assertThatThrownBy(builder::run) // <2>
+				.isInstanceOf(BeanCreationException.class)
 				.rootCause()
 				.isInstanceOf(IllegalArgumentException.class)
-				.hasMessage("preferences.temperature-threshold.hot (10.0) " + "must be higher than "
-						+ "preferences.temperature-threshold.cold (20.0)");
+				.hasMessage(
+					"preferences.temperature-threshold.hot (10.0) must be " +
+					"higher than preferences.temperature-threshold.cold (20.0)"
+				);
 		}
+		// end::manual-app-failure[]
+		//@formatter:on
 
 		@Test
 		void invalidThresholdRangeFromEnvironment() throws IOException {
@@ -346,6 +368,31 @@ class PreferencesConfigurationTests {
 						+ "preferences.temperature-threshold.cold (20.0)");
 		}
 
+		@Test
+		void multipleYamlPropertySources() {
+			//@formatter:off
+			// tag::properties-loaders[]
+			var propertiesFromFile = propertiesFromYamlFile("thresholds.yaml");
+			var propertiesFromYaml = propertiesFromYaml("""
+					preferences:
+					  temperature-threshold:
+					    cold: 25
+					""");
+
+			var builder = new SpringApplicationBuilder(PreferencesConfiguration.class)
+				.web(WebApplicationType.NONE)
+				.properties(propertiesFromFile)
+				.properties(propertiesFromYaml);
+			// end::properties-loaders[]
+			//@formatter:on
+
+			assertThatThrownBy(builder::run).isInstanceOf(BeanCreationException.class)
+				.rootCause()
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage("preferences.temperature-threshold.hot (10.0) " + "must be higher than "
+						+ "preferences.temperature-threshold.cold (25.0)");
+		}
+
 		private static StandardEnvironment envFromYaml(String yamlProperties) throws IOException {
 			var config = new ByteArrayResource(yamlProperties.getBytes(StandardCharsets.UTF_8));
 
@@ -355,19 +402,22 @@ class PreferencesConfigurationTests {
 			return env;
 		}
 
-		private Properties propertiesFromYaml(String yamlProperties) {
+		// tag::yaml-utilities[]
+		public Properties propertiesFromYaml(String yamlProperties) {
+			var yamlBytes = yamlProperties.getBytes(StandardCharsets.UTF_8);
+			var resource = new ByteArrayResource(yamlBytes);
 			var yamlPropertiesFactory = new YamlPropertiesFactoryBean();
-			var resource = new ByteArrayResource(yamlProperties.getBytes(StandardCharsets.UTF_8));
 			yamlPropertiesFactory.setResources(resource);
 			return yamlPropertiesFactory.getObject();
 		}
 
-		private Properties propertiesFromYamlFile(String fileName) {
+		public Properties propertiesFromYamlFile(String fileName) {
 			var yamlPropertiesFactory = new YamlPropertiesFactoryBean();
 			var resource = new ClassPathResource("/" + fileName);
 			yamlPropertiesFactory.setResources(resource);
 			return yamlPropertiesFactory.getObject();
 		}
+		// end::yaml-utilities[]
 
 	}
 
