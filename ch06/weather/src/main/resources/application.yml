@@ -8,8 +8,6 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
-weather-service:
-  url: https://api.open-meteo.com/v1/forecast
 preferences:
   defaults:
     units: metric

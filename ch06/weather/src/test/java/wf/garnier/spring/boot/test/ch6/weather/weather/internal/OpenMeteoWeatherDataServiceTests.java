@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,9 +25,6 @@ class OpenMeteoWeatherDataServiceTests {
 
 	@Autowired
 	private MockRestServiceServer mockServer;
-
-	@MockitoBean
-	private WeatherServiceProperties props;
 
 	@Test
 	void getWeatherData() {

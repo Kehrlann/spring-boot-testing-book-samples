@@ -1,6 +1,4 @@
 # Custom properties
-weather-service:
-  url: https://weather.example.com
 preferences:
   defaults:
     dark-mode: false

@@ -19,10 +19,12 @@ class OpenMeteoWeatherDataService implements WeatherDataService {
 
 	private static final Logger log = LoggerFactory.getLogger(OpenMeteoWeatherDataService.class);
 
+	private static final String WEATHER_SERVICE_URL = "https://api.open-meteo.com/v1/forecast";
+
 	private final RestClient restClient;
 
-	OpenMeteoWeatherDataService(RestClient.Builder restClientBuilder, WeatherServiceProperties properties) {
-		this.restClient = restClientBuilder.baseUrl(properties.getUrl()).build();
+	OpenMeteoWeatherDataService(RestClient.Builder restClientBuilder) {
+		this.restClient = restClientBuilder.baseUrl(WEATHER_SERVICE_URL).build();
 	}
 
 	@Override
