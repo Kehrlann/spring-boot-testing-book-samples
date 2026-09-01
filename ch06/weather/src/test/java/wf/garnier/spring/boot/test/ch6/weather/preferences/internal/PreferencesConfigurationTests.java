@@ -47,8 +47,8 @@ class PreferencesConfigurationTests {
 	@SpringBootTest(properties = """
 			preferences.defaults.dark-mode=false
 			preferences.defaults.units=imperial
-			""") // <1>
-	@ModuleSlicing(module = "preferences") // <2>
+			""") <1>
+	@ModuleSlicing(module = "preferences") <2>
 	class CustomPropertiesValue {
 
 		@Autowired
@@ -84,28 +84,24 @@ class PreferencesConfigurationTests {
 
 	@Nested
 	// tag::test-property-source[]
-	//@formatter:off
 	@SpringBootTest(
-			classes = PreferencesConfiguration.class, // <1>
-			webEnvironment = WebEnvironment.NONE // <2>
+			classes = PreferencesConfiguration.class, <1>
+			webEnvironment = WebEnvironment.NONE <2>
 	)
 	@TestPropertySource(locations = {
-			"classpath:units-imperial.properties", // <3>
-			"classpath:dark-mode.properties" // <3>
+			"classpath:units-imperial.properties", <3>
+			"classpath:dark-mode.properties" <3>
 	})
-	//@formatter:on
 	class FromTestPropertySource {
 
 		@Autowired
-		PreferencesProperties props; // <4>
+		PreferencesProperties props; <4>
 
 		@Test
 		void hasCustomValues() {
-			//@formatter:off
 			assertThat(props.getDefaults().darkMode()).isTrue();
 			assertThat(props.getDefaults().units())
 					.isEqualTo(UnitSystem.IMPERIAL);
-			//@formatter:on
 		}
 
 	}
@@ -113,12 +109,10 @@ class PreferencesConfigurationTests {
 
 	@Nested
 	// tag::profiles[]
-	//@formatter:off
 	@SpringBootTest(
 			classes = PreferencesConfiguration.class,
 			webEnvironment = WebEnvironment.NONE
 	)
-	//@formatter:on
 	@ActiveProfiles({ "dark-mode", "date-added" })
 	class ProfileBasedValues {
 
@@ -129,11 +123,9 @@ class PreferencesConfigurationTests {
 
 		@Test
 		void hasCustomValues() {
-			//@formatter:off
 			assertThat(props.getDefaults().darkMode()).isTrue();
 			assertThat(props.getDefaults().sortBy())
 					.isEqualTo(SortOrder.DATE_ADDED);
-			//@formatter:on
 		}
 		// end::ignored[]
 
@@ -238,18 +230,16 @@ class PreferencesConfigurationTests {
 		// tag::manual-app[]
 		@Test
 		void manualAppConstruction() {
-			var builder = new SpringApplicationBuilder( // <1>
-					PreferencesConfiguration.class // <1>
-			).properties("preferences.temperature-threshold.cold=5") // <2>
-				.web(WebApplicationType.NONE); // <3>
-			try (var applicationContext = builder.run()) { // <4>
-				var props = applicationContext // <5>
-					.getBean(PreferencesProperties.class); // <5>
+			var builder = new SpringApplicationBuilder( <1>
+					PreferencesConfiguration.class <1>
+			).properties("preferences.temperature-threshold.cold=5") <2>
+				.web(WebApplicationType.NONE); <3>
+			try (var applicationContext = builder.run()) { <4>
+				var props = applicationContext <5>
+					.getBean(PreferencesProperties.class); <5>
 				assertThat(props).isNotNull();
-				//@formatter:off
 				assertThat(props.getTemperatureThreshold().cold())
 						.isEqualTo(5);
-				//@formatter:on
 				// tag::ignored[]
 				assertThat(props.getDefaults().darkMode()).isFalse();
 				assertThat(props.getDefaults().units()).isEqualTo(UnitSystem.METRIC);
@@ -266,11 +256,9 @@ class PreferencesConfigurationTests {
 				.properties("preferences.temperature-threshold.cold=-100")
 				.web(WebApplicationType.NONE);
 
-			//@formatter:off
 			assertThatThrownBy(builder::run)
 					.rootCause()
 					.hasMessageContaining("must be greater than or equal to -90");
-			//@formatter:on
 		}
 
 		/**
@@ -295,19 +283,18 @@ class PreferencesConfigurationTests {
 				.isEqualTo("must be greater than or equal to -90");
 		}
 
-		//@formatter:off
 		// tag::manual-app-failure[]
 		@Test
 		void invalidTemperatureRange() {
 			var builder = new SpringApplicationBuilder(
 					PreferencesConfiguration.class
 				).properties(
-						"preferences.temperature-threshold.hot=10", // <1>
-						"preferences.temperature-threshold.cold=20" // <1>
+						"preferences.temperature-threshold.hot=10", <1>
+						"preferences.temperature-threshold.cold=20" <1>
 				)
 				.web(WebApplicationType.NONE);
 
-			assertThatThrownBy(builder::run) // <2>
+			assertThatThrownBy(builder::run) <2>
 				.isInstanceOf(BeanCreationException.class)
 				.rootCause()
 				.isInstanceOf(IllegalArgumentException.class)
@@ -317,7 +304,6 @@ class PreferencesConfigurationTests {
 				);
 		}
 		// end::manual-app-failure[]
-		//@formatter:on
 
 		@Test
 		void invalidThresholdRangeFromEnvironment() throws IOException {
@@ -370,7 +356,6 @@ class PreferencesConfigurationTests {
 
 		@Test
 		void multipleYamlPropertySources() {
-			//@formatter:off
 			// tag::properties-loaders[]
 			var propertiesFromFile = propertiesFromYamlFile("thresholds.yaml");
 			var propertiesFromYaml = propertiesFromYaml("""
@@ -384,7 +369,6 @@ class PreferencesConfigurationTests {
 				.properties(propertiesFromFile)
 				.properties(propertiesFromYaml);
 			// end::properties-loaders[]
-			//@formatter:on
 
 			assertThatThrownBy(builder::run).isInstanceOf(BeanCreationException.class)
 				.rootCause()

@@ -58,13 +58,11 @@ class OpenMeteoWeatherDataServiceTests {
 
 	@Test
 	void http400Throw() {
-		//@formatter:off
 		mockServer.expect(anything())
 				.andRespond(withBadRequest());
 
 		assertThatThrownBy(() -> service.getCurrentWeather(32.99, -97.68))
 				.isInstanceOf(IllegalArgumentException.class);
-		//@formatter:on
 	}
 
 	@Test

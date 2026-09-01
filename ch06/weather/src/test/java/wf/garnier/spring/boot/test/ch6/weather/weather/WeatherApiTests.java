@@ -43,7 +43,6 @@ class WeatherApiTests {
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
-		//@formatter:off
 		assertThat(response)
 				.hasStatus(HttpStatus.OK)
 				.bodyJson()
@@ -59,7 +58,6 @@ class WeatherApiTests {
 				]
 				""")
 				.extractingPath("$.[0].cityId").isEqualTo(paris.getId());
-		//@formatter:on
 	}
 
 	/**
@@ -192,7 +190,6 @@ class WeatherApiTests {
 
 		@Override
 		public WeatherData getCurrentWeather(double latitude, double longitude) {
-			//@formatter:off
 			return preRecordedWeather.entrySet().stream()
 					.filter(e -> {
 						var city = e.getKey();
@@ -201,7 +198,6 @@ class WeatherApiTests {
 					.findFirst()
 					.map(Map.Entry::getValue)
 					.orElse(new WeatherData(20, 0, 0));
-			//@formatter:on
 		}
 
 		void setWeatherFor(City city, WeatherData weatherData) {
