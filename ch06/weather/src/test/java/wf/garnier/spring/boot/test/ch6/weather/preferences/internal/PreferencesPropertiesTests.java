@@ -21,49 +21,44 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PreferencesPropertiesTests {
 
 	// end::class[]
-	//@formatter:off
 	// tag::mapper[]
 	YAMLMapper mapper = YAMLMapper.builder()
 			.propertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE)
 			.build();
 
 	// end::mapper[]
-	//@formatter:on
 	// tag::validator[]
-	LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean(); // <1>
+	LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean(); <1>
 
 	@BeforeEach
 	void setUp() {
-		validator.afterPropertiesSet(); // <1>
+		validator.afterPropertiesSet(); <1>
 	}
 
 	// end::validator[]
-	//@formatter:off
 	// tag::constraint-validation[]
 	@Test
 	void constraintValidation() {
-		var valid = new TemperatureThreshold(-5, 40); // <2>
-		assertThat(validator.validate(valid)).isEmpty(); // <2>
+		var valid = new TemperatureThreshold(-5, 40); <2>
+		assertThat(validator.validate(valid)).isEmpty(); <2>
 
-		var invalid = new TemperatureThreshold(-100, 40); // <3>
-		Set<ConstraintViolation<TemperatureThreshold>> violations = // <3>
-				validator.validate(invalid); // <3>
+		var invalid = new TemperatureThreshold(-100, 40); <3>
+		Set<ConstraintViolation<TemperatureThreshold>> violations = <3>
+				validator.validate(invalid); <3>
 
 		assertThat(violations).hasSize(1)
 				.first()
 				.satisfies(violation -> {
-					assertThat(violation.getPropertyPath()) // <4>
+					assertThat(violation.getPropertyPath()) <4>
 							.hasToString("cold");
-					assertThat(violation.getMessage()) // <4>
+					assertThat(violation.getMessage()) <4>
 							.isEqualTo("must be greater than or equal to -90");
 				});
 	}
 	// end::constraint-validation[]
-	//@formatter:on
 
 	@Test
 	void fullPropertiesObject() {
-		//@formatter:off
 		// tag::full-properties-object[]
 		var invalid = new PreferencesProperties(
 				null,
@@ -131,7 +126,6 @@ class PreferencesPropertiesTests {
 
 		assertThat(props.getTemperatureThreshold().cold()).isEqualTo(-100);
 		assertThat(props.getTemperatureThreshold().hot()).isEqualTo(100);
-		//@formatter:off
 		assertThat(validator.validate(props))
 			.hasSize(2)
 			.satisfiesOnlyOnce(violation -> {
@@ -146,7 +140,6 @@ class PreferencesPropertiesTests {
 				assertThat(violation.getMessage())
 						.isEqualTo("must be less than or equal to 57");
 			});
-		//@formatter:on
 	}
 	// tag::class[]
 
