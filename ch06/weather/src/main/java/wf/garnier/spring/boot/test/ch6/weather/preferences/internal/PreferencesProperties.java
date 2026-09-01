@@ -49,7 +49,7 @@ public class PreferencesProperties implements InitializingBean {
 	 * temperature recorded on Earth</a>.
 	 * @param hot temperature below which the UI will display temperatures in blue.
 	 * Minimum is +57˚C, see <a href=
-	 * "https://en.wikipedia.org/wiki/Highest_temperature_recorded_on_Earth">Lowest *
+	 * "https://en.wikipedia.org/wiki/Highest_temperature_recorded_on_Earth">Highest
 	 * temperature recorded on Earth</a>.
 	 */
 	//@formatter:off
