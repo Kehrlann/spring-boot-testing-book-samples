@@ -8,7 +8,7 @@
         <version>4.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>wf.garnier.spring.boot.test.ch2.weather</groupId>
+    <groupId>wf.garnier.spring.boot.test.ch7.weather</groupId>
     <artifactId>weather</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Weather App</name>
