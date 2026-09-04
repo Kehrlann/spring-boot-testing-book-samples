@@ -1,4 +1,4 @@
-# Chapter 4: Testing Web Application
+# Chapter 5: Testing Web Applications
 
 ## The application
 
