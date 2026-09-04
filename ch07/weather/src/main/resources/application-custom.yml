@@ -1,0 +1,9 @@
+# Custom properties
+preferences:
+  defaults:
+    dark-mode: false
+    units: metric
+    sort-by: alphabetical
+  temperature-threshold:
+    cold: 10
+    hot: 25
