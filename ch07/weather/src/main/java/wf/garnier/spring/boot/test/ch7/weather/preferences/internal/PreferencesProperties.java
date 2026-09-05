@@ -11,16 +11,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 
-// tag::class[]
 @Validated
 @ConfigurationProperties(prefix = "preferences")
 public class PreferencesProperties implements InitializingBean {
 
-	// end::class[]
-	// tag::threshold-field[]
 	private final @Valid TemperatureThreshold temperatureThreshold;
-
-	// end::threshold-field[]
 
 	private final @Valid Defaults defaults;
 
@@ -53,12 +48,10 @@ public class PreferencesProperties implements InitializingBean {
 	 * temperature recorded on Earth</a>.
 	 */
 	//@formatter:off
-	// tag::threshold-class[]
 	public record TemperatureThreshold(
 			@DefaultValue("10") @Min(-90) double cold,
 			@DefaultValue("25") @Max(57) double hot) {
 	}
-	// end::threshold-class[]
 	//@formatter:on
 
 	@Override
@@ -70,7 +63,4 @@ public class PreferencesProperties implements InitializingBean {
 		}
 	}
 
-	// tag::class[]
-
 }
-// end::class[]

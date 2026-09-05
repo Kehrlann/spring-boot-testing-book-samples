@@ -1,4 +1,4 @@
-# Chapter 4: Testing Web Application
+# Chapter 7: Testing Security configurations
 
 ## The application
 

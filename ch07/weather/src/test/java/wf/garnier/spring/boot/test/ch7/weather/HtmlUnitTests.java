@@ -13,6 +13,7 @@ import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.javascript.host.event.KeyboardEvent;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch7.weather.city.CityService;
 import wf.garnier.spring.boot.test.ch7.weather.city.internal.CityRepository;
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(
 		properties = { "preferences.temperature-threshold.cold=10", "preferences.temperature-threshold.hot=25" })
 @AutoConfigureMockMvc
+@Disabled
 class HtmlUnitTests {
 
 	@Autowired

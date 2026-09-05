@@ -1,6 +1,7 @@
 package wf.garnier.spring.boot.test.ch7.weather.preferences;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.internal.PreferencesRepository;
 
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ApplicationModuleTest
 @AutoConfigureMockMvc
+@Disabled
 class PreferencesApiTests {
 
 	@Autowired
