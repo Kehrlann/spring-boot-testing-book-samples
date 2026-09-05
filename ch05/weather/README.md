@@ -1,4 +1,4 @@
-# Chapter 5: Testing Web Applications
+# Chapter 5: Testing subsets of an application with test slices
 
 ## The application
 
