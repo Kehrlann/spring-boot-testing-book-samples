@@ -28,6 +28,7 @@ import wf.garnier.spring.boot.test.ch7.weather.weather.internal.WeatherDataServi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(
 		properties = { "preferences.temperature-threshold.cold=10", "preferences.temperature-threshold.hot=25" })
 @AutoConfigureMockMvc
-@Disabled
+@WithMockUser
 class HtmlUnitTests {
 
 	@Autowired

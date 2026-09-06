@@ -7,7 +7,6 @@ import java.util.Random;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch7.weather.city.City;
 import wf.garnier.spring.boot.test.ch7.weather.city.CityService;
@@ -17,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpStatus;
 import org.springframework.modulith.test.ApplicationModuleTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.convention.TestBean;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.doReturn;
 
 @ApplicationModuleTest
 @AutoConfigureMockMvc
-@Disabled
+@WithMockUser
 class WeatherApiTests {
 
 	@Autowired
