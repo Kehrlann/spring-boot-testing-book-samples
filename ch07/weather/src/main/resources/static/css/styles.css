@@ -23,6 +23,18 @@ h1 {
     margin-bottom: 1.5rem;
 }
 
+/* Page header: title on the left, logout button on the right */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+    margin-bottom: 0;
+}
+
 /* Card styles */
 .card {
     border: 1px solid #ddd;

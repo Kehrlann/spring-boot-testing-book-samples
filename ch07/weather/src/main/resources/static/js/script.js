@@ -105,6 +105,17 @@ function removeCity(cityId) {
   }).then((response) => response.ok);
 }
 
+function logout() {
+  return fetch("/logout", {
+    method: "POST",
+    headers: {
+      "X-XSRF-TOKEN": csrfToken(),
+    },
+  }).then(function () {
+    window.location.href = "/login?logout";
+  });
+}
+
 function searchCities(query) {
   return fetch(`/api/city?q=${encodeURIComponent(query)}`).then((response) =>
     response.json()
@@ -337,6 +348,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   });
+
+  document.getElementById("logoutButton").addEventListener("click", logout);
 
   // Preference change listeners
   document.getElementById("darkModeToggle").addEventListener("change", updatePreferences);
