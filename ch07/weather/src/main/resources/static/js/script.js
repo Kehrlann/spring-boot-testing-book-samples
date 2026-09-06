@@ -11,6 +11,18 @@
 var currentCities = null;
 var currentPreferences = null;
 
+/**
+ * Spring Security writes the CSRF token in the XSRF-TOKEN cookie, and expects it back
+ * in the X-XSRF-TOKEN header on every "unsafe" request (POST, PUT, DELETE, PATCH).
+ * See https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html#csrf-integration-javascript
+ */
+function csrfToken() {
+  var cookie = document.cookie
+    .split("; ")
+    .find((c) => c.startsWith("XSRF-TOKEN="));
+  return cookie ? cookie.split("=")[1] : "";
+}
+
 function loadWeather() {
   return fetch("/api/weather").then((response) => response.json());
 }
@@ -78,6 +90,7 @@ function addCity(cityId) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-XSRF-TOKEN": csrfToken(),
     },
     body: JSON.stringify({ id: cityId }),
   }).then((response) => response.ok);
@@ -86,6 +99,9 @@ function addCity(cityId) {
 function removeCity(cityId) {
   return fetch(`/api/city/${cityId}`, {
     method: "DELETE",
+    headers: {
+      "X-XSRF-TOKEN": csrfToken(),
+    },
   }).then((response) => response.ok);
 }
 
@@ -257,6 +273,7 @@ function updatePreferences() {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      "X-XSRF-TOKEN": csrfToken(),
     },
     body: JSON.stringify({
       darkMode: darkMode,

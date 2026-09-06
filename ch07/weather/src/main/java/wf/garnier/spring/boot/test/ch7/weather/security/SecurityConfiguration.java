@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -18,7 +19,9 @@ class SecurityConfiguration {
 		})
 			.formLogin(form -> form.loginPage("/login").permitAll())
 			.logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll())
-			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+			// Store the CSRF token in a cookie, which the JavaScript
+			// frontend reads and sends back in the X-XSRF-TOKEN header.
+			.csrf(CsrfConfigurer::spa)
 			.build();
 	}
 
