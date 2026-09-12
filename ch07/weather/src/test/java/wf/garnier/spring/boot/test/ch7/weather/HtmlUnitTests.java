@@ -13,7 +13,6 @@ import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.javascript.host.event.KeyboardEvent;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch7.weather.city.CityService;
 import wf.garnier.spring.boot.test.ch7.weather.city.internal.CityRepository;
@@ -22,6 +21,7 @@ import wf.garnier.spring.boot.test.ch7.weather.preferences.PreferencesService;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.UnitSystem;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.internal.PreferencesRepository;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 import wf.garnier.spring.boot.test.ch7.weather.weather.WeatherData;
 import wf.garnier.spring.boot.test.ch7.weather.weather.internal.WeatherDataService;
 
@@ -33,12 +33,17 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
+import static wf.garnier.spring.boot.test.ch7.weather.HtmlUnitTests.USER_NAME;
 
 @SpringBootTest(
 		properties = { "preferences.temperature-threshold.cold=10", "preferences.temperature-threshold.hot=25" })
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(username = USER_NAME)
 class HtmlUnitTests {
+
+	public static final String USER_NAME = "test-user";
+
+	private static final UserId USER = new UserId(USER_NAME);
 
 	@Autowired
 	private WebClient webClient;
@@ -218,7 +223,7 @@ class HtmlUnitTests {
 
 	@Test
 	void darkModeSelected() throws IOException {
-		preferencesService.updatePreferences(true, null, null);
+		preferencesService.updatePreferences(USER, true, null, null);
 		var page = getIndex();
 		var body = page.<HtmlElement>querySelector("body");
 
@@ -245,7 +250,7 @@ class HtmlUnitTests {
 
 	@Test
 	void unitSelected() throws IOException {
-		preferencesService.updatePreferences(false, UnitSystem.IMPERIAL, null);
+		preferencesService.updatePreferences(USER, false, UnitSystem.IMPERIAL, null);
 		selectCity("Paris");
 		var page = getIndex();
 
@@ -307,7 +312,7 @@ class HtmlUnitTests {
 
 	@Test
 	void sortSelected() throws IOException {
-		preferencesService.updatePreferences(false, UnitSystem.METRIC, SortOrder.DATE_ADDED);
+		preferencesService.updatePreferences(USER, false, UnitSystem.METRIC, SortOrder.DATE_ADDED);
 		selectCity("Paris");
 		selectCity("Delhi");
 		var page = getIndex();
@@ -318,7 +323,7 @@ class HtmlUnitTests {
 
 	@Test
 	void sortAlphabetical() throws IOException, InterruptedException {
-		preferencesService.updatePreferences(false, UnitSystem.METRIC, SortOrder.ALPHABETICAL);
+		preferencesService.updatePreferences(USER, false, UnitSystem.METRIC, SortOrder.ALPHABETICAL);
 		selectCity("Paris");
 		Thread.sleep(Duration.ofMillis(10));
 		selectCity("Delhi");
@@ -330,7 +335,7 @@ class HtmlUnitTests {
 
 	private void selectCity(String name) {
 		var city = cityRepository.findByNameIgnoreCase(name).get();
-		cityService.addCityById(city.getId());
+		cityService.addCityById(USER, city.getId());
 	}
 
 	private HtmlPage getIndex() throws IOException {

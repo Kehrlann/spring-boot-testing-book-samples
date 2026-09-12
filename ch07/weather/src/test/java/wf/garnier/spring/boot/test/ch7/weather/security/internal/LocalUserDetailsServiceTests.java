@@ -1,8 +1,9 @@
-package wf.garnier.spring.boot.test.ch7.weather.security;
+package wf.garnier.spring.boot.test.ch7.weather.security.internal;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import wf.garnier.spring.boot.test.ch7.weather.security.Email;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,7 +21,7 @@ class LocalUserDetailsServiceTests {
 		var alice = service.loadUserByUsername("alice");
 
 		assertThat(alice.getUsername()).isEqualTo("alice");
-		assertThat(alice.getUserEmail()).isEqualTo(new Email("alice@example.com"));
+		assertThat(alice.getEmail()).isEqualTo(new Email("alice@example.com"));
 		assertThat(alice.getAuthorities()).map(GrantedAuthority::getAuthority).containsExactly("ROLE_USER");
 		assertThat(alice.getPassword()).isEqualTo("{noop}secret");
 	}

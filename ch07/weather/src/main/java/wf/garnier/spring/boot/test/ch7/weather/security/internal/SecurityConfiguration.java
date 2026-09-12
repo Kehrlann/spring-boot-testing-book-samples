@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch7.weather.security;
+package wf.garnier.spring.boot.test.ch7.weather.security.internal;
 
 import java.util.List;
 
@@ -21,6 +21,8 @@ class SecurityConfiguration {
 			.logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll())
 			// Store the CSRF token in a cookie, which the JavaScript
 			// frontend reads and sends back in the X-XSRF-TOKEN header.
+			// See:
+			// https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html#csrf-integration-javascript-spa
 			.csrf(CsrfConfigurer::spa)
 			.build();
 	}

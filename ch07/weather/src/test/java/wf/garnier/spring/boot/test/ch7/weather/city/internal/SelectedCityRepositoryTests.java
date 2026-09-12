@@ -5,20 +5,19 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.test.annotation.Commit;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class SelectedCityRepositoryTests {
+
+	private static final UserId ALICE = new UserId("alice");
+
+	private static final UserId BOB = new UserId("bob");
 
 	@Autowired
 	private SelectedCityRepository selectedCityRepository;
@@ -43,18 +42,19 @@ class SelectedCityRepositoryTests {
 
 	@Test
 	void unselectedCities() {
-		selectedCityRepository.save(new SelectedCity(tokyo));
+		selectedCityRepository.save(new SelectedCity(ALICE, tokyo));
 
-		List<CityEntity> unselectedCities = selectedCityRepository.findUnselectedCities();
+		List<CityEntity> unselectedCities = selectedCityRepository.findUnselectedCities(ALICE);
 
 		assertThat(unselectedCities).doesNotContain(tokyo).contains(jakarta, paris);
 	}
 
 	@Test
 	void unselectedCitiesByName() {
-		selectedCityRepository.save(new SelectedCity(jakarta));
+		selectedCityRepository.save(new SelectedCity(ALICE, jakarta));
 
-		List<CityEntity> unselectedCities = selectedCityRepository.findUnselectedFilteredByCityNameIgnoringCase("jak");
+		List<CityEntity> unselectedCities = selectedCityRepository.findUnselectedFilteredByCityNameIgnoringCase(ALICE,
+				"jak");
 
 		assertThat(unselectedCities).doesNotContain(jakarta)
 			.map(CityEntity::getName)
@@ -63,91 +63,70 @@ class SelectedCityRepositoryTests {
 
 	@Test
 	void shouldDeleteByCityId() {
-		selectedCityRepository.save(new SelectedCity(tokyo));
-		selectedCityRepository.save(new SelectedCity(jakarta));
+		selectedCityRepository.save(new SelectedCity(ALICE, tokyo));
+		selectedCityRepository.save(new SelectedCity(ALICE, jakarta));
 
-		selectedCityRepository.deleteByCityId(tokyo.getId());
+		selectedCityRepository.deleteByUserAndCityId(ALICE, tokyo.getId());
 
 		assertThat(selectedCityRepository.findAll()).hasSize(1);
-		assertThat(selectedCityRepository.findByCity(tokyo)).isEmpty();
-		assertThat(selectedCityRepository.findByCity(jakarta)).isPresent();
+		assertThat(selectedCityRepository.findByUserAndCity(ALICE, tokyo)).isEmpty();
+		assertThat(selectedCityRepository.findByUserAndCity(ALICE, jakarta)).isPresent();
 	}
 
 	@Test
 	void deleteCityByName() {
-		selectedCityRepository.save(new SelectedCity(tokyo));
-		selectedCityRepository.save(new SelectedCity(jakarta));
+		selectedCityRepository.save(new SelectedCity(ALICE, tokyo));
+		selectedCityRepository.save(new SelectedCity(ALICE, jakarta));
 
-		selectedCityRepository.deleteByCityName("Tokyo");
+		selectedCityRepository.deleteByUserAndCityName(ALICE, "Tokyo");
 
 		assertThat(selectedCityRepository.findAll()).hasSize(1);
-		assertThat(selectedCityRepository.findByCity(tokyo)).isEmpty();
-		assertThat(selectedCityRepository.findByCity(jakarta)).isPresent();
+		assertThat(selectedCityRepository.findByUserAndCity(ALICE, tokyo)).isEmpty();
+		assertThat(selectedCityRepository.findByUserAndCity(ALICE, jakarta)).isPresent();
 	}
 
 	@Test
 	void findByCity() {
-		selectedCityRepository.save(new SelectedCity(tokyo));
+		selectedCityRepository.save(new SelectedCity(ALICE, tokyo));
 
-		Optional<SelectedCity> result = selectedCityRepository.findByCity(tokyo);
+		Optional<SelectedCity> result = selectedCityRepository.findByUserAndCity(ALICE, tokyo);
 
 		assertThat(result).map(SelectedCity::getCity).get().isEqualTo(tokyo);
 	}
 
 	@Test
 	void orderByDateAddedAsc() {
-		SelectedCity selectedTokyo = new SelectedCity(tokyo);
+		SelectedCity selectedTokyo = new SelectedCity(ALICE, tokyo);
 		selectedTokyo.setDateAdded(Instant.now().minusSeconds(10));
 		selectedCityRepository.save(selectedTokyo);
 
-		SelectedCity selectedJakarta = new SelectedCity(jakarta);
+		SelectedCity selectedJakarta = new SelectedCity(ALICE, jakarta);
 		selectedJakarta.setDateAdded(Instant.now());
 		selectedCityRepository.save(selectedJakarta);
 
-		List<SelectedCity> results = selectedCityRepository.findAllByOrderByDateAddedAsc();
+		List<SelectedCity> results = selectedCityRepository.findAllByUserOrderByDateAddedAsc(ALICE);
 
 		assertThat(results).hasSize(2).map(SelectedCity::getCity).containsExactly(tokyo, jakarta);
 	}
 
-	/**
-	 * Demonstrates the default transactional rollback behavior of {@link DataJpaTest} and
-	 * how to override it using the {@link Commit} annotation. By default, tests are
-	 * wrapped in a transaction that is rolled back after execution. The {@code @Commit}
-	 * annotation forces the transaction to commit instead.
-	 */
-	@Nested
-	@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-	class TransactionTests {
+	@Test
+	void selectionsAreScopedToTheirOwner() {
+		selectedCityRepository.save(new SelectedCity(ALICE, tokyo));
+		selectedCityRepository.save(new SelectedCity(BOB, jakarta));
 
-		@Test
-		@Order(1)
-		void notCommitted() {
-			cityRepository.save(new CityEntity("Test City", "Test Country", 0, 0));
+		assertThat(selectedCityRepository.findAllByUserOrderByDateAddedAsc(ALICE)).map(SelectedCity::getCity)
+			.containsExactly(tokyo);
+		assertThat(selectedCityRepository.findUnselectedCities(ALICE)).doesNotContain(tokyo).contains(jakarta);
+		assertThat(selectedCityRepository.findUnselectedCities(BOB)).doesNotContain(jakarta).contains(tokyo);
+	}
 
-			assertThat(cityRepository.findByNameIgnoreCase("test city")).isPresent();
-		}
+	@Test
+	void sameCityCanBeSelectedByTwoUsers() {
+		selectedCityRepository.save(new SelectedCity(ALICE, tokyo));
+		selectedCityRepository.save(new SelectedCity(BOB, tokyo));
 
-		@Test
-		@Order(2)
-		void noTestCity() {
-			assertThat(cityRepository.findByNameIgnoreCase("test city")).isEmpty();
-		}
-
-		@Test
-		@Commit
-		@Order(3)
-		void committed() {
-			cityRepository.save(new CityEntity("Test City", "Test Country", 0, 0));
-
-			assertThat(cityRepository.findByNameIgnoreCase("test city")).isPresent();
-		}
-
-		@Test
-		@Order(4)
-		void hasTestCity() {
-			assertThat(cityRepository.findByNameIgnoreCase("test city")).isPresent();
-		}
-
+		assertThat(selectedCityRepository.findByUserAndCity(ALICE, tokyo)).isPresent();
+		assertThat(selectedCityRepository.findByUserAndCity(BOB, tokyo)).isPresent();
 	}
 
 }

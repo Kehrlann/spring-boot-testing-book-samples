@@ -2,14 +2,18 @@ package wf.garnier.spring.boot.test.ch7.weather.city.internal;
 
 import java.time.Instant;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 
 @Entity
 @Table(name = "preferred_city")
@@ -19,7 +23,14 @@ public class SelectedCity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@OneToOne(fetch = FetchType.EAGER)
+	/**
+	 * The user this selection belongs to.
+	 */
+	@Embedded
+	@AttributeOverride(name = "value", column = @Column(name = "user_id", nullable = false))
+	private UserId user;
+
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "city_id", nullable = false)
 	private CityEntity city;
 
@@ -29,13 +40,18 @@ public class SelectedCity {
 	protected SelectedCity() {
 	}
 
-	public SelectedCity(CityEntity city) {
+	public SelectedCity(UserId user, CityEntity city) {
+		this.user = user;
 		this.city = city;
 		this.dateAdded = Instant.now();
 	}
 
 	public Long getId() {
 		return id;
+	}
+
+	public UserId getUser() {
+		return user;
 	}
 
 	public CityEntity getCity() {
@@ -52,7 +68,7 @@ public class SelectedCity {
 
 	@Override
 	public String toString() {
-		return "Selection{" + "city=" + city.getName() + '}';
+		return "Selection{" + "owner=" + user + ", city=" + city.getName() + '}';
 	}
 
 }

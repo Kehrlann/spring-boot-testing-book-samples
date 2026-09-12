@@ -10,6 +10,7 @@ import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import wf.garnier.spring.boot.test.ch7.weather.city.City;
 import wf.garnier.spring.boot.test.ch7.weather.city.CityService;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 import wf.garnier.spring.boot.test.ch7.weather.weather.internal.WeatherDataService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,15 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.data.Percentage.withPercentage;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 @ApplicationModuleTest
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(username = "test-user")
 class WeatherApiTests {
+
+	public static final String USER_NAME = "test-user";
 
 	@Autowired
 	MockMvcTester mvc;
@@ -41,7 +45,7 @@ class WeatherApiTests {
 	@Test
 	void getWeather() {
 		var paris = new TestCity("Paris", "France");
-		doReturn(List.of(paris)).when(cityService).getSelectedCities();
+		doReturn(List.of(paris)).when(cityService).getSelectedCities(new UserId("test-user"));
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
@@ -70,7 +74,7 @@ class WeatherApiTests {
 	@Test
 	void getWeatherAlternate() {
 		var paris = new TestCity("Paris", "France");
-		doReturn(List.of(paris)).when(cityService).getSelectedCities();
+		doReturn(List.of(paris)).when(cityService).getSelectedCities(new UserId("test-user"));
 
 		var response = mvc.get().uri("/api/weather").exchange();
 
@@ -94,7 +98,7 @@ class WeatherApiTests {
 		var shenzhen = new TestCity("Shenzhen", "China");
 		((TestWeatherDataService) weatherDataService).setWeatherFor(lagos, new WeatherData(25, 0, 0));
 		((TestWeatherDataService) weatherDataService).setWeatherFor(shenzhen, new WeatherData(17, 5, 1));
-		doReturn(List.of(lagos, shenzhen)).when(cityService).getSelectedCities();
+		doReturn(List.of(lagos, shenzhen)).when(cityService).getSelectedCities(new UserId("test-user"));
 
 		var response = mvc.get().uri("/api/weather").exchange();
 

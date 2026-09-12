@@ -4,7 +4,9 @@ import wf.garnier.spring.boot.test.ch7.weather.preferences.Preferences;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.PreferencesService;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.UnitSystem;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,15 +27,16 @@ class PreferencesController {
 	}
 
 	@GetMapping
-	public PresentationPreferences getPreferences() {
-		return new PresentationPreferences(preferencesService.getPreferences(),
+	public PresentationPreferences getPreferences(Authentication authentication) {
+		return new PresentationPreferences(preferencesService.getPreferences(UserId.of(authentication)),
 				preferencesProperties.getTemperatureThreshold());
 	}
 
 	@PutMapping
-	public PresentationPreferences updatePreferences(@RequestBody PreferencesUpdateRequest request) {
-		return new PresentationPreferences(
-				preferencesService.updatePreferences(request.darkMode(), request.units(), request.sortBy()),
+	public PresentationPreferences updatePreferences(Authentication authentication,
+			@RequestBody PreferencesUpdateRequest request) {
+		return new PresentationPreferences(preferencesService.updatePreferences(UserId.of(authentication),
+				request.darkMode(), request.units(), request.sortBy()),
 				preferencesProperties.getTemperatureThreshold());
 	}
 

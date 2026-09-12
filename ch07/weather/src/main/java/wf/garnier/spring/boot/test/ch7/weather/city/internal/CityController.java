@@ -3,8 +3,10 @@ package wf.garnier.spring.boot.test.ch7.weather.city.internal;
 import java.util.List;
 
 import wf.garnier.spring.boot.test.ch7.weather.city.CityService;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,20 +28,21 @@ public class CityController {
 
 	@GetMapping(value = "/api/city")
 	@ResponseBody
-	public List<CityEntity> searchCities(@RequestParam(name = "q", required = true) String name) {
-		return cityService.searchUnselectedCities(name);
+	public List<CityEntity> searchCities(Authentication authentication,
+			@RequestParam(name = "q", required = true) String name) {
+		return cityService.searchUnselectedCities(UserId.of(authentication), name);
 	}
 
 	@PostMapping(value = "/api/city")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void addCityApi(@RequestBody CityRequest req) {
-		cityService.addCityById(req.id());
+	public void addCityApi(Authentication authentication, @RequestBody CityRequest req) {
+		cityService.addCityById(UserId.of(authentication), req.id());
 	}
 
 	@DeleteMapping(value = "/api/city/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteCity(@PathVariable Long id) {
-		cityService.unselectCityById(id);
+	public void deleteCity(Authentication authentication, @PathVariable Long id) {
+		cityService.unselectCityById(UserId.of(authentication), id);
 	}
 
 	public record CityRequest(long id) {

@@ -1,8 +1,10 @@
-package wf.garnier.spring.boot.test.ch7.weather.security;
+package wf.garnier.spring.boot.test.ch7.weather.security.internal;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import wf.garnier.spring.boot.test.ch7.weather.security.Email;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 
 import org.springframework.security.core.GrantedAuthority;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +19,8 @@ class LocalUserTests {
 		assertThat(user.getAuthorities()).extracting(GrantedAuthority::getAuthority)
 			.containsExactlyInAnyOrder("ROLE_USER", "ROLE_ADMIN");
 		assertThat(user.getRoles()).containsExactlyInAnyOrder("USER", "ADMIN");
-		assertThat(user.getUserEmail()).isEqualTo(new Email("alice@example.com"));
+		assertThat(user.getEmail()).isEqualTo(new Email("alice@example.com"));
+		assertThat(user.getId()).isEqualTo(new UserId("alice@example.com"));
 	}
 
 	@Test
@@ -52,7 +55,7 @@ class LocalUserTests {
 		var copy = new LocalUser(original);
 
 		assertThat(copy.getPassword()).isEqualTo(original.getPassword());
-		assertThat(copy.getUserEmail()).isEqualTo(original.getUserEmail());
+		assertThat(copy.getEmail()).isEqualTo(original.getEmail());
 		assertThat(copy.getAuthorities()).isEqualTo(original.getAuthorities());
 	}
 

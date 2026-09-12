@@ -6,6 +6,7 @@ import wf.garnier.spring.boot.test.ch7.weather.city.internal.CityEntity;
 import wf.garnier.spring.boot.test.ch7.weather.city.internal.CityRepository;
 import wf.garnier.spring.boot.test.ch7.weather.city.internal.SelectedCity;
 import wf.garnier.spring.boot.test.ch7.weather.city.internal.SelectedCityRepository;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,25 +23,28 @@ public class CityService {
 		this.cityRepository = cityRepository;
 	}
 
-	public List<CityEntity> searchUnselectedCities(String name) {
-		return selectedCityRepository.findUnselectedFilteredByCityNameIgnoringCase(name);
+	public List<CityEntity> searchUnselectedCities(UserId owner, String name) {
+		return selectedCityRepository.findUnselectedFilteredByCityNameIgnoringCase(owner, name);
 	}
 
-	public void addCityById(long cityId) {
+	public void addCityById(UserId owner, long cityId) {
 		var city = cityRepository.findById(cityId).orElseThrow(() -> new CityNotFoundException(cityId));
-		if (selectedCityRepository.findByCity(city).isPresent()) {
+		if (selectedCityRepository.findByUserAndCity(owner, city).isPresent()) {
 			throw new CityAlreadySelectedException(cityId);
 		}
-		selectedCityRepository.save(new SelectedCity(city));
+		selectedCityRepository.save(new SelectedCity(owner, city));
 	}
 
 	@Transactional
-	public void unselectCityById(long id) {
-		selectedCityRepository.deleteByCityId(id);
+	public void unselectCityById(UserId owner, long id) {
+		selectedCityRepository.deleteByUserAndCityId(owner, id);
 	}
 
-	public List<? extends City> getSelectedCities() {
-		return selectedCityRepository.findAllByOrderByDateAddedAsc().stream().map(SelectedCity::getCity).toList();
+	public List<? extends City> getSelectedCities(UserId owner) {
+		return selectedCityRepository.findAllByUserOrderByDateAddedAsc(owner)
+			.stream()
+			.map(SelectedCity::getCity)
+			.toList();
 	}
 
 }

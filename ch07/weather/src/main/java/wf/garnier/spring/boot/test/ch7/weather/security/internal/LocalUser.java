@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch7.weather.security;
+package wf.garnier.spring.boot.test.ch7.weather.security.internal;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -6,12 +6,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import wf.garnier.spring.boot.test.ch7.weather.security.Email;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
+import wf.garnier.spring.boot.test.ch7.weather.security.WeatherUser;
+
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class LocalUser implements EmailUser, UserDetails, CredentialsContainer, Serializable {
+public class LocalUser implements WeatherUser, UserDetails, CredentialsContainer, Serializable {
 
 	private final String username;
 
@@ -33,7 +37,7 @@ public class LocalUser implements EmailUser, UserDetails, CredentialsContainer, 
 	LocalUser(LocalUser other) {
 		this.username = other.getUsername();
 		this.password = other.getPassword().replace("{noop}", "");
-		this.email = other.getUserEmail();
+		this.email = other.getEmail();
 		this.authorities = other.getAuthorities();
 	}
 
@@ -63,7 +67,13 @@ public class LocalUser implements EmailUser, UserDetails, CredentialsContainer, 
 		this.password = null;
 	}
 
-	public Email getUserEmail() {
+	@Override
+	public UserId getId() {
+		return new UserId(this.email.toString());
+	}
+
+	@Override
+	public Email getEmail() {
 		return this.email;
 	}
 
@@ -95,7 +105,7 @@ public class LocalUser implements EmailUser, UserDetails, CredentialsContainer, 
 
 	@Override
 	public String toString() {
-		return "DemoUser{" + "username='" + username + "'" + ", email=" + email + ", authorities=" + authorities + "}";
+		return "LocalUser{" + "username='" + username + "'" + ", email=" + email + ", authorities=" + authorities + "}";
 	}
 
 }

@@ -1,4 +1,4 @@
-package wf.garnier.spring.boot.test.ch7.weather.security;
+package wf.garnier.spring.boot.test.ch7.weather.security.internal;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.web.csrf.CsrfToken;

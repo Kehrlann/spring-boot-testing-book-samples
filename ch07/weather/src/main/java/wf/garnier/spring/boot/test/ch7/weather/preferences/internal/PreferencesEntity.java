@@ -1,5 +1,8 @@
 package wf.garnier.spring.boot.test.ch7.weather.preferences.internal;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,6 +13,7 @@ import jakarta.persistence.Table;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.Preferences;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.UnitSystem;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 
 @Entity
 @Table(name = "preferences")
@@ -18,6 +22,10 @@ public class PreferencesEntity implements Preferences {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Embedded
+	@AttributeOverride(name = "value", column = @Column(name = "user_id", nullable = false))
+	private UserId owner;
 
 	private boolean darkMode;
 
@@ -30,7 +38,8 @@ public class PreferencesEntity implements Preferences {
 	public PreferencesEntity() {
 	}
 
-	public PreferencesEntity(boolean darkMode, UnitSystem units, SortOrder sortBy) {
+	public PreferencesEntity(UserId owner, boolean darkMode, UnitSystem units, SortOrder sortBy) {
+		this.owner = owner;
 		this.darkMode = darkMode;
 		this.units = units;
 		this.sortBy = sortBy;
@@ -43,6 +52,10 @@ public class PreferencesEntity implements Preferences {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public UserId getOwner() {
+		return owner;
 	}
 
 	@Override

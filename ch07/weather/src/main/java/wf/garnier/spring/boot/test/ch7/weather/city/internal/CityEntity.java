@@ -1,13 +1,13 @@
 package wf.garnier.spring.boot.test.ch7.weather.city.internal;
 
+import java.util.Objects;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import wf.garnier.spring.boot.test.ch7.weather.city.City;
-
-import java.util.Objects;
 
 @Entity
 @Table(name = "city")

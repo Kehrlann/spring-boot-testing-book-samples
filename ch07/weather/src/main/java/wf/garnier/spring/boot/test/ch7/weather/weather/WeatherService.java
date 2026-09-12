@@ -3,6 +3,7 @@ package wf.garnier.spring.boot.test.ch7.weather.weather;
 import java.util.List;
 
 import wf.garnier.spring.boot.test.ch7.weather.city.CityService;
+import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 import wf.garnier.spring.boot.test.ch7.weather.weather.internal.CityWeather;
 import wf.garnier.spring.boot.test.ch7.weather.weather.internal.WeatherDataService;
 
@@ -20,9 +21,9 @@ public class WeatherService {
 		this.cityService = cityService;
 	}
 
-	public List<CityWeather> getWeatherInSelectedCities() {
+	public List<CityWeather> getWeatherInSelectedCities(UserId owner) {
 		//@formatter:off
-        return cityService.getSelectedCities()
+        return cityService.getSelectedCities(owner)
                 .stream()
                 .map(city -> {
                     var weatherData = weatherDataService.getCurrentWeather(city.getLatitude(), city.getLongitude());
