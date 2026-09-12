@@ -27,6 +27,14 @@ function loadWeather() {
   return fetch("/api/weather").then((response) => response.json());
 }
 
+function loadMe() {
+  return fetch("/api/me")
+    .then((response) => response.json())
+    .then((me) => {
+      document.getElementById("welcome-message").textContent = `Hello, ${me.username}!`;
+    });
+}
+
 function renderCity(cityWeather) {
   const isImperial = document.getElementById("unitToggle").checked;
   let tempDisplay = cityWeather.temperature;
@@ -357,6 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("sortSelect").addEventListener("change", updatePreferences);
 
   // Load weather data and preferences on page load
+  loadMe();
   loadPreferences().then(() => {
     refreshCities();
   });
