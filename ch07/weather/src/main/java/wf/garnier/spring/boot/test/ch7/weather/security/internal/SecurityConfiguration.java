@@ -29,8 +29,14 @@ class SecurityConfiguration {
 
 	@Bean
 	LocalUserDetailsService localUserDetailsService() {
-		return new LocalUserDetailsService(new LocalUser("alice", "pw", "alice@example.com", List.of("USER", "ADMIN")),
-				new LocalUser("bob", "pw", "bob@example.com", List.of("USER")));
+		//@formatter:off
+		return new LocalUserDetailsService(
+				new LocalUser("alice", "pw", "alice@example.com", List.of("USER", "ADMIN")),
+				new LocalUser("bob", "pw", "bob@example.com", List.of("USER")),
+				new LocalUser("carol", "pw", "carol@example.com", List.of("USER")),
+				new LocalUser("daniel", "pw", "daniel@example.com", List.of("USER"))
+			);
+		//@formatter:on
 	}
 
 }
