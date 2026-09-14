@@ -1,0 +1,5 @@
+spring:
+  docker:
+    compose:
+      file: classpath:/compose.yaml
+      enabled: true
