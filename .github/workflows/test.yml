@@ -43,3 +43,7 @@ jobs:
             run: |
               cd ch06/weather
               mvn --batch-mode test
+          - name: Chapter 7
+            run: |
+              cd ch07/weather
+              mvn --batch-mode test
