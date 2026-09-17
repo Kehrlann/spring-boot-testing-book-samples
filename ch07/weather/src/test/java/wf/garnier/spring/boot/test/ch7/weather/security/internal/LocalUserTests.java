@@ -19,7 +19,7 @@ class LocalUserTests {
 		assertThat(user.getAuthorities()).extracting(GrantedAuthority::getAuthority)
 			.containsExactlyInAnyOrder("ROLE_USER", "ROLE_ADMIN");
 		assertThat(user.getRoles()).containsExactlyInAnyOrder("USER", "ADMIN");
-		assertThat(user.getEmail()).isEqualTo(new Email("alice@example.com"));
+		assertThat(user.getUserEmail()).isEqualTo(new Email("alice@example.com"));
 		assertThat(user.getId()).isEqualTo(new UserId("alice@example.com"));
 	}
 
@@ -55,7 +55,7 @@ class LocalUserTests {
 		var copy = new LocalUser(original);
 
 		assertThat(copy.getPassword()).isEqualTo(original.getPassword());
-		assertThat(copy.getEmail()).isEqualTo(original.getEmail());
+		assertThat(copy.getUserEmail()).isEqualTo(original.getUserEmail());
 		assertThat(copy.getAuthorities()).isEqualTo(original.getAuthorities());
 	}
 

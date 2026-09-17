@@ -18,7 +18,7 @@ class UserServiceTests {
 	@Test
 	void findById() {
 		assertThat(userService.findById(ALICE)).get()
-			.extracting(WeatherUser::getUsername, WeatherUser::getEmail)
+			.extracting(WeatherUser::getUsername, WeatherUser::getUserEmail)
 			.containsExactly("alice", new Email("alice@example.com"));
 	}
 

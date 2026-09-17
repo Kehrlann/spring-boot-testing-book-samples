@@ -1,5 +1,7 @@
 package wf.garnier.spring.boot.test.ch7.weather.security;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A user of the application, as seen by other modules. Notably, this exposes neither
  * credentials nor Spring Security types: the {@code UserDetails} implementation stays
@@ -11,6 +13,6 @@ public interface WeatherUser {
 
 	String getUsername();
 
-	Email getEmail();
+	@Nullable Email getUserEmail();
 
 }

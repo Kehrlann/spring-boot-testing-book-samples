@@ -1,6 +1,13 @@
 package wf.garnier.spring.boot.test.ch7.weather.security.internal;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +39,7 @@ class LoginController {
 			    <input type="password" id="password" name="password" required>
 			    <input type="hidden" name="%s" value="%s">
 			    <button type="submit">Sign in</button>
-			</form>
+			%s</form>
 			</body>
 			</html>
 			""";
@@ -45,6 +52,28 @@ class LoginController {
 			    <p class="message message-logout">You have been signed out.</p>
 			""";
 
+	/**
+	 * Link starting the {@code authorization_code} flow. Spring Security exposes one such
+	 * endpoint per client registration.
+	 */
+	private static final String OAUTH2_LINK = """
+			    <p class="login-separator">or</p>
+			    <a class="login-oauth2" href="/oauth2/authorization/%s">Sign in with %s</a>
+			""";
+
+	private final List<ClientRegistration> clientRegistrations;
+
+	/**
+	 * The {@code ClientRegistrationRepository} is only present when an OAuth2 client is
+	 * configured, which is why it is injected through an {@link ObjectProvider}. When
+	 * there is none, the page only offers the username and password form.
+	 */
+	LoginController(ObjectProvider<InMemoryClientRegistrationRepository> clientRegistrationRepository) {
+		var registrations = new ArrayList<ClientRegistration>();
+		clientRegistrationRepository.ifAvailable(repository -> repository.forEach(registrations::add));
+		this.clientRegistrations = List.copyOf(registrations);
+	}
+
 	@GetMapping(value = "/login", produces = MediaType.TEXT_HTML_VALUE)
 	@ResponseBody
 	String login(CsrfToken csrfToken, @RequestParam(required = false) String error,
@@ -56,7 +85,10 @@ class LoginController {
 		else if (logout != null) {
 			message = LOGOUT_MESSAGE;
 		}
-		return PAGE.formatted(message, csrfToken.getParameterName(), csrfToken.getToken());
+		var oauth2Logins = this.clientRegistrations.stream()
+			.map(registration -> OAUTH2_LINK.formatted(registration.getRegistrationId(), registration.getClientName()))
+			.collect(Collectors.joining());
+		return PAGE.formatted(message, csrfToken.getParameterName(), csrfToken.getToken(), oauth2Logins);
 	}
 
 }

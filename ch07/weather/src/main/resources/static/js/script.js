@@ -31,7 +31,7 @@ function loadMe() {
   return fetch("/api/me")
     .then((response) => response.json())
     .then((me) => {
-      document.getElementById("welcome-message").textContent = `Hello, ${me.username}!`;
+      document.getElementById("welcome-message").textContent = `Hello, ${me.username} (${me.email})!`;
     });
 }
 

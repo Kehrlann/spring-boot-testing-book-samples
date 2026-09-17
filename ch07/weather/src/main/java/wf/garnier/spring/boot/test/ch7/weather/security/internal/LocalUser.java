@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.jspecify.annotations.Nullable;
 import wf.garnier.spring.boot.test.ch7.weather.security.Email;
 import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 import wf.garnier.spring.boot.test.ch7.weather.security.WeatherUser;
@@ -37,7 +38,7 @@ public class LocalUser implements WeatherUser, UserDetails, CredentialsContainer
 	LocalUser(LocalUser other) {
 		this.username = other.getUsername();
 		this.password = other.getPassword().replace("{noop}", "");
-		this.email = other.getEmail();
+		this.email = other.getUserEmail();
 		this.authorities = other.getAuthorities();
 	}
 
@@ -73,7 +74,7 @@ public class LocalUser implements WeatherUser, UserDetails, CredentialsContainer
 	}
 
 	@Override
-	public Email getEmail() {
+	public @Nullable Email getUserEmail() {
 		return this.email;
 	}
 

@@ -3,3 +3,21 @@ spring:
     compose:
       file: classpath:/compose.yaml
       enabled: true
+  # Dex, the OpenID Provider, is part of the Docker Compose setup. It is only
+  # available when this profile is active, and so is the OAuth2 login.
+  security:
+    oauth2:
+      client:
+        registration:
+          dex:
+            client-name: Dex
+            client-id: base-client
+            client-secret: base-secret
+            authorization-grant-type: authorization_code
+            scope:
+              - openid
+              - email
+              - profile
+        provider:
+          dex:
+            issuer-uri: http://localhost:5556

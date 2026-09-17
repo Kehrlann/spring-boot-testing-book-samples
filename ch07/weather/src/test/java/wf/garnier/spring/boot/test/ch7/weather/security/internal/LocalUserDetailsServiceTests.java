@@ -21,7 +21,7 @@ class LocalUserDetailsServiceTests {
 		var alice = service.loadUserByUsername("alice");
 
 		assertThat(alice.getUsername()).isEqualTo("alice");
-		assertThat(alice.getEmail()).isEqualTo(new Email("alice@example.com"));
+		assertThat(alice.getUserEmail()).isEqualTo(new Email("alice@example.com"));
 		assertThat(alice.getAuthorities()).map(GrantedAuthority::getAuthority).containsExactly("ROLE_USER");
 		assertThat(alice.getPassword()).isEqualTo("{noop}secret");
 	}
