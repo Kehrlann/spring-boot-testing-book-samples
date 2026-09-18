@@ -12,7 +12,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
- * Trick class to detect whether docker is running on
+ * Trick class to detect whether docker is running on the local machine.
  */
 public class DockerPresentEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
@@ -20,6 +20,13 @@ public class DockerPresentEnvironmentPostProcessor implements EnvironmentPostPro
 
 	@Override
 	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+		// Spring Boot's test framework sets the "main" application class to the test
+		// class, so this is a reliable way to only detect Docker when the application is
+		// actually started, and never in tests.
+		if (!WeatherApplication.class.equals(application.getMainApplicationClass())) {
+			return;
+		}
+
 		boolean dockerRunning = false;
 		try {
 			Process process = new ProcessBuilder("docker", "info").redirectErrorStream(true).start();
