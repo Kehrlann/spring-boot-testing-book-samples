@@ -8,7 +8,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authorization.AuthorizationDecision;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -30,7 +29,7 @@ class SecurityConfiguration {
 				return new AuthorizationDecision(false);
 			});
 		})
-			.formLogin(form -> form.loginPage("/login").permitAll())
+			.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/index.html").permitAll())
 			.logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll())
 			// Store the CSRF token in a cookie, which the JavaScript
 			// frontend reads and sends back in the X-XSRF-TOKEN header.

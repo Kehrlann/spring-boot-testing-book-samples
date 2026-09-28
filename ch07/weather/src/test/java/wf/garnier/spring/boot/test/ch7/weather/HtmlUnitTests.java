@@ -87,6 +87,34 @@ class HtmlUnitTests {
 	}
 
 	@Test
+	void logoutLogin() throws IOException {
+		var page = getIndex();
+		assertThat(page.getElementById("welcome-message").getTextContent())
+			.isEqualTo("Hello, alice (alice@example.com)!");
+
+		page.<HtmlButton>querySelector("#logoutButton").click();
+		webClient.waitForBackgroundJavaScript(1000);
+
+		var currentUrl = page.getEnclosingWindow().getEnclosedPage().getUrl();
+		assertThat(currentUrl).hasPath("/login").hasQuery("logout");
+		page = webClient.getPage(currentUrl);
+		webClient.waitForBackgroundJavaScript(1000);
+
+		assertThat(page.getUrl()).hasPath("/login");
+		page.<HtmlInput>querySelector("#username").type("bob");
+		page.<HtmlInput>querySelector("#password").type("pw");
+		page.<HtmlButton>querySelector("button[type=\"submit\"]").click();
+		webClient.waitForBackgroundJavaScript(1000);
+
+		currentUrl = page.getEnclosingWindow().getEnclosedPage().getUrl();
+		assertThat(currentUrl).hasPath("/index.html");
+		page = webClient.getPage(currentUrl);
+		webClient.waitForBackgroundJavaScript(1000);
+
+		assertThat(page.getElementById("welcome-message").getTextContent()).isEqualTo("Hello, bob (bob@example.com)!");
+	}
+
+	@Test
 	void mainPage() throws IOException {
 		selectCity("Paris");
 		var page = getIndex();
