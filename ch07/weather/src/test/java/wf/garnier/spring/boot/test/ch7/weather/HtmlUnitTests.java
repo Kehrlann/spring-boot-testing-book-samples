@@ -28,7 +28,8 @@ import wf.garnier.spring.boot.test.ch7.weather.weather.internal.WeatherDataServi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -38,10 +39,10 @@ import static wf.garnier.spring.boot.test.ch7.weather.HtmlUnitTests.USER_NAME;
 @SpringBootTest(
 		properties = { "preferences.temperature-threshold.cold=10", "preferences.temperature-threshold.hot=25" })
 @AutoConfigureMockMvc
-@WithMockUser(username = USER_NAME)
+@WithUserDetails(USER_NAME)
 class HtmlUnitTests {
 
-	public static final String USER_NAME = "test-user";
+	public static final String USER_NAME = "alice";
 
 	private static final UserId USER = new UserId(USER_NAME);
 
@@ -78,6 +79,14 @@ class HtmlUnitTests {
 	}
 
 	@Test
+	@WithAnonymousUser
+	void notLoggedIn() throws IOException {
+		var page = getIndex();
+
+		assertThat(page.getUrl()).hasPath("/login");
+	}
+
+	@Test
 	void mainPage() throws IOException {
 		selectCity("Paris");
 		var page = getIndex();
@@ -92,6 +101,14 @@ class HtmlUnitTests {
 			.contains("Temperature: 20°C")
 			.contains("Wind Speed: 0 km/h")
 			.contains("Weather: Clear sky");
+	}
+
+	@Test
+	@WithUserDetails("bob")
+	void mainPageLocalUser() throws IOException {
+		var page = getIndex();
+
+		assertThat(page.getElementById("welcome-message").getTextContent()).isEqualTo("Hello, bob (bob@example.com)!");
 	}
 
 	@Test

@@ -2,21 +2,28 @@ package wf.garnier.spring.boot.test.ch7.weather;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jspecify.annotations.NonNull;
 
 import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.config.ConfigDataEnvironmentPostProcessor;
+import org.springframework.boot.logging.DeferredLog;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.stereotype.Component;
 
 /**
  * Trick class to detect whether docker is running on the local machine.
  */
-public class DockerPresentEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
+@Component
+public class DockerPresentEnvironmentPostProcessor
+		implements EnvironmentPostProcessor, Ordered, ApplicationListener<ApplicationEvent> {
 
-	private static final Logger log = LoggerFactory.getLogger(DockerPresentEnvironmentPostProcessor.class);
+	// Logging is not available during env post-processing, so we replay logs when the
+	// logging system is online.
+	private static final DeferredLog log = new DeferredLog();
 
 	@Override
 	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
@@ -48,6 +55,11 @@ public class DockerPresentEnvironmentPostProcessor implements EnvironmentPostPro
 	@Override
 	public int getOrder() {
 		return ConfigDataEnvironmentPostProcessor.ORDER - 1;
+	}
+
+	@Override
+	public void onApplicationEvent(@NonNull ApplicationEvent event) {
+		log.replayTo(DockerPresentEnvironmentPostProcessor.class);
 	}
 
 }

@@ -2,9 +2,13 @@ package wf.garnier.spring.boot.test.ch7.weather.security.internal;
 
 import java.util.List;
 
+import wf.garnier.spring.boot.test.ch7.weather.security.WeatherUser;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -18,7 +22,13 @@ class SecurityConfiguration {
 			ObjectProvider<ClientRegistrationRepository> clientRegistrationRepository) {
 		http.authorizeHttpRequests(authz -> {
 			authz.requestMatchers("/css/login.css").permitAll();
-			authz.anyRequest().authenticated();
+			authz.anyRequest().access((authnSupplier, reqCtx) -> {
+				var authn = authnSupplier.get();
+				if (authn != null && authn.getPrincipal() instanceof WeatherUser) {
+					return new AuthorizationDecision(authn.isAuthenticated());
+				}
+				return new AuthorizationDecision(false);
+			});
 		})
 			.formLogin(form -> form.loginPage("/login").permitAll())
 			.logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll())
