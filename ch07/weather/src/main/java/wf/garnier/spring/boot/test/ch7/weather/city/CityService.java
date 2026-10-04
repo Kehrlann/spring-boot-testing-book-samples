@@ -1,6 +1,9 @@
 package wf.garnier.spring.boot.test.ch7.weather.city;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import wf.garnier.spring.boot.test.ch7.weather.city.internal.CityEntity;
 import wf.garnier.spring.boot.test.ch7.weather.city.internal.CityRepository;
@@ -8,6 +11,7 @@ import wf.garnier.spring.boot.test.ch7.weather.city.internal.SelectedCity;
 import wf.garnier.spring.boot.test.ch7.weather.city.internal.SelectedCityRepository;
 import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +49,14 @@ public class CityService {
 			.stream()
 			.map(SelectedCity::getCity)
 			.toList();
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	public Map<UserId, List<City>> getSelectedCitiesByUser() {
+		return selectedCityRepository.findAllOrderedByUserAndDateAdded()
+			.stream()
+			.collect(Collectors.groupingBy(SelectedCity::getUser, LinkedHashMap::new,
+					Collectors.mapping(SelectedCity::getCity, Collectors.toList())));
 	}
 
 }

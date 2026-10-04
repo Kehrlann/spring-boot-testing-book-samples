@@ -37,4 +37,10 @@ public interface SelectedCityRepository extends JpaRepository<SelectedCity, Long
 
 	List<SelectedCity> findAllByUserOrderByDateAddedAsc(UserId user);
 
+	@Query("""
+			SELECT s FROM SelectedCity s
+			ORDER BY s.user.value ASC, s.dateAdded ASC
+			""")
+	List<SelectedCity> findAllOrderedByUserAndDateAdded();
+
 }

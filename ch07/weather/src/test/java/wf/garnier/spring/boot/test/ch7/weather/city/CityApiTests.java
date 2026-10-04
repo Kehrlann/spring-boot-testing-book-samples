@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static wf.garnier.spring.boot.test.ch7.weather.city.CityApiTests.USER_NAME;
 
 @ApplicationModuleTest
@@ -120,6 +121,31 @@ class CityApiTests {
 	}
 
 	@Test
+	void selectedCitiesByUser() {
+		selectCityAs(USER_NAME, "Tokyo");
+		selectCityAs(USER_NAME, "Quito");
+		selectCityAs("another-user", "Paris");
+
+		var citiesByUser = cityService.getSelectedCitiesByUser();
+
+		var otherUser = new UserId("another-user");
+		assertThat(citiesByUser.keySet()).containsExactly(otherUser, USER);
+		assertThat(citiesByUser.get(otherUser)).map(City::getName).containsExactly("Paris");
+		assertThat(citiesByUser.get(USER)).map(City::getName).containsExactlyInAnyOrder("Tokyo", "Quito");
+	}
+
+	@Test
+	void selectedCitiesByUserAfterUnselect() {
+		selectCityAs(USER_NAME, "Paris");
+		selectCityAs("another-user", "Paris");
+
+		mvc.delete().uri("/api/city/{id}", paris.getId()).exchange().assertThat().hasStatus(HttpStatus.NO_CONTENT);
+
+		var citiesByUser = cityService.getSelectedCitiesByUser();
+		assertThat(citiesByUser.keySet()).containsExactly(new UserId("another-user"));
+	}
+
+	@Test
 	void cityAutocomplete() {
 		var response = mvc.get().uri("/api/city").queryParam("q", "quito").exchange();
 
@@ -152,6 +178,18 @@ class CityApiTests {
 			return builder -> builder.defaultRequest(MockMvcRequestBuilders.get("/").with(csrf()));
 		}
 
+	}
+
+	private void selectCityAs(String username, String cityName) {
+		var city = cityRepository.findByNameIgnoreCase(cityName).get();
+		mvc.post()
+			.uri("/api/city")
+			.with(user(username))
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("{ \"id\": %s }".formatted(city.getId()))
+			.exchange()
+			.assertThat()
+			.hasStatus(HttpStatus.CREATED);
 	}
 
 	private void selectCity(String name) {

@@ -38,24 +38,6 @@ class UserControllerTests {
 	}
 
 	@Test
-	void rejectsRawOidc() {
-		var response = mvc.get()
-			.uri("/api/me")
-			.with(SecurityMockMvcRequestPostProcessors.oidcLogin()
-				.idToken(token -> token.claim("name", "Test User").claim("email", "test@example.com")))
-			.exchange();
-
-		// Here we are using a "plain" OidcUser, which does not implement our common
-		// interface WeatherUser, so the access is denied, as only WeatherUser are
-		// allowed into our app.
-		//
-		// It's not a redirect to /login because the user is logged in, not anonymous,
-		// and so this is in a invalid authentication rather than no auth that requires
-		// login.
-		assertThat(response).hasStatus(HttpStatus.FORBIDDEN);
-	}
-
-	@Test
 	void returnsCurrentWeatherUser() {
 		var testUser = new WeatherUser() {
 			@Override

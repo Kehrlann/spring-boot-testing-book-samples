@@ -35,9 +35,13 @@ configs:
             - client_credentials
       enablePasswordDB: true
       staticPasswords:
-        - email: "admin@example.com"
-          hash: "$$2a$$10$$UCeEDP4hboxloj5QtyG0iu8QlP4b5uGSpUZysLiuBxJNrNjFXsywC" #pw
-          username: "admin"
+        - email: "user@example.com"
+          hash: "$$2a$$10$$UCeEDP4hboxloj5QtyG0iu8QlP4b5uGSpUZysLiuBxJNrNjFXsywC" # "pw"
+          username: "user"
           userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+        - email: "admin@admin.example.com"
+          hash: "$$2a$$10$$UCeEDP4hboxloj5QtyG0iu8QlP4b5uGSpUZysLiuBxJNrNjFXsywC" # "pw"
+          username: "admin"
+          userID: "2fdffc83-fe4c-401e-b8d0-86368f271320"
       oauth2:
         skipApprovalScreen: true

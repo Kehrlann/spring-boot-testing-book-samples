@@ -11,6 +11,7 @@ import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @DataJpaTest
 class SelectedCityRepositoryTests {
@@ -107,6 +108,22 @@ class SelectedCityRepositoryTests {
 		List<SelectedCity> results = selectedCityRepository.findAllByUserOrderByDateAddedAsc(ALICE);
 
 		assertThat(results).hasSize(2).map(SelectedCity::getCity).containsExactly(tokyo, jakarta);
+	}
+
+	@Test
+	void allSelectionsOrderedByUserThenDateAdded() {
+		selectedCityRepository.save(new SelectedCity(BOB, tokyo));
+		SelectedCity aliceJakarta = new SelectedCity(ALICE, jakarta);
+		aliceJakarta.setDateAdded(Instant.now());
+		selectedCityRepository.save(aliceJakarta);
+		SelectedCity aliceParis = new SelectedCity(ALICE, paris);
+		aliceParis.setDateAdded(Instant.now().minusSeconds(10));
+		selectedCityRepository.save(aliceParis);
+
+		List<SelectedCity> results = selectedCityRepository.findAllOrderedByUserAndDateAdded();
+
+		assertThat(results).extracting(SelectedCity::getUser, SelectedCity::getCity)
+			.containsExactly(tuple(ALICE, paris), tuple(ALICE, jakarta), tuple(BOB, tokyo));
 	}
 
 	@Test

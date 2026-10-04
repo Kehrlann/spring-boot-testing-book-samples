@@ -22,6 +22,7 @@ import wf.garnier.spring.boot.test.ch7.weather.preferences.SortOrder;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.UnitSystem;
 import wf.garnier.spring.boot.test.ch7.weather.preferences.internal.PreferencesRepository;
 import wf.garnier.spring.boot.test.ch7.weather.security.UserId;
+import wf.garnier.spring.boot.test.ch7.weather.security.WeatherUser;
 import wf.garnier.spring.boot.test.ch7.weather.weather.WeatherData;
 import wf.garnier.spring.boot.test.ch7.weather.weather.internal.WeatherDataService;
 
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,8 +38,13 @@ import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 import static wf.garnier.spring.boot.test.ch7.weather.HtmlUnitTests.USER_NAME;
 
-@SpringBootTest(
-		properties = { "preferences.temperature-threshold.cold=10", "preferences.temperature-threshold.hot=25" })
+/**
+ * This class needs to use {@link WithUserDetails} in general, because city selection is
+ * per-user, and each user is represented as a {@link WeatherUser}.
+ */
+@SpringBootTest(properties = { """
+		preferences.temperature-threshold.cold=10
+		preferences.temperature-threshold.hot=25""" })
 @AutoConfigureMockMvc
 @WithUserDetails(USER_NAME)
 class HtmlUnitTests {
@@ -140,6 +147,7 @@ class HtmlUnitTests {
 	}
 
 	@Test
+	@WithMockUser
 	void mainPageNoCities() throws IOException {
 		var page = getIndex();
 

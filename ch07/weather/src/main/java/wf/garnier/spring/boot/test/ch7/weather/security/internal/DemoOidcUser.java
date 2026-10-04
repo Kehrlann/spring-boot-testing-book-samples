@@ -36,4 +36,9 @@ public class DemoOidcUser extends DefaultOidcUser implements WeatherUser {
 		return getFullName();
 	}
 
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return super.getAuthorities();
+	}
+
 }
