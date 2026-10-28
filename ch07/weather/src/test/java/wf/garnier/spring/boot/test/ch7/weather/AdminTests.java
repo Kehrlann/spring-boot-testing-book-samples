@@ -74,7 +74,6 @@ class AdminTests {
 	void oidcAdmin() {
 		selectCity(new UserId("bob"), "Paris");
 
-		//@formatter:off
 		var response = mvc.get()
 			.uri("/admin")
 			.with(oidcLogin()
@@ -84,7 +83,6 @@ class AdminTests {
 					})
 					.authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))
 			.exchange();
-		//@formatter:on
 
 		assertThat(response).hasStatus(HttpStatus.OK).bodyText().contains("bob", "Paris (France)");
 	}

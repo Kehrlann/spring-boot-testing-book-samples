@@ -47,12 +47,10 @@ public class PreferencesProperties implements InitializingBean {
 	 * "https://en.wikipedia.org/wiki/Highest_temperature_recorded_on_Earth">Highest
 	 * temperature recorded on Earth</a>.
 	 */
-	//@formatter:off
 	public record TemperatureThreshold(
 			@DefaultValue("10") @Min(-90) double cold,
 			@DefaultValue("25") @Max(57) double hot) {
 	}
-	//@formatter:on
 
 	@Override
 	public void afterPropertiesSet() {
